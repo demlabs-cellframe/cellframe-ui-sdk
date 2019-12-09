@@ -25,47 +25,66 @@ along with any CellFrame SDK based project.  If not, see <http://www.gnu.org/lic
 #include <QtDebug>
 #include "DapStreamChChainNetSrv.h"
 
-#define DAP_STREAM_CH_CHAIN_NET_SRV_PKT_TYPE_REQUEST                       0x01
-#define DAP_STREAM_CH_CHAIN_NET_SRV_PKT_TYPE_SIGN_REQUEST                  0x10
-#define DAP_STREAM_CH_CHAIN_NET_SRV_PKT_TYPE_SIGN_RESPONSE                 0x11
-#define DAP_STREAM_CH_CHAIN_NET_SRV_PKT_TYPE_RECEIPE                       0x20
-#define DAP_STREAM_CH_CHAIN_NET_SRV_PKT_TYPE_RESPONSE_SUCCESS              0xf0
-#define DAP_STREAM_CH_CHAIN_NET_SRV_PKT_TYPE_RESPONSE_ERROR                0xff
+// TYPE_REQUEST
+typedef struct dap_stream_ch_chain_net_srv_pkt_request_hdr{
+    dap_chain_net_id_t net_id;// Network id wheither to request
+    dap_chain_hash_fast_t tx_cond; // Conditioned transaction with paymemt for
+    dap_chain_net_srv_uid_t srv_uid;
+} DAP_ALIGN_PACKED dap_stream_ch_chain_net_srv_pkt_request_hdr_t;
+
+typedef struct dap_stream_ch_chain_net_srv_pkt_request{
+    dap_stream_ch_chain_net_srv_pkt_request_hdr_t hdr;
+    uint8_t data[];
+} DAP_ALIGN_PACKED dap_stream_ch_chain_net_srv_pkt_request_t;
+
+typedef struct dap_stream_ch_chain_net_srv_pkt_success_hdr{
+    uint32_t usage_id;
+} DAP_ALIGN_PACKED dap_stream_ch_chain_net_srv_pkt_success_hdr_t;
+
+typedef struct dap_stream_ch_chain_net_srv_pkt_success{
+    dap_stream_ch_chain_net_srv_pkt_success_hdr_t hdr;
+    uint8_t custom_data[];
+} DAP_ALIGN_PACKED dap_stream_ch_chain_net_srv_pkt_success_t;
+
+// TYPE_RESPONSE_ERROR
+typedef struct dap_stream_ch_chain_net_srv_pkt_error{
+    uint32_t code; // error code
+} DAP_ALIGN_PACKED dap_stream_ch_chain_net_srv_pkt_error_t;
+
+using namespace Dap;
+using namespace Dap::Stream;
 
 /**
- * @brief DapStreamChChainNetSrv::DapStreamChChainNetSrv
+ * @brief ChChainNetSrv::ChChainNetSrv
  * @param a_streamer
  * @param a_mainDapSession
  */
-DapStreamChChainNetSrv::DapStreamChChainNetSrv(DapStreamer * a_streamer, DapSession * a_mainDapSession)
+ChChainNetSrv::ChChainNetSrv(DapStreamer * a_streamer, DapSession * a_mainDapSession)
                 : DapChBase(nullptr, 'R'), m_streamer(a_streamer), m_mainDapSession(a_mainDapSession)
 {
 
 }
 
 /**
- * @brief DapStreamChChainNetSrv::onPktIn
+ * @brief ChChainNetSrv::onPktIn
  * @param a_pkt
  */
-void DapStreamChChainNetSrv::onPktIn(DapChannelPacket* a_pkt)
+void ChChainNetSrv::onPktIn(DapChannelPacket* a_pkt)
 {
-    switch ( a_pkt->hdr()->type ) {
-        case DAP_STREAM_CH_CHAIN_NET_SRV_PKT_TYPE_REQUEST:{
+    switch (static_cast<ChChainNetSrvPktType>(a_pkt->hdr()->type) ) {
+        case REQUEST:{
 
         } break;
-        case DAP_STREAM_CH_CHAIN_NET_SRV_PKT_TYPE_SIGN_REQUEST:{
+        case SIGN_REQUEST:{
 
         } break;
-        case DAP_STREAM_CH_CHAIN_NET_SRV_PKT_TYPE_SIGN_RESPONSE:{
+        case SIGN_RESPONSE:{
 
         } break;
-        case DAP_STREAM_CH_CHAIN_NET_SRV_PKT_TYPE_RECEIPE:{
+        case RESPONSE_SUCCESS:{
 
         } break;
-        case DAP_STREAM_CH_CHAIN_NET_SRV_PKT_TYPE_RESPONSE_SUCCESS:{
-
-        } break;
-        case DAP_STREAM_CH_CHAIN_NET_SRV_PKT_TYPE_RESPONSE_ERROR:{
+        case RESPONSE_ERROR:{
 
         } break;
         default: qWarning() << "Unknown packet type " << a_pkt->hdr()->type;
