@@ -55,109 +55,115 @@ along with any CellFrame SDK based project.  If not, see <http://www.gnu.org/lic
 
 struct DapSockForwPacket;
 
-class DapStreamChChainNetSrvVpn : public DapChBase
-{
-    Q_OBJECT
-public:
-    struct PacketHdr{
-        int socket_id;
-        quint32 op_code;
-        union
+namespace Dap {
+    namespace Stream {
+
+        class ChChainNetSrvVpn : public DapChBase
         {
-            struct
+            Q_OBJECT
+        public:
+            struct PacketHdr{
+                int socket_id;
+                quint32 op_code;
+                union
+                {
+                    struct
+                    {
+                        quint32 addr_size;
+                        quint16 port;
+                        quint16 padding;
+                    } __attribute__((packed)) op_connect ;
+                    struct
+                    {
+                        quint32 data_size;
+                        quint32 padding;
+                    } __attribute__((packed)) raw ;   // Default access to raw OP data
+                    struct
+                    {
+                        quint32 data_size;
+                        quint32 padding;
+                    } __attribute__((packed)) op_data ;
+                };
+            } __attribute__((packed));
+
+            struct Packet
             {
-                quint32 addr_size;
-                quint16 port;
-                quint16 padding;
-            } op_connect;
-            struct
-            {
-                quint32 data_size;
-                quint32 padding;
-            } raw;   // Default access to raw OP data
-            struct
-            {
-                quint32 data_size;
-                quint32 padding;
-            } op_data;
+                DapSockForwPacketHdr header;
+                quint8 data[];
+            } __attribute__((packed));
+
+        private:
+            // DATAS
+            DapStreamer * m_streamer;
+            DapSession * m_mainDapSession;
+
+            QMap<int, QTcpSocket* > m_socketsIn;
+            QMap<int, QTcpServer* > m_servs;
+            QMap<int, QString > m_servsRemoteAddr;
+            QMap<int, quint16 > m_servsRemotePort;
+
+            QMap<int, QTcpSocket* > m_socksIn;
+            QMap<int, QTcpSocket* > m_socksOut;
+
+            DapTunNative * tun;
+            // METHODS
+            QString m_addr, m_gw;
+            QTcpServer *m_fdListener;
+        private slots:
+            void onFwServerConnected();
+            void onFwClientReadyRead();
+            void onFwClientDisconnected();
+
+        signals:
+            void bytesRead(int);
+            void bytesWrite(int);
+
+            void fwdDisconnected(int sockServ, int sockClient);
+            void usrMsg(QString);
+            void sigPacketRead();
+            void sigPacketWrite();
+
+            void sigTunNativeCreate();
+            void sigNativeDestroy();
+
+
+        public:
+            ChChainNetSrvVpn(DapStreamer * a_streamer, DapSession * mainDapSession);
+
+            bool isTunCreated(){return tun->isCreated();}
+
+            void tunCreate (const QString& a_addr, const QString& a_gw);
+            void workerStart(int a_tunSocket);
+
+            quint16 addForwarding(const QString remoteAddr, quint16 remotePort, quint16 localPort);
+            void delForwarding(int sockId);
+            void delForwardingAll();
+
+            DapStreamer * streamer(){ return m_streamer; }
+        signals:
+
+            void netConfigReceived(QString,QString);
+            void netConfigRequested();
+            void netConfigReceivedSame();
+            void netConfigCleared();
+            void tunCreated();
+            void tunDestroyed();
+            void tunError(const QString&);
+            void tunWriteData();
+
+            void ipRequested();
+
+            void sendCmdAll(const QString&);
+        public slots:
+            void onPktIn(DapChannelPacket *pkt) override;
+            void packetOut(DapSockForwPacket *pkt);
+
+            void requestIP();
+            void netConfigClear();
+
+            void tunCreate(); // create with all predefined before values
+            void tunDestroy();
         };
-    } __attribute__((packed));
 
-    struct Packet
-    {
-        DapSockForwPacketHdr header;
-        quint8 data[];
-    } __attribute__((packed));
-
-private:
-    // DATAS
-    DapStreamer * m_streamer;
-    DapSession * m_mainDapSession;
-
-    QMap<int, QTcpSocket* > m_socketsIn;
-    QMap<int, QTcpServer* > m_servs;
-    QMap<int, QString > m_servsRemoteAddr;
-    QMap<int, quint16 > m_servsRemotePort;
-
-    QMap<int, QTcpSocket* > m_socksIn;
-    QMap<int, QTcpSocket* > m_socksOut;
-
-    DapTunNative * tun;
-    // METHODS
-    QString m_addr, m_gw;
-    QTcpServer *m_fdListener;
-private slots:
-    void onFwServerConnected();
-    void onFwClientReadyRead();
-    void onFwClientDisconnected();
-
-signals:
-    void bytesRead(int);
-    void bytesWrite(int);
-
-    void fwdDisconnected(int sockServ, int sockClient);
-    void usrMsg(QString);
-    void sigPacketRead();
-    void sigPacketWrite();
-
-    void sigTunNativeCreate();
-    void sigNativeDestroy();
-
-
-public:
-    DapStreamChChainNetSrvVpn(DapStreamer * a_streamer, DapSession * mainDapSession);
-
-    bool isTunCreated(){return tun->isCreated();}
-
-    void tunCreate (const QString& a_addr, const QString& a_gw);
-    void workerStart(int a_tunSocket);
-
-    quint16 addForwarding(const QString remoteAddr, quint16 remotePort, quint16 localPort);
-    void delForwarding(int sockId);
-    void delForwardingAll();
-
-    DapStreamer * streamer(){ return m_streamer; }
-signals:
-
-    void netConfigReceived(QString,QString);
-    void netConfigRequested();
-    void netConfigReceivedSame();
-    void netConfigCleared();
-    void tunCreated();
-    void tunDestroyed();
-    void tunError(const QString&);
-    void tunWriteData();
-
-    void ipRequested();
-
-    void sendCmdAll(const QString&);
-public slots:
-    void onPktIn(DapChannelPacket *pkt) override;
-    void packetOut(DapSockForwPacket *pkt);
-
-    void requestIP();
-    void netConfigClear();
-
-    void tunCreate(); // create with all predefined before values
-    void tunDestroy();
-};
+    }
+}

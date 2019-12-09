@@ -50,10 +50,13 @@ along with any CellFrame SDK based project.  If not, see <http://www.gnu.org/lic
 #include <errno.h>
 #include <string.h>
 
+using namespace Dap;
+using namespace Dap::Stream;
+
 /**
- * @brief DapChSockForw::delForwardingAll
+ * @brief ChChainNetSrvVpn::delForwardingAll
  */
-void DapStreamChChainNetSrvVpn::delForwardingAll()
+void ChChainNetSrvVpn::delForwardingAll()
 {
     for (auto s : m_socketsIn)
         delete s;
@@ -65,10 +68,10 @@ void DapStreamChChainNetSrvVpn::delForwardingAll()
 }
 
 /**
- * @brief DapChSockForw::delForwarding
+ * @brief ChChainNetSrvVpn::delForwarding
  * @param sockId
  */
-void DapStreamChChainNetSrvVpn::delForwarding(int sockId)
+void ChChainNetSrvVpn::delForwarding(int sockId)
 {
     QTcpServer * serv = m_servs[sockId];
     if (serv) {
@@ -78,9 +81,9 @@ void DapStreamChChainNetSrvVpn::delForwarding(int sockId)
 }
 
 /**
- * @brief DapChSockForw::onFwClientReadyRead
+ * @brief ChChainNetSrvVpn::onFwClientReadyRead
  */
-void DapStreamChChainNetSrvVpn::onFwClientReadyRead()
+void ChChainNetSrvVpn::onFwClientReadyRead()
 {
     qDebug() << "[onFwClientReadyRead]";
     QTcpSocket * sock = qobject_cast<QTcpSocket*>(QObject::sender());
@@ -100,9 +103,9 @@ void DapStreamChChainNetSrvVpn::onFwClientReadyRead()
 }
 
 /**
- * @brief DapChSockForw::onFwClientDisconnected
+ * @brief ChChainNetSrvVpn::onFwClientDisconnected
  */
-void DapStreamChChainNetSrvVpn::onFwClientDisconnected()
+void ChChainNetSrvVpn::onFwClientDisconnected()
 {
     QTcpSocket *sock = qobject_cast<QTcpSocket*>(QObject::sender());
     if(sock) {
@@ -121,9 +124,9 @@ void DapStreamChChainNetSrvVpn::onFwClientDisconnected()
 }
 
 /**
- * @brief DapChSockForw::onFwServerConnected
+ * @brief ChChainNetSrvVpn::onFwServerConnected
  */
-void DapStreamChChainNetSrvVpn::onFwServerConnected()
+void ChChainNetSrvVpn::onFwServerConnected()
 {
     qDebug() << "[onFwServerConnected()]";
     QTcpServer *serv = qobject_cast<QTcpServer*>(QObject::sender());
@@ -154,8 +157,8 @@ void DapStreamChChainNetSrvVpn::onFwServerConnected()
                      << ":" << pkt->header.op_connect.port
                      << " addr size" << pkt->header.op_connect.addr_size;
 
-            connect(sock, &QTcpSocket::readyRead, this, &DapStreamChChainNetSrvVpn::onFwClientReadyRead);
-            connect(sock, &QTcpSocket::disconnected, this, &DapStreamChChainNetSrvVpn::onFwClientDisconnected);
+            connect(sock, &QTcpSocket::readyRead, this, &ChChainNetSrvVpn::onFwClientReadyRead);
+            connect(sock, &QTcpSocket::disconnected, this, &ChChainNetSrvVpn::onFwClientDisconnected);
 
             packetOut(pkt);
 
@@ -165,13 +168,13 @@ void DapStreamChChainNetSrvVpn::onFwServerConnected()
 }
 
 /**
- * @brief DapChSockForw::addForwarding
+ * @brief ChChainNetSrvVpn::addForwarding
  * @param remoteAddr
  * @param remotePort
  * @param localPort
  * @return
  */
-quint16 DapStreamChChainNetSrvVpn::addForwarding(const QString remoteAddr, quint16 remotePort, quint16 localPort)
+quint16 ChChainNetSrvVpn::addForwarding(const QString remoteAddr, quint16 remotePort, quint16 localPort)
 {
     qDebug() << "addForwarding " << QString("127.0.0.1:%1 => %2:%3")
                                                                     .arg(localPort)
@@ -183,7 +186,7 @@ quint16 DapStreamChChainNetSrvVpn::addForwarding(const QString remoteAddr, quint
         m_servs.insert(server->socketDescriptor(), server);
         m_servsRemoteAddr.insert(server->socketDescriptor(), remoteAddr);
         m_servsRemotePort.insert(server->socketDescriptor(), remotePort);
-        connect(server, &QTcpServer::newConnection, this, &DapStreamChChainNetSrvVpn::onFwServerConnected);
+        connect(server, &QTcpServer::newConnection, this, &ChChainNetSrvVpn::onFwServerConnected);
         connect(server, &QTcpServer::acceptError,[=]{
            qDebug() << "QTcpServer::acceptError() "<< server->errorString() ;
         });
@@ -197,29 +200,29 @@ quint16 DapStreamChChainNetSrvVpn::addForwarding(const QString remoteAddr, quint
 }
 
 /**
- * @brief DapChSockForw::DapChSockForw
+ * @brief ChChainNetSrvVpn::ChChainNetSrvVpn
  */
-DapStreamChChainNetSrvVpn::DapStreamChChainNetSrvVpn(DapStreamer * a_streamer, DapSession * mainDapSession)
+ChChainNetSrvVpn::ChChainNetSrvVpn(DapStreamer * a_streamer, DapSession * mainDapSession)
     :DapChBase(nullptr, 's'), m_streamer(a_streamer), m_mainDapSession(mainDapSession)
 {
     tun = new DapTunNative();
     m_fdListener = nullptr;
-    connect(tun, &DapTunNative::created, this, &DapStreamChChainNetSrvVpn::tunCreated);
-    connect(tun, &DapTunNative::destroyed, this, &DapStreamChChainNetSrvVpn::tunDestroyed);
-    connect(tun, &DapTunNative::error , this, &DapStreamChChainNetSrvVpn::tunError);
-    connect(tun, &DapTunNative::packetOut, this, &DapStreamChChainNetSrvVpn::packetOut);
-    connect(tun, &DapTunNative::sendCmd, this, &DapStreamChChainNetSrvVpn::sendCmdAll);
-    connect(tun, &DapTunNative::bytesRead, this, &DapStreamChChainNetSrvVpn::bytesRead);
-    connect(tun, &DapTunNative::bytesWrite, this, &DapStreamChChainNetSrvVpn::bytesWrite);
-    connect(tun, &DapTunNative::nativeCreateRequest, this, &DapStreamChChainNetSrvVpn::sigTunNativeCreate);
-    connect(tun, &DapTunNative::nativeDestroyRequest, this, &DapStreamChChainNetSrvVpn::sigNativeDestroy);
+    connect(tun, &DapTunNative::created, this, &ChChainNetSrvVpn::tunCreated);
+    connect(tun, &DapTunNative::destroyed, this, &ChChainNetSrvVpn::tunDestroyed);
+    connect(tun, &DapTunNative::error , this, &ChChainNetSrvVpn::tunError);
+    connect(tun, &DapTunNative::packetOut, this, &ChChainNetSrvVpn::packetOut);
+    connect(tun, &DapTunNative::sendCmd, this, &ChChainNetSrvVpn::sendCmdAll);
+    connect(tun, &DapTunNative::bytesRead, this, &ChChainNetSrvVpn::bytesRead);
+    connect(tun, &DapTunNative::bytesWrite, this, &ChChainNetSrvVpn::bytesWrite);
+    connect(tun, &DapTunNative::nativeCreateRequest, this, &ChChainNetSrvVpn::sigTunNativeCreate);
+    connect(tun, &DapTunNative::nativeDestroyRequest, this, &ChChainNetSrvVpn::sigNativeDestroy);
 }
 
 /**
- * @brief DapChSockForw::packetOut
+ * @brief ChChainNetSrvVpn::packetOut
  * @param pkt
  */
-void DapStreamChChainNetSrvVpn::packetOut(DapSockForwPacket *pkt)
+void ChChainNetSrvVpn::packetOut(DapSockForwPacket *pkt)
 {
     DapChannelPacketHdr* hdr= (DapChannelPacketHdr *) ::calloc(1, sizeof(DapChannelPacketHdr));
     hdr->id='s';
@@ -245,7 +248,7 @@ void DapStreamChChainNetSrvVpn::packetOut(DapSockForwPacket *pkt)
 /**
  * @brief DapChSockForw::requestIP
  */
-void DapStreamChChainNetSrvVpn::requestIP()
+void ChChainNetSrvVpn::requestIP()
 {
     emit netConfigRequested();
     DapSockForwPacket * pktOut = reinterpret_cast<DapSockForwPacket*>(::calloc(1 ,sizeof(pktOut->header)));
@@ -257,7 +260,7 @@ void DapStreamChChainNetSrvVpn::requestIP()
 /**
  * @brief DapChSockForw::netConfigClear
  */
-void DapStreamChChainNetSrvVpn::netConfigClear()
+void ChChainNetSrvVpn::netConfigClear()
 {
     m_addr.clear();
     m_gw.clear();
@@ -265,11 +268,11 @@ void DapStreamChChainNetSrvVpn::netConfigClear()
 }
 
 /**
- * @brief DapChSockForw::tunCreate
+ * @brief ChChainNetSrvVpn::tunCreate
  * @param a_addr
  * @param a_gw
  */
-void DapStreamChChainNetSrvVpn::tunCreate(const QString &a_addr, const QString &a_gw)
+void ChChainNetSrvVpn::tunCreate(const QString &a_addr, const QString &a_gw)
 {
     m_addr = a_addr;
     m_gw = a_gw;
@@ -281,9 +284,9 @@ void DapStreamChChainNetSrvVpn::tunCreate(const QString &a_addr, const QString &
 }
 
 /**
- * @brief DapChSockForw::tunCreate
+ * @brief ChChainNetSrvVpn::tunCreate
  */
-void DapStreamChChainNetSrvVpn::tunCreate()
+void ChChainNetSrvVpn::tunCreate()
 {
     tun->create(m_addr,
                 m_gw,
@@ -312,16 +315,16 @@ void DapStreamChChainNetSrvVpn::tunCreate()
 #endif
 }
 
-void DapStreamChChainNetSrvVpn::tunDestroy()
+void ChChainNetSrvVpn::tunDestroy()
 {
     tun->destroy();
 }
 
 /**
- * @brief DapChSockForw::afterTunCreate
+ * @brief ChChainNetSrvVpn::afterTunCreate
  * @param a_tunSocket
  */
-void DapStreamChChainNetSrvVpn::workerStart(int a_tunSocket)
+void ChChainNetSrvVpn::workerStart(int a_tunSocket)
 {
     qDebug() << "set tun socket: " << a_tunSocket;
     tun->setTunSocket(a_tunSocket);
@@ -329,10 +332,10 @@ void DapStreamChChainNetSrvVpn::workerStart(int a_tunSocket)
 }
 
 /**
- * @brief DapChSockForw::onPktIn
+ * @brief ChChainNetSrvVpn::onPktIn
  * @param pkt
  */
-void DapStreamChChainNetSrvVpn::onPktIn(DapChannelPacket* pkt)
+void ChChainNetSrvVpn::onPktIn(DapChannelPacket* pkt)
 {
     // qDebug() << "onPktIn: id ="<<pkt->hdr()->id << " type = "<< pkt->hdr()->type<< " ch_data_size = "<<pkt->hdr()->size;
     DapSockForwPacket * pktSF=(DapSockForwPacket *) pkt->data();
