@@ -25,11 +25,70 @@ along with any CellFrame SDK based project.  If not, see <http://www.gnu.org/lic
 
 #include "dap_common.h"
 #include "dap_chain_common.h"
+#include "dap_chain_datum_tx_receipt.h"
 #include "DapChBase.h"
+#include "DapCrypto.h"
+
+
 
 class DapStreamer;
 class DapSession;
 namespace Dap {
+
+    // TODO move to its own module
+    namespace Chain {
+        class NetId
+        {
+        private:
+            dap_chain_net_id_t m_value;
+        public:
+            const dap_chain_net_id_t& value () const { return  m_value;}
+            NetId(){ m_value.uint64 = 0ull; }
+            NetId( const dap_chain_net_id_t& a_value){ m_value.uint64 = a_value.uint64; }
+            NetId( const NetId& a_netId){ m_value.uint64 = a_netId.m_value.uint64; }
+            NetId( const QString& a_str){
+                m_value.uint64 = dap_chain_net_id_from_str(a_str.toLatin1().constData()).uint64;
+            }
+            QString toString(){ return QString().sprintf("0x%016lX",m_value.uint64); }
+            operator dap_chain_net_id_t& (){ return  m_value; }
+            dap_chain_net_id_t& operator=(const NetId& a_netId) {  m_value.uint64 = a_netId.m_value.uint64; return m_value; }
+            bool operator==(const NetId& a_netId){ return a_netId.m_value.uint64 == m_value.uint64; }
+        };
+
+        namespace NetSrv {
+            class Uid
+            {
+            private:
+                dap_chain_net_srv_uid_t m_value;
+            public:
+                Uid(){ m_value.uint64 = 0ull; }
+                Uid( const dap_chain_net_srv_uid_t& a_value){ m_value.uint64 = a_value.uint64; }
+                Uid( const Uid& a_netSrvUid){ m_value.uint64 = a_netSrvUid.m_value.uint64; }
+                Uid( const QString& a_str){
+                    m_value.uint64 = dap_chain_net_srv_uid_from_str(a_str.toLatin1().constData()).uint64;
+                }
+                operator dap_chain_net_srv_uid_t& (){ return  m_value; }
+
+                QString toString(){ return QString().sprintf("0x%016lX",m_value.uint64); }
+
+                dap_chain_net_srv_uid_t& operator=(const Uid& a_netSrvUid) {
+                    m_value.uint64 = a_netSrvUid.m_value.uint64;
+                    return m_value;
+                }
+
+                bool operator==(const Uid& a_netSrvUid){ return a_netSrvUid.m_value.uint64 == m_value.uint64; }
+            };
+            enum UnitType{
+                UNIT_TYPE_UNDEFINED = 0 ,
+                UNIT_TYPE_MB = 0x00000001, // megabytes
+                UNIT_TYPE_SEC = 0x00000002, // seconds
+                UNIT_TYPE_DAY = 0x00000003,  // days
+                UNIT_TYPE_KB = 0x00000010,  // kilobytes
+                UNIT_TYPE_B = 0x00000011,   // bytes
+            };
+        }
+
+    }
     namespace Stream{
         enum ChChainNetSrvPktType {
             REQUEST             = 0x01,
@@ -56,7 +115,6 @@ namespace Dap {
             RECEIPT_WRONG_PKEY_HASH   = 0x00000502,
             UNKNOWN                   = 0xffffffff
         };
-
         class ChChainNetSrv : public DapChBase
         {
             Q_OBJECT
@@ -65,8 +123,16 @@ namespace Dap {
             DapSession * m_mainDapSession;
         public:
             ChChainNetSrv(DapStreamer * a_streamer, DapSession * a_mainDapSession);
+        signals:
+            void sigProvideSuccess (Chain::NetSrv::Uid a_srvUid,Chain::NetSrv::UnitType a_unitType, quint64 a_units);
+            void sigProvideError(quint32 a_errorCode);
         public slots:
             void onPktIn(DapChannelPacket* a_pkt) override;
+
+            void sendRequest(Chain::NetId a_netId,// Network id wheither to request
+                Crypto::HashFast a_txCond, // Conditioned transaction with paymemt for
+                Chain::NetSrv::Uid a_srvUid // Service ID
+            );
         };
     }
 }
