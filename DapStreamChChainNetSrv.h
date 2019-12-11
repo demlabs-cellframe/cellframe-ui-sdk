@@ -194,7 +194,8 @@ namespace Dap {
             void sendReceipt(Chain::Receipt * receipt );
             void sendRequest(Chain::NetId a_netId,// Network id wheither to request
                 Crypto::HashFast a_txCond, // Conditioned transaction with paymemt for
-                Chain::NetSrv::Uid a_srvUid // Service ID
+                Chain::NetSrv::Uid a_srvUid ,// Service ID
+                const QString& a_token        // Token to pay
             );
         };
     }

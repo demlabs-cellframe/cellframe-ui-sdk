@@ -146,13 +146,14 @@ void ChChainNetSrv::onPktIn(DapChannelPacket* a_pkt)
 
 void ChChainNetSrv::sendRequest(Chain::NetId a_netId,// Network id wheither to request
     Crypto::HashFast a_txCond, // Conditioned transaction with paymemt for
-    Chain::NetSrv::Uid a_srvUid ) // Service ID
+    Chain::NetSrv::Uid a_srvUid, const QString& a_token ) // Service ID
 {
     dap_stream_ch_chain_net_srv_pkt_request_t * l_request =static_cast<dap_stream_ch_chain_net_srv_pkt_request_t *>(
                 calloc(1,sizeof(dap_stream_ch_chain_net_srv_pkt_request_t) ) );
     l_request->hdr.net_id = a_netId;
     l_request->hdr.tx_cond = a_txCond;
     l_request->hdr.srv_uid = a_srvUid;
+    strncpy(l_request->hdr.token, a_token.toLatin1().constData(),sizeof (l_request->hdr.token)-1);
     sendPacket( get_id(),ChChainNetSrvPktType::REQUEST,l_request,sizeof(*l_request));
     qInfo() << "Sent request for service "<<a_srvUid.toString();
 }
