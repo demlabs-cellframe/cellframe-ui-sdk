@@ -33,6 +33,8 @@ along with any CellFrame SDK based project.  If not, see <http://www.gnu.org/lic
 #include <QTcpSocket>
 #include <QTcpServer>
 
+#include "DapStreamChChainNetSrv.h"
+
 #define STREAM_SF_PACKET_OP_CODE_CONNECTED 0x000000a9
 #define STREAM_SF_PACKET_OP_CODE_CONNECT 0x000000aa
 #define STREAM_SF_PACKET_OP_CODE_DISCONNECT 0x000000ab
@@ -53,9 +55,16 @@ along with any CellFrame SDK based project.  If not, see <http://www.gnu.org/lic
 #define STREAM_SF_PACKET_OP_CODE_RAW_SEND 0x000000bc
 #define STREAM_SF_PACKET_OP_CODE_RAW_RECV 0x000000bd
 
+#define DAP_CHAIN_NET_SRV_VPN_ID
+
 struct DapSockForwPacket;
 
 namespace Dap {
+    namespace Chain {
+        namespace NetSrv {
+            const Uid UID_VPN = 0x0000000000000001;
+        }
+    }
     namespace Stream {
 
         class ChChainNetSrvVpn : public DapChBase
