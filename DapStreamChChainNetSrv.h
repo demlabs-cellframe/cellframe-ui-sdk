@@ -37,6 +37,7 @@ namespace Dap {
 
     // TODO move to its own module
     namespace Chain {
+
         class NetId
         {
         private:
@@ -55,12 +56,14 @@ namespace Dap {
             bool operator==(const NetId& a_netId){ return a_netId.m_value.uint64 == m_value.uint64; }
         };
 
+
         namespace NetSrv {
             class Uid
             {
             private:
                 dap_chain_net_srv_uid_t m_value;
             public:
+                Uid(quint64 a_value) { m_value.uint64 = a_value ;}
                 Uid(){ m_value.uint64 = 0ull; }
                 Uid( const dap_chain_net_srv_uid_t& a_value){ m_value.uint64 = a_value.uint64; }
                 Uid( const Uid& a_netSrvUid){ m_value.uint64 = a_netSrvUid.m_value.uint64; }
@@ -78,6 +81,7 @@ namespace Dap {
 
                 bool operator==(const Uid& a_netSrvUid){ return a_netSrvUid.m_value.uint64 == m_value.uint64; }
             };
+            static const Uid UidNull=Uid();
             enum UnitType{
                 UNIT_TYPE_UNDEFINED = 0 ,
                 UNIT_TYPE_MB = 0x00000001, // megabytes
@@ -86,7 +90,58 @@ namespace Dap {
                 UNIT_TYPE_KB = 0x00000010,  // kilobytes
                 UNIT_TYPE_B = 0x00000011,   // bytes
             };
+
+
         }
+        class Receipt {
+        private:
+            dap_chain_datum_tx_receipt_t * m_value;
+        public:
+            enum ThrowClass{DataNull, DataSizeWrong};
+            Receipt() { m_value = nullptr; }
+            Receipt(const Receipt& a_receipt){ m_value = a_receipt.m_value; }
+            Receipt(const Receipt* a_receipt){ m_value = a_receipt->m_value; }
+            Receipt(const void * a_data, size_t a_dataSize){
+                if( a_data == nullptr)
+                    throw DataNull;
+                if( a_dataSize < ( 1 +sizeof (m_value->receipt_info)+sizeof (m_value->size)))
+                    throw DataSizeWrong;
+                m_value = DAP_NEW_Z_SIZE(dap_chain_datum_tx_receipt_t, a_dataSize);
+                ::memcpy(m_value,a_data,a_dataSize);
+            }
+            ~Receipt(){
+                if (m_value)
+                    DAP_DELETE(m_value);
+            }
+
+            void release(){ m_value = nullptr; } // Release wrapper from m_value to prevent doulbe free
+            operator dap_chain_datum_tx_receipt_t& () { return  *m_value;}
+            operator dap_chain_datum_tx_receipt_t* () { return  m_value;}
+            operator const void* () { return  m_value;}
+            operator void* () { return  m_value;}
+            quint16 size() { return m_value?m_value->size : 0; }
+
+            dap_chain_datum_tx_receipt_t * value() { return m_value; }
+            NetSrv::Uid getNetSrvUid() { return m_value ? m_value->receipt_info.srv_uid : NetSrv::UidNull; }
+            NetSrv::UnitType getUnitType() { return m_value ?static_cast<NetSrv::UnitType>(m_value->receipt_info.units_type.uint32):
+                                                             NetSrv::UNIT_TYPE_UNDEFINED ; }
+            quint64 getUnits() { return  m_value? m_value->receipt_info.units : 0; }
+            quint64 getValueDatoshi() { return  m_value ? m_value->receipt_info.value_datoshi: 0; }
+
+            void signAdd(Crypto::Key& a_key){
+                dap_chain_datum_tx_receipt_sign_add( m_value, m_value->size, a_key );
+            }
+            void signAdd(Crypto::Cert& a_cert){
+                dap_chain_datum_tx_receipt_sign_add( m_value, m_value->size, a_cert.key() );
+            }
+
+            Receipt* deepCopy(){
+                Receipt* ret = new Receipt;
+                ret->m_value = DAP_NEW_Z_SIZE(dap_chain_datum_tx_receipt_t, m_value->size);
+                ::memcpy(ret->m_value, m_value, m_value->size);
+                return  ret;
+            }
+        };
 
     }
     namespace Stream{
@@ -94,6 +149,7 @@ namespace Dap {
             REQUEST             = 0x01,
             SIGN_REQUEST        = 0x10,
             SIGN_RESPONSE       = 0x11,
+            NOTIFY_STOPPED      = 0x20,
             RESPONSE_SUCCESS    = 0xf0,
             RESPONSE_ERROR      = 0xff
         };
@@ -124,11 +180,13 @@ namespace Dap {
         public:
             ChChainNetSrv(DapStreamer * a_streamer, DapSession * a_mainDapSession);
         signals:
-            void sigProvideSuccess (Chain::NetSrv::Uid a_srvUid,Chain::NetSrv::UnitType a_unitType, quint64 a_units);
-            void sigProvideError(quint32 a_errorCode);
+            void sigReceiptToSign(Chain::Receipt * receipt );
+            void sigProvideSuccess (Chain::NetId a_netId, Chain::NetSrv::Uid a_srvUid, quint32 a_usageId );
+            void sigProvideError(Chain::NetId a_netId, Chain::NetSrv::Uid a_srvUid, quint32 a_usageId,quint32 a_errorCode);
         public slots:
             void onPktIn(DapChannelPacket* a_pkt) override;
 
+            void sendReceipt(Chain::Receipt * receipt );
             void sendRequest(Chain::NetId a_netId,// Network id wheither to request
                 Crypto::HashFast a_txCond, // Conditioned transaction with paymemt for
                 Chain::NetSrv::Uid a_srvUid // Service ID

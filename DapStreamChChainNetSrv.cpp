@@ -75,6 +75,19 @@ ChChainNetSrv::ChChainNetSrv(DapStreamer * a_streamer, DapSession * a_mainDapSes
 }
 
 /**
+ * @brief ChChainNetSrv::sendReceipt
+ * @param receipt
+ */
+void ChChainNetSrv::sendReceipt(Chain::Receipt * receipt )
+{
+    sendPacket( get_id(),ChChainNetSrvPktType::SIGN_RESPONSE,receipt->value() ,receipt->size() );
+
+    // To prevent double free
+    receipt->release();
+    delete receipt;
+}
+
+/**
  * @brief ChChainNetSrv::onPktIn
  * @param a_pkt
  */
@@ -82,16 +95,36 @@ void ChChainNetSrv::onPktIn(DapChannelPacket* a_pkt)
 {
     switch (static_cast<ChChainNetSrvPktType>(a_pkt->hdr()->type) ) {
         case REQUEST:{
-
+            qWarning() << "We don't serve any service so nothing todo with REQUEST. TODO: add service provide for this realization as well";
         } break;
         case SIGN_REQUEST:{
+            Chain::Receipt * receipt = nullptr;
+            try {
+                receipt = new Chain::Receipt(a_pkt->data(), a_pkt->hdr()->size);
+                emit sigReceiptToSign(receipt);
+            } catch (Chain::Receipt::ThrowClass err) {
+                switch (err) {
+                    case Chain::Receipt::DataNull:
+                        qWarning() << "Packet with receipt has NULL data";
+                    break;
+                    case Chain::Receipt::DataSizeWrong:
+                    qWarning() << "Packet with receipt has wrong data size "<< a_pkt->hdr()->size;
+                    break;
+                }
+            }
 
         } break;
         case SIGN_RESPONSE:{
-
+            qWarning() << "We don't serve any service so nothing todo with SIG_RESPONSE. TODO: add service provide for this realization as well";
         } break;
         case RESPONSE_SUCCESS:{
-
+            if( a_pkt->hdr()->size < sizeof(dap_stream_ch_chain_net_srv_pkt_success_hdr_t) ){
+                qWarning() << "Wrong error packet data size, expected to be at least " << sizeof(dap_stream_ch_chain_net_srv_pkt_success_hdr_t);
+                break;
+            }
+            const dap_stream_ch_chain_net_srv_pkt_success_t * l_success =
+                    reinterpret_cast<const dap_stream_ch_chain_net_srv_pkt_success_t* >(a_pkt->data());
+            emit sigProvideSuccess( l_success->hdr.net_id, l_success->hdr.srv_uid, l_success->hdr.usage_id );
         } break;
         case RESPONSE_ERROR:{
             const dap_stream_ch_chain_net_srv_pkt_error_t *l_err;
@@ -100,7 +133,7 @@ void ChChainNetSrv::onPktIn(DapChannelPacket* a_pkt)
                 break;
             }
             l_err =reinterpret_cast<const dap_stream_ch_chain_net_srv_pkt_error_t*>(a_pkt->data());
-            emit sigProvideError(l_err->code );
+            emit sigProvideError(l_err->net_id, l_err->srv_uid, l_err->usage_id,  l_err->code );
         } break;
         default: qWarning() << "Unknown packet type " << a_pkt->hdr()->type;
     }
