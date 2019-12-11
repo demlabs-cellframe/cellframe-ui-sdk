@@ -78,6 +78,10 @@ namespace Dap {
                     m_value.uint64 = a_netSrvUid.m_value.uint64;
                     return m_value;
                 }
+                dap_chain_net_srv_uid_t& operator=(quint64 a_value) {
+                    m_value.uint64 = a_value;
+                    return m_value;
+                }
 
                 bool operator==(const Uid& a_netSrvUid){ return a_netSrvUid.m_value.uint64 == m_value.uint64; }
             };
@@ -183,6 +187,7 @@ namespace Dap {
             void sigReceiptToSign(Chain::Receipt * receipt );
             void sigProvideSuccess (Chain::NetId a_netId, Chain::NetSrv::Uid a_srvUid, quint32 a_usageId );
             void sigProvideError(Chain::NetId a_netId, Chain::NetSrv::Uid a_srvUid, quint32 a_usageId,quint32 a_errorCode);
+            void sigNotifyStopped(); // Service stopped
         public slots:
             void onPktIn(DapChannelPacket* a_pkt) override;
 

@@ -135,6 +135,10 @@ void ChChainNetSrv::onPktIn(DapChannelPacket* a_pkt)
             l_err =reinterpret_cast<const dap_stream_ch_chain_net_srv_pkt_error_t*>(a_pkt->data());
             emit sigProvideError(l_err->net_id, l_err->srv_uid, l_err->usage_id,  l_err->code );
         } break;
+        case NOTIFY_STOPPED: {
+            /// TODO add usage id, net id and service id to identify what exactly was stopped
+            emit sigNotifyStopped();
+        } break;
         default: qWarning() << "Unknown packet type " << a_pkt->hdr()->type;
     }
 }
