@@ -74,6 +74,7 @@ namespace Dap {
             struct PacketHdr{
                 int socket_id;
                 quint32 op_code;
+		quint32 usage_id;
                 union
                 {
                     struct
