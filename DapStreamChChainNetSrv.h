@@ -168,13 +168,34 @@ namespace Dap {
             TX_COND_NOT_ENOUGH        = 0x00000402,
             TX_COND_NOT_ACCEPT_TOKEN  = 0x00000403,
             TX_COND_WRONG_SRV_UID     = 0x00000404,
-            TX_COND_WRONG_SIZE        = 0x00000404,
+            TX_COND_WRONG_SIZE        = 0x00000405,
             RECEIPT_CANT_FIND         = 0x00000500,
             RECEIPT_NO_SIGN           = 0x00000501,
             PRICE_NOT_FOUND           = 0x00000600,
             RECEIPT_WRONG_PKEY_HASH   = 0x00000502,
             UNKNOWN                   = 0xffffffff
         };
+        static inline const QString chChainNetSrvPktResponseErrorCodeToString(quint32 a){
+            switch (static_cast<ChChainNetSrvPktResponseErrorCode>(a)) {
+                case UNDEFINED: return "UNDEFINED";
+                case SERVICE_NOT_FOUND: return "SERVICE_NOT_FOUND";
+                case NETWORK_NOT_FOUND: return "NETWORK_NOT_FOUND";
+                case NETWORK_NO_LEDGER: return "NETWORK_NO_LEDGER";
+                case USAGE_CANT_ADD: return "USAGE_CANT_ADD";
+                case TX_COND_NOT_FOUND: return "TX_COND_NOT_FOUND";
+                case TX_COND_NO_COND_OUT: return "TX_COND_NO_COND_OUT";
+                case TX_COND_NOT_ENOUGH: return "TX_COND_NOT_ENOUGH";
+                case TX_COND_NOT_ACCEPT_TOKEN: return "TX_COND_NOT_ACCEPT_TOKEN";
+                case TX_COND_WRONG_SRV_UID: return "TX_COND_WRONG_SRV_UID";
+                case TX_COND_WRONG_SIZE: return "TX_COND_WRONG_SIZE";
+                case RECEIPT_CANT_FIND: return "RECEIPT_CANT_FIND";
+                case RECEIPT_NO_SIGN: return "RECEIPT_NO_SIGN";
+                case PRICE_NOT_FOUND: return "PRICE_NOT_FOUND";
+                case RECEIPT_WRONG_PKEY_HASH: return "RECEIPT_WRONG_PKEY_HASH";
+                case UNKNOWN: return "UNKNOWN";
+            }
+        };
+
         class ChChainNetSrv : public DapChBase
         {
             Q_OBJECT
