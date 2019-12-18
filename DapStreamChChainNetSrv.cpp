@@ -150,8 +150,9 @@ void ChChainNetSrv::sendRequest(Chain::NetId a_netId,// Network id wheither to r
 {
     dap_stream_ch_chain_net_srv_pkt_request_t * l_request =static_cast<dap_stream_ch_chain_net_srv_pkt_request_t *>(
                 calloc(1,sizeof(dap_stream_ch_chain_net_srv_pkt_request_t) ) );
-    l_request->hdr.net_id = a_netId;
-    l_request->hdr.tx_cond = a_txCond;
+    l_request->hdr.net_id = a_netId.value();
+    l_request->hdr.tx_cond = a_txCond.value();
+    qDebug() << "2791: Service req: net_id = " << a_netId.value().uint64 << "tx_cond = " << a_txCond.value().raw;
     l_request->hdr.srv_uid = a_srvUid;
     strncpy(l_request->hdr.token, a_token.toLatin1().constData(),sizeof (l_request->hdr.token)-1);
     sendPacket( get_id(),ChChainNetSrvPktType::REQUEST,l_request,sizeof(*l_request));
