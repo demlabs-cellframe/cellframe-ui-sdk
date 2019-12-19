@@ -25,7 +25,9 @@ along with any CellFrame SDK based project.  If not, see <http://www.gnu.org/lic
 #include "DapChBase.h"
 #include "DapSession.h"
 
-#include "DapSockForwPacket.h"
+//#include "DapSockForwPacket.h"
+#include "DapStreamChChainNetSrv.h"
+#include "DapStreamChChainVpnPacket.h"
 #include "DapTunNative.h"
 #include "DapStreamer.h"
 
@@ -33,7 +35,7 @@ along with any CellFrame SDK based project.  If not, see <http://www.gnu.org/lic
 #include <QTcpSocket>
 #include <QTcpServer>
 
-#include "DapStreamChChainNetSrv.h"
+
 
 #define STREAM_SF_PACKET_OP_CODE_CONNECTED 0x000000a9
 #define STREAM_SF_PACKET_OP_CODE_CONNECT 0x000000aa
@@ -57,7 +59,6 @@ along with any CellFrame SDK based project.  If not, see <http://www.gnu.org/lic
 
 #define DAP_CHAIN_NET_SRV_VPN_ID
 
-struct DapSockForwPacket;
 
 namespace Dap {
     namespace Chain {
@@ -71,37 +72,6 @@ namespace Dap {
         {
             Q_OBJECT
         public:
-            struct PacketHdr{
-                int socket_id;
-                quint32 op_code;
-		quint32 usage_id;
-                union
-                {
-                    struct
-                    {
-                        quint32 addr_size;
-                        quint16 port;
-                        quint16 padding;
-                    } __attribute__((packed)) op_connect ;
-                    struct
-                    {
-                        quint32 data_size;
-                        quint32 padding;
-                    } __attribute__((packed)) raw ;   // Default access to raw OP data
-                    struct
-                    {
-                        quint32 data_size;
-                        quint32 padding;
-                    } __attribute__((packed)) op_data ;
-                };
-            } __attribute__((packed));
-
-            struct Packet
-            {
-                DapSockForwPacketHdr header;
-                quint8 data[];
-            } __attribute__((packed));
-
         private:
             // DATAS
             DapStreamer * m_streamer;
@@ -166,9 +136,9 @@ namespace Dap {
             void sendCmdAll(const QString&);
         public slots:
             void onPktIn(DapChannelPacket *pkt) override;
-            void packetOut(DapSockForwPacket *pkt);
+            void packetOut(Dap::Stream::Packet *pkt);
 
-            void requestIP();
+            void requestIP(quint32);
             void netConfigClear();
 
             void tunCreate(); // create with all predefined before values
