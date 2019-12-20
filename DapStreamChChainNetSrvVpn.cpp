@@ -24,6 +24,7 @@ along with any CellFrame SDK based project.  If not, see <http://www.gnu.org/lic
 #include <QtDebug>
 
 #include "DapStreamer.h"
+#include "DapStreamChChainVpnPacket.h"
 #include "DapStreamChChainNetSrvVpn.h"
 
 #if defined(Q_OS_LINUX)
@@ -90,7 +91,7 @@ void ChChainNetSrvVpn::onFwClientReadyRead()
     if (sock) {
         QByteArray ba = sock->readAll();
         qDebug() << "From client's socket have read " << ba.length() << "bytes.";
-        DapSockForwPacket * pkt = (DapSockForwPacket *) calloc(1, ba.length() + sizeof(pkt->header));
+        Dap::Stream::Packet* pkt = (Dap::Stream::Packet*) calloc(1, ba.length() + sizeof(pkt->header));
         memcpy(pkt->data, ba.constData(), ba.length());
         pkt->header.op_data.data_size = ba.length();
         pkt->header.op_code = STREAM_SF_PACKET_OP_CODE_SEND;
@@ -112,7 +113,7 @@ void ChChainNetSrvVpn::onFwClientDisconnected()
         qDebug() << "Disconnected client " << sock->localAddress();
         m_socketsIn.remove(sock->socketDescriptor());
 
-        DapSockForwPacket* pkt = (DapSockForwPacket*) calloc(1,sizeof(pkt->header) + 1);
+        Dap::Stream::Packet* pkt = (Dap::Stream::Packet*) calloc(1,sizeof(pkt->header) + 1);
         pkt->header.op_code = STREAM_SF_PACKET_OP_CODE_DISCONNECT;
         pkt->header.socket_id = sock->socketDescriptor();
         pkt->header.raw.data_size = 2; ///TODO prev value is 0
@@ -132,7 +133,7 @@ void ChChainNetSrvVpn::onFwServerConnected()
     QTcpServer *serv = qobject_cast<QTcpServer*>(QObject::sender());
     QTcpSocket *sock;
     QByteArray remoteAddrBA;
-    DapSockForwPacket *pkt;
+    Dap::Stream::Packet *pkt;
 
     if(serv) {
         if(!serv->hasPendingConnections())
@@ -142,7 +143,7 @@ void ChChainNetSrvVpn::onFwServerConnected()
             sock = serv->nextPendingConnection();
             remoteAddrBA = (m_servsRemoteAddr[serv->socketDescriptor()]).toLatin1();
             m_socketsIn.insert(sock->socketDescriptor(),sock);
-            pkt = (DapSockForwPacket*) calloc(1, sizeof(pkt->header) +  remoteAddrBA.length());
+            pkt = (Dap::Stream::Packet*) calloc(1, sizeof(pkt->header) +  remoteAddrBA.length());
 
             pkt->header.op_code = STREAM_SF_PACKET_OP_CODE_CONNECT;
             pkt->header.socket_id = sock->socketDescriptor();
@@ -203,7 +204,7 @@ quint16 ChChainNetSrvVpn::addForwarding(const QString remoteAddr, quint16 remote
  * @brief ChChainNetSrvVpn::ChChainNetSrvVpn
  */
 ChChainNetSrvVpn::ChChainNetSrvVpn(DapStreamer * a_streamer, DapSession * mainDapSession)
-    :DapChBase(nullptr, 's'), m_streamer(a_streamer), m_mainDapSession(mainDapSession)
+    :DapChBase(nullptr, 'S'), m_streamer(a_streamer), m_mainDapSession(mainDapSession)
 {
     tun = new DapTunNative();
     m_fdListener = nullptr;
@@ -222,10 +223,10 @@ ChChainNetSrvVpn::ChChainNetSrvVpn(DapStreamer * a_streamer, DapSession * mainDa
  * @brief ChChainNetSrvVpn::packetOut
  * @param pkt
  */
-void ChChainNetSrvVpn::packetOut(DapSockForwPacket *pkt)
+void ChChainNetSrvVpn::packetOut(Dap::Stream::Packet *pkt)
 {
     DapChannelPacketHdr* hdr= (DapChannelPacketHdr *) ::calloc(1, sizeof(DapChannelPacketHdr));
-    hdr->id='s';
+    hdr->id='S';
     hdr->type='d';
     hdr->size=sizeof(pkt->header);
     switch(pkt->header.op_code){
@@ -248,11 +249,13 @@ void ChChainNetSrvVpn::packetOut(DapSockForwPacket *pkt)
 /**
  * @brief DapChSockForw::requestIP
  */
-void ChChainNetSrvVpn::requestIP()
+void ChChainNetSrvVpn::requestIP(quint32 a_usageId)
 {
     emit netConfigRequested();
-    DapSockForwPacket * pktOut = reinterpret_cast<DapSockForwPacket*>(::calloc(1 ,sizeof(pktOut->header)));
+    Dap::Stream::Packet * pktOut = reinterpret_cast<Dap::Stream::Packet*>(::calloc(1 ,sizeof(pktOut->header)));
     pktOut->header.op_code=STREAM_SF_PACKET_OP_CODE_RAW_L3_ADDR_REQUEST;
+    pktOut->header.usage_id = a_usageId;
+    qInfo() << "usage_id: " << pktOut->header.usage_id;
     packetOut(pktOut);
     emit ipRequested();
 }
@@ -338,7 +341,7 @@ void ChChainNetSrvVpn::workerStart(int a_tunSocket)
 void ChChainNetSrvVpn::onPktIn(DapChannelPacket* pkt)
 {
     // qDebug() << "onPktIn: id ="<<pkt->hdr()->id << " type = "<< pkt->hdr()->type<< " ch_data_size = "<<pkt->hdr()->size;
-    DapSockForwPacket * pktSF=(DapSockForwPacket *) pkt->data();
+    Dap::Stream::Packet * pktSF=(Dap::Stream::Packet *) pkt->data();
     //qDebug() << " onPktIn: SampSFPacket op_code ="<< pktSF->header.op_code;
     switch(pktSF->header.op_code){
         case STREAM_SF_PACKET_OP_CODE_SEND:
