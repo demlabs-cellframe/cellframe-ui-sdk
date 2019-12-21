@@ -227,7 +227,7 @@ void ChChainNetSrvVpn::packetOut(Dap::Stream::Packet *pkt)
 {
     DapChannelPacketHdr* hdr= (DapChannelPacketHdr *) ::calloc(1, sizeof(DapChannelPacketHdr));
     hdr->id='S';
-    hdr->type='d';
+    hdr->type=0x00;
     hdr->size=sizeof(pkt->header);
     switch(pkt->header.op_code){
         case STREAM_SF_PACKET_OP_CODE_SEND:
