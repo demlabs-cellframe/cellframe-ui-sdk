@@ -255,7 +255,7 @@ void ChChainNetSrvVpn::requestIP(quint32 a_usageId)
     Dap::Stream::Packet * pktOut = reinterpret_cast<Dap::Stream::Packet*>(::calloc(1 ,sizeof(pktOut->header)));
     pktOut->header.op_code=STREAM_SF_PACKET_OP_CODE_RAW_L3_ADDR_REQUEST;
     pktOut->header.usage_id = a_usageId;
-    qInfo() << "usage_id: " << pktOut->header.usage_id;
+    qInfo() << "Request for IP with usage_id: " << pktOut->header.usage_id;
     packetOut(pktOut);
     emit ipRequested();
 }
