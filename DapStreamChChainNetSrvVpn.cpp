@@ -368,8 +368,11 @@ void ChChainNetSrvVpn::onPktIn(DapChannelPacket* pkt)
             }
         } break;
         case STREAM_SF_PACKET_OP_CODE_RAW_L3_ADDR_REPLY:{
-            m_addr = QHostAddress(ntohl (*((quint32*) pktSF->data))).toString() ;
-            m_gw = QHostAddress(ntohl ( ((quint32*) pktSF->data)[1])).toString() ;
+            quint32 l_addr,l_gw;
+            ::memcpy(&l_addr, pktSF->data,sizeof (l_addr));
+            ::memcpy(&l_gw, pktSF->data+sizeof (l_addr),sizeof (l_addr));
+            m_addr = QHostAddress(  ::ntohl(l_addr) ).toString() ;
+            m_gw = QHostAddress( ::ntohl ( l_gw )).toString()  ;
             emit netConfigReceived(m_addr,m_gw);
         }break;
         case STREAM_SF_PACKET_OP_CODE_RAW_RECV:{
