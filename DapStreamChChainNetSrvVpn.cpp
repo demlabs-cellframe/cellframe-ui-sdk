@@ -27,7 +27,7 @@ along with any CellFrame SDK based project.  If not, see <http://www.gnu.org/lic
 #include "DapStreamChChainVpnPacket.h"
 #include "DapStreamChChainNetSrvVpn.h"
 
-#if defined(Q_OS_LINUX)
+#if defined(Q_OS_UNIX)
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <sys/types.h>
