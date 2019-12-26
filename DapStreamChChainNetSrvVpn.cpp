@@ -371,10 +371,17 @@ void ChChainNetSrvVpn::onPktIn(DapChannelPacket* pkt)
             quint32 l_addr,l_gw;
             ::memcpy(&l_addr, pktSF->data,sizeof (l_addr));
             ::memcpy(&l_gw, pktSF->data+sizeof (l_addr),sizeof (l_addr));
-            m_addr = QHostAddress(  ::ntohl(l_addr) ).toString() ;
-            m_gw = QHostAddress( ::ntohl ( l_gw )).toString()  ;
-            emit netConfigReceived(m_addr,m_gw);
-        }break;
+            QString new_addr    = QHostAddress(  ::ntohl(l_addr) ).toString();
+            QString new_gw      = QHostAddress( ::ntohl ( l_gw )).toString();
+            if (m_addr == new_addr && new_gw == m_gw) {
+                qDebug() << "Net config is the same, we don't touch Tun";
+                emit netConfigReceivedSame();
+            } else {
+                m_addr = new_addr;
+                m_gw = new_gw;
+                emit netConfigReceived(m_addr,m_gw);
+            }
+        } break;
         case STREAM_SF_PACKET_OP_CODE_RAW_RECV:{
             pkt->unleashData(); // Uleash *data section from pkt object
             tun->tunWriteData(pktSF);
