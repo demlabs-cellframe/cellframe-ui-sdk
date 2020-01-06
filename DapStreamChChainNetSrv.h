@@ -192,7 +192,7 @@ namespace Dap {
                 case RECEIPT_NO_SIGN: return "RECEIPT_NO_SIGN";
                 case PRICE_NOT_FOUND: return "PRICE_NOT_FOUND";
                 case RECEIPT_WRONG_PKEY_HASH: return "RECEIPT_WRONG_PKEY_HASH";
-                case UNKNOWN: return "UNKNOWN";
+                default: return "UNKNOWN";
             }
         };
 
