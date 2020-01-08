@@ -371,8 +371,8 @@ void ChChainNetSrvVpn::onPktIn(DapChannelPacket* pkt)
             quint32 l_addr,l_gw;
             ::memcpy(&l_addr, pktSF->data,sizeof (l_addr));
             ::memcpy(&l_gw, pktSF->data+sizeof (l_addr),sizeof (l_addr));
-            QString new_addr    = QHostAddress(  ::ntohl(l_addr) ).toString();
-            QString new_gw      = QHostAddress( ::ntohl ( l_gw )).toString();
+            QString new_addr    = QHostAddress(  ntohl(l_addr) ).toString();
+            QString new_gw      = QHostAddress( ntohl ( l_gw )).toString();
             if (m_addr == new_addr && new_gw == m_gw) {
                 qDebug() << "Net config is the same, we don't touch Tun";
                 emit netConfigReceivedSame();
