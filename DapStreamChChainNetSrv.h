@@ -53,6 +53,10 @@ namespace Dap {
             QString toString(){ return QString().sprintf("0x%016lX",m_value.uint64); }
             operator dap_chain_net_id_t& (){ return  m_value; }
             dap_chain_net_id_t& operator=(const NetId& a_netId) {  m_value.uint64 = a_netId.m_value.uint64; return m_value; }
+            dap_chain_net_id_t& operator=(QString& a_netId_str) {
+                m_value.uint64 = a_netId_str.toInt(nullptr, 16);
+                return m_value;
+            }
             bool operator==(const NetId& a_netId){ return a_netId.m_value.uint64 == m_value.uint64; }
         };
 
