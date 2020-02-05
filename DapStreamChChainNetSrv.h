@@ -137,10 +137,10 @@ namespace Dap {
             quint64 getValueDatoshi() { return  m_value ? m_value->receipt_info.value_datoshi: 0; }
 
             void signAdd(Crypto::Key& a_key){
-                dap_chain_datum_tx_receipt_sign_add( m_value, m_value->size, a_key );
+                dap_chain_datum_tx_receipt_sign_add( &m_value, m_value->size, a_key );
             }
             void signAdd(Crypto::Cert& a_cert){
-                dap_chain_datum_tx_receipt_sign_add( m_value, m_value->size, a_cert.key() );
+                dap_chain_datum_tx_receipt_sign_add( &m_value, m_value->size, a_cert.key() );
             }
 
             Receipt* deepCopy(){
