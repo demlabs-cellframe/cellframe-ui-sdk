@@ -291,6 +291,7 @@ void ChChainNetSrvVpn::tunCreate(const QString &a_addr, const QString &a_gw)
  */
 void ChChainNetSrvVpn::tunCreate()
 {
+    qDebug()<< "tunCreate()";
     tun->create(m_addr,
                 m_gw,
                 m_mainDapSession->upstreamAddress(),
