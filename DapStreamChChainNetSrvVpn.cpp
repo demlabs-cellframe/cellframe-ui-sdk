@@ -301,7 +301,10 @@ void ChChainNetSrvVpn::tunCreate()
     if (m_fdListener == nullptr) {
         m_fdListener = new QTcpServer();
 
+        qDebug()<< "QTcpServer created";
         connect(m_fdListener, &QTcpServer::newConnection, this, [&] {
+            qDebug()<< "newConnection";
+
             qDebug() << "f0";
             auto pending = m_fdListener->nextPendingConnection();
             connect(pending, &QTcpSocket::readyRead, this, [=] {
