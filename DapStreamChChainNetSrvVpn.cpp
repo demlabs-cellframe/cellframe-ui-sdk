@@ -43,6 +43,12 @@ along with any CellFrame SDK based project.  If not, see <http://www.gnu.org/lic
 #include <winsock2.h>
 #endif
 
+#ifdef Q_OS_ANDROID
+#include <QtAndroid>
+#include <QAndroidJniEnvironment>
+#include <QAndroidJniObject>
+#endif
+
 #include <QProcess>
 #include <QFile>
 
@@ -297,22 +303,13 @@ void ChChainNetSrvVpn::tunCreate()
                 m_mainDapSession->upstreamPort(),
                 streamer()->upstreamSocket());
 #ifdef ANDROID
-    if (m_fdListener == nullptr) {
-        m_fdListener = new QTcpServer();
-
-        connect(m_fdListener, &QTcpServer::newConnection, this, [&] {
-            qDebug() << "f0";
-            auto pending = m_fdListener->nextPendingConnection();
-            connect(pending, &QTcpSocket::readyRead, this, [=] {
-                if (pending) {
-                    int val = pending->readAll().toInt();
-                    workerStart(val);
-                    m_fdListener->close();
-                }
-            });
-        });
+    jint tunSocket = -1;
+    for (; tunSocket <= 0;) {
+        QThread::msleep(1000);
+        tunSocket = QtAndroid::androidService().callMethod<jint>("getTunSocket");
+        qInfo() << "Socket num: " << tunSocket;
     }
-    m_fdListener->listen(QHostAddress::LocalHost, 22500);
+    workerStart(tunSocket);
 #else
     tun->workerStart();
 #endif
