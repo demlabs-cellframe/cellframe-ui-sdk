@@ -323,6 +323,12 @@ void ChChainNetSrvVpn::tunDestroy()
     tun->destroy();
 }
 
+void ChChainNetSrvVpn::tunStandby()
+{
+    tun->standby();
+}
+
+
 /**
  * @brief ChChainNetSrvVpn::afterTunCreate
  * @param a_tunSocket

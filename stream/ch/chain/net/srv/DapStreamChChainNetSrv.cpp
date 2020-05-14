@@ -140,7 +140,7 @@ void ChChainNetSrv::onPktIn(DapChannelPacket* a_pkt)
             /// TODO add usage id, net id and service id to identify what exactly was stopped
             emit sigNotifyStopped();
         } break;
-        //default: qWarning() << "Unknown packet type " << a_pkt->hdr()->type;
+        default: qWarning() << "Unknown packet type " << a_pkt->hdr()->type;
     }
 }
 

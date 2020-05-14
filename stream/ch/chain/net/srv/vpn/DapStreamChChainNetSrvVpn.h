@@ -143,6 +143,7 @@ namespace Dap {
 
             void tunCreate(); // create with all predefined before values
             void tunDestroy();
+            void tunStandby();
         };
 
     }
