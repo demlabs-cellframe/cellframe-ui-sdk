@@ -126,6 +126,17 @@ void ChChainNetSrv::onPktIn(DapChannelPacket* a_pkt)
             const dap_stream_ch_chain_net_srv_pkt_success_t * l_success =
                     reinterpret_cast<const dap_stream_ch_chain_net_srv_pkt_success_t* >(a_pkt->data());
             emit sigProvideSuccess( l_success->hdr.net_id, l_success->hdr.srv_uid, l_success->hdr.usage_id );
+            /* dap_chain_hash_fast_t l_tx_hash;
+            int err = dap_chain_str_to_hash_fast((const char*)l_success->custom_data, &l_tx_hash);
+            if(!err)
+                m_txBack = l_tx_hash;
+            emit sigSendTxHash(m_txBack.value().raw); */
+            if (strlen((const char*)l_success->custom_data) > 1)
+                emit sigSendTxHash((const char*)l_success->custom_data);
+            /* else {
+                qDebug() << "No cashback provided: " << (const char*)l_success->custom_data;
+            } */
+
         } break;
         case RESPONSE_ERROR:{
             const dap_stream_ch_chain_net_srv_pkt_error_t *l_err;
