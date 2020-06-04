@@ -206,12 +206,17 @@ namespace Dap {
         private:
             DapStreamer * m_streamer;
             DapSession * m_mainDapSession;
+            Crypto::HashFast m_txBack;
         public:
             ChChainNetSrv(DapStreamer * a_streamer, DapSession * a_mainDapSession);
+            Crypto::HashFast getTxBack() {
+                return m_txBack;
+            }
         signals:
             void sigReceiptToSign(Chain::Receipt * receipt );
             void sigProvideSuccess (Chain::NetId a_netId, Chain::NetSrv::Uid a_srvUid, quint32 a_usageId );
             void sigProvideError(Chain::NetId a_netId, Chain::NetSrv::Uid a_srvUid, quint32 a_usageId,quint32 a_errorCode);
+            void sigSendTxHash(const QString &tx);
             void sigNotifyStopped(); // Service stopped
         public slots:
             void onPktIn(DapChannelPacket* a_pkt) override;
