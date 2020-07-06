@@ -12,7 +12,7 @@ Item
     DapFont
     {
         id: dapFonts
-        dapFontPath: "qrc:/resources/fonts/"
+        dapFontPath: "qrc:/resources/fonts/Roboto/"
         dapFontNames: ["roboto_black.ttf",
                     "roboto_light.ttf",
                     "roboto_medium.ttf",
