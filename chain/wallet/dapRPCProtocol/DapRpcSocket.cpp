@@ -187,7 +187,7 @@ DapRpcServiceReply *DapRpcSocket::invokeRemoteMethod(const QString &asMethod, co
 {
     QVariantList params;
     if (param1.isValid()) params.append(param1);
-    if (param2.isValid()) params.append(param2);
+    if (param2.isValid()) params.append(param2);            //
     if (param3.isValid()) params.append(param3);
     if (param4.isValid()) params.append(param4);
     if (param5.isValid()) params.append(param5);
@@ -196,6 +196,12 @@ DapRpcServiceReply *DapRpcSocket::invokeRemoteMethod(const QString &asMethod, co
     if (param8.isValid()) params.append(param8);
     if (param9.isValid()) params.append(param9);
     if (param10.isValid()) params.append(param10);
+
+
+    //можно было бы передавать json объекты и массивы прямо из qml. В таком случае QVariant содержит QJSValue который сам посебе пропадает при конверсии в строку.
+    //только если вручную проверять и конвертить параметры .value<QVariantMap>()
+    //qInfo() << "DapRpcSocket::invokeRemoteMethod:" << asMethod << params <<  param2.isValid() << param2.typeName();
+
 
     DapRpcMessage request =
         DapRpcMessage::createRequest(asMethod, QJsonArray::fromVariantList(params));

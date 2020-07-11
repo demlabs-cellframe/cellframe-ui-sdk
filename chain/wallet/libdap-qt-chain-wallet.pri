@@ -12,6 +12,7 @@ win32{
 DISTFILES +=
 
 HEADERS += \
+    $$PWD/CellframeNodeConfig.h \
     $$PWD/DapChainConvertor.h \
     $$PWD/DapHistoryType.h \
     $$PWD/DapLogMessage.h \
@@ -19,9 +20,13 @@ HEADERS += \
     $$PWD/DapWallet.h \
     $$PWD/DapWalletHistoryEvent.h \
     $$PWD/DapWalletToken.h \
+    $$PWD/handlers/CertificateManager/DapCertificateCommands.h \
+    $$PWD/handlers/CertificateManager/DapCertificateOperation.h \
+    $$PWD/handlers/CertificateManager/DapCertificateType.h \
     $$PWD/handlers/DapAbstractCommand.h \
     $$PWD/handlers/DapActivateClientCommand.h \
     $$PWD/handlers/DapAddWalletCommand.h \
+    $$PWD/handlers/DapCertificateManagerCommands.h \
     $$PWD/handlers/DapCreateTransactionCommand.h \
     $$PWD/handlers/DapExportLogCommand.h \
     $$PWD/handlers/DapGetHistoryExecutedCmdCommand.h \
@@ -45,15 +50,19 @@ HEADERS += \
     $$PWD/serviceClient/DapServiceClientNativeWin.h
 
 SOURCES += \
+    $$PWD/CellframeNodeConfig.cpp \
     $$PWD/DapChainConvertor.cpp \
     $$PWD/DapHistoryType.cpp \
     $$PWD/DapLogMessage.cpp \
     $$PWD/DapWallet.cpp \
     $$PWD/DapWalletHistoryEvent.cpp \
     $$PWD/DapWalletToken.cpp \
+    $$PWD/handlers/CertificateManager/DapCertificateCommands.cpp \
+    $$PWD/handlers/CertificateManager/DapCertificateOperation.cpp \
     $$PWD/handlers/DapAbstractCommand.cpp \
     $$PWD/handlers/DapActivateClientCommand.cpp \
     $$PWD/handlers/DapAddWalletCommand.cpp \
+    $$PWD/handlers/DapCertificateManagerCommands.cpp \
     $$PWD/handlers/DapCreateTransactionCommand.cpp \
     $$PWD/handlers/DapExportLogCommand.cpp \
     $$PWD/handlers/DapGetHistoryExecutedCmdCommand.cpp \
