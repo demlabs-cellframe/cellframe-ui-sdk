@@ -306,6 +306,7 @@ void ChChainNetSrvVpn::tunCreate()
 #ifdef ANDROID
     jint tunSocket = 0;
     for (; tunSocket == 0;) {
+        QThread::msleep(1000);
         tunSocket = QtAndroid::androidService().callMethod<jint>("getTunSocket");
     }
     qInfo() << "Socket num: " << tunSocket;
