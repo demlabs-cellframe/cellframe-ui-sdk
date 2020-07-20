@@ -170,6 +170,9 @@ void DapAbstractCommand::notifedFromClient(const QVariant &arg1, const QVariant 
     emit serviceNotifed(QVariant());
 }
 
+
+Q_DECLARE_METATYPE(QVariantMap);
+
 /// Send request to service.
 /// @details Performed on the client side.
 /// @param arg1...arg10 Parameters.
@@ -179,7 +182,7 @@ void DapAbstractCommand::requestToService(const QVariant &arg1, const QVariant &
                                               const QVariant &arg8, const QVariant &arg9,
                                               const QVariant &arg10)
 {
-    QVariantList params;
+    QVariantList params;             //а это тут зачем? for delete
     if (arg1.isValid()) params.append(arg1);
     if (arg2.isValid()) params.append(arg2);
     if (arg3.isValid()) params.append(arg3);
@@ -191,9 +194,14 @@ void DapAbstractCommand::requestToService(const QVariant &arg1, const QVariant &
     if (arg9.isValid()) params.append(arg9);
     if (arg10.isValid()) params.append(arg10);
 
-    DapRpcServiceReply *reply = dynamic_cast<DapRpcSocket *>(m_parent)->invokeRemoteMethod(QString("%1.%2").arg(this->getName()).arg("respondToClient"),
-                                            arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+
+    DapRpcServiceReply *reply = dynamic_cast<DapRpcSocket *>(m_parent)->invokeRemoteMethod(
+                                            QString("%1.%2").arg(this->getName()).arg("respondToClient"),
+                                                    arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+
+    //qDebug() << "DapAbstractCommand::requestToService" << reply;
     connect(reply, SIGNAL(finished()), this, SLOT(replyFromService()));
+
 }
 
 /// Send a response to the client.
@@ -226,7 +234,11 @@ QVariant DapAbstractCommand::replyFromService()
 {
     DapRpcServiceReply *reply = static_cast<DapRpcServiceReply *>(sender());
 
+//    qDebug() << "DapAbstractCommand::replyFromService(), reply" << reply
+//             << "reply->response().toJsonValue():" << reply->response().toJsonValue();
+
     emit serviceResponded(reply->response().toJsonValue().toVariant());
 
+    //тут не должно быть возвращаемого значения получаемого через sender()
     return reply->response().toJsonValue().toVariant();
 }

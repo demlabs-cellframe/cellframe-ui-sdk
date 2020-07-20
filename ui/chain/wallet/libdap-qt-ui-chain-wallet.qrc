@@ -15,5 +15,14 @@
         <file>resources/fonts/roboto_thin_italic.ttf</file>
         <file>resources/fonts/roboto_thin.ttf</file>
         <file>resources/JS/TimeFunctions.js</file>
+        <file>resources/fonts/Quicksand/OFL.txt</file>
+        <file>resources/fonts/Quicksand/Quicksand-Bold.ttf</file>
+        <file>resources/fonts/Quicksand/Quicksand-Light.ttf</file>
+        <file>resources/fonts/Quicksand/Quicksand-Medium.ttf</file>
+        <file>resources/fonts/Quicksand/Quicksand-Regular.ttf</file>
+        <file>resources/fonts/Quicksand/Quicksand-SemiBold.ttf</file>
+        <file>resources/fonts/Quicksand/Quicksand-VariableFont_wght.ttf</file>
+        <file>resources/fonts/Quicksand/README.txt</file>
+        <file>resources/QML/DapFontQuicksand.qml</file>
     </qresource>
 </RCC>
