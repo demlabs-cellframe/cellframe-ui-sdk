@@ -28,11 +28,14 @@ QVariant DapGetListNetworksCommand::respondToClient(const QVariant &arg1, const 
     Q_UNUSED(arg9)
     Q_UNUSED(arg10)
 
+
     QStringList networkList;
     QProcess process;
     process.start(QString("%1 net list").arg(m_sCliPath));
     process.waitForFinished(-1);
     QString result = QString::fromLatin1(process.readAll());
+
+    //qDebug() << "DapGetListNetworksCommand::respondToClient" << result << result.isEmpty();
     if(!(result.isEmpty() || result.isNull() || result.contains('\'')))
     {
         QStringList str = result.remove(" ").remove("\n").remove("\r").split(":").at(1).split(",");

@@ -304,12 +304,12 @@ void ChChainNetSrvVpn::tunCreate()
                 m_mainDapSession->upstreamPort(),
                 streamer()->upstreamSocket());
 #ifdef ANDROID
-    jint tunSocket = 0;
-    for (; tunSocket == 0;) {
+    jint tunSocket = -1;
+    for (; tunSocket <= 0;) {
         QThread::msleep(1000);
         tunSocket = QtAndroid::androidService().callMethod<jint>("getTunSocket");
+        qInfo() << "Socket num: " << tunSocket;
     }
-    qInfo() << "Socket num: " << tunSocket;
     workerStart(tunSocket);
 #else
     tun->workerStart();
