@@ -31,6 +31,13 @@ Item
                                         })
 
 
+    property font medium10:    Qt.font({
+                                            family: dapFonts.dapProjectFonts[2].name,
+                                            bold: false,
+                                            italic: false,
+                                            pixelSize: 10 * dapFactor
+                                        })
+
     property font medium11:    Qt.font({
                                             family: dapFonts.dapProjectFonts[2].name,
                                             bold: false,

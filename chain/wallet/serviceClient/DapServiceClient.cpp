@@ -136,7 +136,6 @@ void DapServiceClient::connectToService()
 {
     if(m_pClientSocket->state() == QAbstractSocket::ConnectedState)
         return;
-    
     qInfo() << "with parametr: " << DAP_BRAND;
     m_pClientSocket->connectToServer(DAP_BRAND);
 }

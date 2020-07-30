@@ -20,6 +20,7 @@ HEADERS += \
     $$PWD/DapWallet.h \
     $$PWD/DapWalletHistoryEvent.h \
     $$PWD/DapWalletToken.h \
+    $$PWD/VpnOrder.h \
     $$PWD/handlers/CertificateManager/DapCertificateCommands.h \
     $$PWD/handlers/CertificateManager/DapCertificateOperation.h \
     $$PWD/handlers/CertificateManager/DapCertificateType.h \
@@ -43,6 +44,7 @@ HEADERS += \
     $$PWD/handlers/DapSaveHistoryExecutedCmdCommand.h \
     $$PWD/handlers/DapUpdateLogsCommand.h \
     $$PWD/models/DapWalletModel.h \
+    $$PWD/models/VpnOrdersModel.h \
     $$PWD/serviceClient/DapServiceClient.h \
     $$PWD/serviceClient/DapServiceClientNativeAbstract.h \
     $$PWD/serviceClient/DapServiceClientNativeLinux.h \
@@ -57,6 +59,7 @@ SOURCES += \
     $$PWD/DapWallet.cpp \
     $$PWD/DapWalletHistoryEvent.cpp \
     $$PWD/DapWalletToken.cpp \
+    $$PWD/VpnOrder.cpp \
     $$PWD/handlers/CertificateManager/DapCertificateCommands.cpp \
     $$PWD/handlers/CertificateManager/DapCertificateOperation.cpp \
     $$PWD/handlers/DapAbstractCommand.cpp \
@@ -79,6 +82,7 @@ SOURCES += \
     $$PWD/handlers/DapSaveHistoryExecutedCmdCommand.cpp \
     $$PWD/handlers/DapUpdateLogsCommand.cpp \
     $$PWD/models/DapWalletModel.cpp \
+    $$PWD/models/VpnOrdersModel.cpp \
     $$PWD/serviceClient/DapServiceClient.cpp \
     $$PWD/serviceClient/DapServiceClientNativeAbstract.cpp \
     $$PWD/serviceClient/DapServiceClientNativeLinux.cpp \
