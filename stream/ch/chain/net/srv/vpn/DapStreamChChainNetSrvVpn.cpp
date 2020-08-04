@@ -316,6 +316,8 @@ void ChChainNetSrvVpn::tunCreate()
 #endif
 }
 
+//
+
 void ChChainNetSrvVpn::tunDestroy()
 {
     tun->destroy();
