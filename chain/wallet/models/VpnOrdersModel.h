@@ -3,22 +3,16 @@
 
 #include <QObject>
 #include <QAbstractListModel>
-#include <algorithm>
 #include <QList>
+#include <algorithm>
 
 #include "VpnOrder.h"
 
 class VpnOrdersModel : public QAbstractListModel
 {
     Q_OBJECT
-
-    QList <VpnOrder> m_aOrders;
-
-    explicit VpnOrdersModel(QObject *parent = nullptr);
-
 public:
-    Q_INVOKABLE void sortByToken();
-    Q_INVOKABLE void sortByRegion();
+    Q_PROPERTY(SortType sortType READ sortType WRITE setSortType NOTIFY sortTypeChanged)
 
     enum VpnOrderRole
     {
@@ -30,16 +24,36 @@ public:
         valueDisplayRole,
         tokenDisplayRole,
         unsafeDisplayRole,
-        speedLimitDisplayRole,
+        speedLimitDisplayRole
     };
+
+    enum SortType
+    {
+        SortByRegion,
+        SortByToken
+    };
+    Q_ENUM(SortType);
 
     static VpnOrdersModel *getInstance();
 
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;    
+    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
 
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QHash<int, QByteArray> roleNames() const override;
+
+    SortType sortType();
+    void setSortType(SortType type);
+private:
+    static VpnOrdersModel* m_instance;
+
+    QList <VpnOrder> m_vpnOrders;
+
+    SortType m_sortType;
+
+    explicit VpnOrdersModel(QObject *parent = nullptr);
+signals:
+    void sortTypeChanged(SortType);
 };
 
 #endif // VPNORDERSMODEL_H
