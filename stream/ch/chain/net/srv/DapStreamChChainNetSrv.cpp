@@ -132,10 +132,10 @@ void ChChainNetSrv::onPktIn(DapChannelPacket* a_pkt)
                 m_txBack = l_tx_hash;
             emit sigSendTxHash(m_txBack.value().raw); */
             if (strlen((const char*)l_success->custom_data) > 1)
-                emit sigSendTxHash((const char*)l_success->custom_data);
-            /* else {
-                qDebug() << "No cashback provided: " << (const char*)l_success->custom_data;
-            } */
+                emit sigSendTxHash(QString::fromUtf8((const char*)l_success->custom_data));
+             else {
+                qDebug() << "No cashback";
+            }
 
         } break;
         case RESPONSE_ERROR:{
