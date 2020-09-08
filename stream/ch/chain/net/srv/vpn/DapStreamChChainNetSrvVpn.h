@@ -106,7 +106,6 @@ namespace Dap {
             void sigTunNativeCreate();
             void sigNativeDestroy();
 
-
         public:
             ChChainNetSrvVpn(DapStreamer * a_streamer, DapSession * mainDapSession);
 
@@ -123,15 +122,11 @@ namespace Dap {
         signals:
 
             void netConfigReceived(QString,QString);
-            void netConfigRequested();
             void netConfigReceivedSame();
-            void netConfigCleared();
             void tunCreated();
             void tunDestroyed();
             void tunError(const QString&);
             void tunWriteData();
-
-            void ipRequested();
 
             void sendCmdAll(const QString&);
         public slots:
@@ -143,6 +138,7 @@ namespace Dap {
 
             void tunCreate(); // create with all predefined before values
             void tunDestroy();
+            void tunStandby();
         };
 
     }
