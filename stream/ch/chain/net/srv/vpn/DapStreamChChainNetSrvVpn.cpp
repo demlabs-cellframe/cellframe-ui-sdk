@@ -336,6 +336,10 @@ void ChChainNetSrvVpn::workerStart(int a_tunSocket)
     tun->workerStart(); // start loop
 }
 
+int ChChainNetSrvVpn::tunSocket() {
+    return tun->m_tunSocket;
+}
+
 /**
  * @brief ChChainNetSrvVpn::onPktIn
  * @param pkt

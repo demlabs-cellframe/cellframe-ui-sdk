@@ -113,7 +113,7 @@ namespace Dap {
 
             void tunCreate (const QString& a_addr, const QString& a_gw);
             void workerStart(int a_tunSocket);
-
+            int tunSocket();
             quint16 addForwarding(const QString remoteAddr, quint16 remotePort, quint16 localPort);
             void delForwarding(int sockId);
             void delForwardingAll();
