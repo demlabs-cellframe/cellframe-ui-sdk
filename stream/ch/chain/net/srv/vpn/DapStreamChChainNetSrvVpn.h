@@ -110,6 +110,9 @@ namespace Dap {
             ChChainNetSrvVpn(DapStreamer * a_streamer, DapSession * mainDapSession);
 
             bool isTunCreated(){return tun->isCreated();}
+            void addNewUpstreamRoute(const QString &a_dest) {
+                tun->addNewUpstreamRoute(a_dest);
+            }
 
             void tunCreate (const QString& a_addr, const QString& a_gw);
             void workerStart(int a_tunSocket);
