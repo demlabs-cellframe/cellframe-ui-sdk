@@ -129,6 +129,7 @@ namespace Dap {
             void tunCreated();
             void tunDestroyed();
             void tunError(const QString&);
+            void androidPermissionDenied();
             void tunWriteData();
 
             void sendCmdAll(const QString&);

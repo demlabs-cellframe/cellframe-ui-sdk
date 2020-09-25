@@ -302,15 +302,14 @@ void ChChainNetSrvVpn::tunCreate()
                 streamer()->upstreamSocket());
 #ifdef ANDROID
     jint tunSocket = 0;
-    bool l_permGranted = QAndroidJniObject::callStaticMethod<jboolean>("com/demlabs/dapchain/DapChainVpnService",
-                                                                            "checkPermissions", "()Z");
-    if (!l_permGranted) {
-        emit tunError("Invalid socket");
-        return;
-    }
     for (; tunSocket == 0;) {
         QThread::msleep(1000);
         tunSocket = QtAndroid::androidService().callMethod<jint>("getTunSocket");
+    }
+    if (tunSocket == -1) {
+        qCritical() << "Permission denied!";
+        emit androidPermissionDenied();
+        return;
     }
     qInfo() << "Socket num: " << tunSocket;
     workerStart(tunSocket);
