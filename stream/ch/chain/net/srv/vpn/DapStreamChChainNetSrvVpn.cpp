@@ -214,15 +214,15 @@ ChChainNetSrvVpn::ChChainNetSrvVpn(DapStreamer * a_streamer, DapSession * mainDa
 {
     tun = new DapTunNative();
     m_fdListener = nullptr;
-    connect(tun, &DapTunNative::created, this, &ChChainNetSrvVpn::tunCreated);
-    connect(tun, &DapTunNative::destroyed, this, &ChChainNetSrvVpn::tunDestroyed);
-    connect(tun, &DapTunNative::error , this, &ChChainNetSrvVpn::tunError);
-    connect(tun, &DapTunNative::packetOut, this, &ChChainNetSrvVpn::packetOut);
-    connect(tun, &DapTunNative::sendCmd, this, &ChChainNetSrvVpn::sendCmdAll);
-    connect(tun, &DapTunNative::bytesRead, this, &ChChainNetSrvVpn::bytesRead);
-    connect(tun, &DapTunNative::bytesWrite, this, &ChChainNetSrvVpn::bytesWrite);
-    connect(tun, &DapTunNative::nativeCreateRequest, this, &ChChainNetSrvVpn::sigTunNativeCreate);
-    connect(tun, &DapTunNative::nativeDestroyRequest, this, &ChChainNetSrvVpn::sigNativeDestroy);
+    connect(tun, &DapTunNative::created,                this, &ChChainNetSrvVpn::tunCreated);
+    connect(tun, &DapTunNative::destroyed,              this, &ChChainNetSrvVpn::tunDestroyed);
+    connect(tun, &DapTunNative::error,                  this, &ChChainNetSrvVpn::tunError);
+    connect(tun, &DapTunNative::packetOut,              this, &ChChainNetSrvVpn::packetOut);
+    connect(tun, &DapTunNative::sendCmd,                this, &ChChainNetSrvVpn::sendCmdAll);
+    connect(tun, &DapTunNative::bytesRead,              this, &ChChainNetSrvVpn::bytesRead);
+    connect(tun, &DapTunNative::bytesWrite,             this, &ChChainNetSrvVpn::bytesWrite);
+    connect(tun, &DapTunNative::nativeCreateRequest,    this, &ChChainNetSrvVpn::sigTunNativeCreate);
+    connect(tun, &DapTunNative::nativeDestroyRequest,   this, &ChChainNetSrvVpn::sigNativeDestroy);
 }
 
 /**
@@ -257,13 +257,11 @@ void ChChainNetSrvVpn::packetOut(Dap::Stream::Packet *pkt)
  */
 void ChChainNetSrvVpn::requestIP(quint32 a_usageId)
 {
-    emit netConfigRequested();
     Dap::Stream::Packet * pktOut = reinterpret_cast<Dap::Stream::Packet*>(::calloc(1 ,sizeof(pktOut->header)));
     pktOut->header.op_code=STREAM_SF_PACKET_OP_CODE_RAW_L3_ADDR_REQUEST;
     pktOut->header.usage_id = a_usageId;
     qInfo() << "Request for IP with usage_id: " << pktOut->header.usage_id;
     packetOut(pktOut);
-    emit ipRequested();
 }
 
 /**
@@ -273,7 +271,6 @@ void ChChainNetSrvVpn::netConfigClear()
 {
     m_addr.clear();
     m_gw.clear();
-    emit netConfigCleared();
 }
 
 /**
@@ -309,6 +306,11 @@ void ChChainNetSrvVpn::tunCreate()
         QThread::msleep(1000);
         tunSocket = QtAndroid::androidService().callMethod<jint>("getTunSocket");
     }
+    if (tunSocket == -1) {
+        qCritical() << "Permission denied!";
+        emit androidPermissionDenied();
+        return;
+    }
     qInfo() << "Socket num: " << tunSocket;
     workerStart(tunSocket);
 #else
@@ -317,6 +319,11 @@ void ChChainNetSrvVpn::tunCreate()
 }
 
 //
+
+void ChChainNetSrvVpn::tunStandby()
+{
+    tun->standby();
+}
 
 void ChChainNetSrvVpn::tunDestroy()
 {
@@ -332,6 +339,10 @@ void ChChainNetSrvVpn::workerStart(int a_tunSocket)
     qDebug() << "set tun socket: " << a_tunSocket;
     tun->setTunSocket(a_tunSocket);
     tun->workerStart(); // start loop
+}
+
+int ChChainNetSrvVpn::tunSocket() {
+    return tun->m_tunSocket;
 }
 
 /**

@@ -106,15 +106,17 @@ namespace Dap {
             void sigTunNativeCreate();
             void sigNativeDestroy();
 
-
         public:
             ChChainNetSrvVpn(DapStreamer * a_streamer, DapSession * mainDapSession);
 
             bool isTunCreated(){return tun->isCreated();}
+            void addNewUpstreamRoute(const QString &a_dest) {
+                tun->addNewUpstreamRoute(a_dest);
+            }
 
             void tunCreate (const QString& a_addr, const QString& a_gw);
             void workerStart(int a_tunSocket);
-
+            int tunSocket();
             quint16 addForwarding(const QString remoteAddr, quint16 remotePort, quint16 localPort);
             void delForwarding(int sockId);
             void delForwardingAll();
@@ -123,15 +125,12 @@ namespace Dap {
         signals:
 
             void netConfigReceived(QString,QString);
-            void netConfigRequested();
             void netConfigReceivedSame();
-            void netConfigCleared();
             void tunCreated();
             void tunDestroyed();
             void tunError(const QString&);
+            void androidPermissionDenied();
             void tunWriteData();
-
-            void ipRequested();
 
             void sendCmdAll(const QString&);
         public slots:
@@ -143,6 +142,7 @@ namespace Dap {
 
             void tunCreate(); // create with all predefined before values
             void tunDestroy();
+            void tunStandby();
         };
 
     }
