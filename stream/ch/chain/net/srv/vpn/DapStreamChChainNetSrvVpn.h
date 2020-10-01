@@ -114,6 +114,8 @@ namespace Dap {
                 tun->addNewUpstreamRoute(a_dest);
             }
 
+            QString upstreamAddress(){return tun->upstreamAddress();}
+
             void tunCreate (const QString& a_addr, const QString& a_gw);
             void workerStart(int a_tunSocket);
             int tunSocket();
