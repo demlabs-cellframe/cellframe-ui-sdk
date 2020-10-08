@@ -89,6 +89,9 @@ namespace Dap {
             // METHODS
             QString m_addr, m_gw;
             QTcpServer *m_fdListener;
+
+            DapServerInfo m_currentServer;
+
         private slots:
             void onFwServerConnected();
             void onFwClientReadyRead();
@@ -115,6 +118,7 @@ namespace Dap {
             }
 
             QString upstreamAddress(){return tun->upstreamAddress();}
+            DapServerInfo currentServer(){return m_currentServer;}
 
             void tunCreate (const QString& a_addr, const QString& a_gw);
             void workerStart(int a_tunSocket);
@@ -145,6 +149,8 @@ namespace Dap {
             void tunCreate(); // create with all predefined before values
             void tunDestroy();
             void tunStandby();
+
+            void saveCurrentServer(const DapServerInfoList &nodelist);
         };
 
     }
