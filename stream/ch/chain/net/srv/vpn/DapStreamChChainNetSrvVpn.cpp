@@ -410,7 +410,13 @@ void ChChainNetSrvVpn::onPktIn(DapChannelPacket* pkt)
     delete pkt;
 }
 
-
+void ChChainNetSrvVpn::saveCurrentServer(const DapServerInfoList &nodelist)
+{
+    for(auto server : nodelist) {
+        if (server.address == upstreamAddress() && server.name != "Auto")
+            m_currentServer = server;
+    }
+}
 
 
 
