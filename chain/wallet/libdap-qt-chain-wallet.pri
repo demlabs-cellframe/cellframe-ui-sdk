@@ -1,6 +1,7 @@
 QT += core
 
-INCLUDEPATH += $$PWD $$PWD/../
+INCLUDEPATH += $$PWD $$PWD/../ \
+    $$PWD/models
 
 
 include (dapRPCProtocol/DapRPCProtocol.pri)
@@ -16,6 +17,7 @@ HEADERS += \
     $$PWD/DapChainConvertor.h \
     $$PWD/DapHistoryType.h \
     $$PWD/DapLogMessage.h \
+    $$PWD/DapNetwork.h \
     $$PWD/DapNodeType.h \
     $$PWD/DapWallet.h \
     $$PWD/DapWalletHistoryEvent.h \
@@ -42,6 +44,7 @@ HEADERS += \
     $$PWD/handlers/DapRunCmdCommand.h \
     $$PWD/handlers/DapSaveHistoryExecutedCmdCommand.h \
     $$PWD/handlers/DapUpdateLogsCommand.h \
+    $$PWD/models/DapNetworksList.h \
     $$PWD/models/DapWalletModel.h \
     $$PWD/serviceClient/DapServiceClient.h \
     $$PWD/serviceClient/DapServiceClientNativeAbstract.h \
@@ -54,6 +57,7 @@ SOURCES += \
     $$PWD/DapChainConvertor.cpp \
     $$PWD/DapHistoryType.cpp \
     $$PWD/DapLogMessage.cpp \
+    $$PWD/DapNetwork.cpp \
     $$PWD/DapWallet.cpp \
     $$PWD/DapWalletHistoryEvent.cpp \
     $$PWD/DapWalletToken.cpp \
@@ -78,6 +82,7 @@ SOURCES += \
     $$PWD/handlers/DapRunCmdCommand.cpp \
     $$PWD/handlers/DapSaveHistoryExecutedCmdCommand.cpp \
     $$PWD/handlers/DapUpdateLogsCommand.cpp \
+    $$PWD/models/DapNetworksList.cpp \
     $$PWD/models/DapWalletModel.cpp \
     $$PWD/serviceClient/DapServiceClient.cpp \
     $$PWD/serviceClient/DapServiceClientNativeAbstract.cpp \
