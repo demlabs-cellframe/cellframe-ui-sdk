@@ -11,7 +11,13 @@ public:
 
     DapNetworksList(QObject *a_parrent = nullptr);
 
+
     QList<QObject*> model();
+
+    DapNetwork* findNetwork(const QString& a_name);
+
+public slots:
+    void fill(QVariant a_stringList);
 
 private:
     QList<DapNetwork*> m_networks;

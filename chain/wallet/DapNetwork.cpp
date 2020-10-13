@@ -1,7 +1,8 @@
 #include "DapNetwork.h"
 
-DapNetwork::DapNetwork(QObject * a_parent /*= nullptr*/)
-    :QObject(a_parent)
+DapNetwork::DapNetwork(const QString& a_name, QObject * a_parent /*= nullptr*/)
+    : QObject(a_parent)
+    , m_name(a_name)
 {
 }
 
