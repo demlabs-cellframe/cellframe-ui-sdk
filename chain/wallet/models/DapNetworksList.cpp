@@ -1,5 +1,6 @@
 #include "DapNetworksList.h"
 #include <QDebug>
+#include <QJsonObject>
 
 DapNetworksList::DapNetworksList(QObject *a_parrent /*= nullptr*/)
     :QObject(a_parrent)
@@ -28,6 +29,14 @@ DapNetwork *DapNetworksList::findNetwork(const QString &a_name)
     return *it;
 }
 
+
+
+void DapNetworksList::setNetworkProperties(QVariantMap a_networkState)
+{
+    DapNetwork* network = this->findNetwork(a_networkState.value(DapNetwork::NAME).toString());
+    network->setProperties(a_networkState);
+}
+
 void DapNetworksList::fill(QVariant a_stringList)
 {
     if (!a_stringList.isValid() || !a_stringList.canConvert<QStringList>())
@@ -36,14 +45,25 @@ void DapNetworksList::fill(QVariant a_stringList)
         return;
     }
 
+    bool netwarkAdded = false;
     for (QString curNetworkName: a_stringList.toStringList())
     {
         DapNetwork* network = this->findNetwork(curNetworkName);
         if (!network)
-        {
-            network = new DapNetwork(curNetworkName, this);
-            m_networks.append(network);
-            //TODO: get state
+        {           
+            this->add(curNetworkName);
+
+            netwarkAdded = true;
         }
     }
+
+    if (netwarkAdded)
+        emit this->listCompositionChanged();
+}
+
+void DapNetworksList::add(const QString &a_networkName)
+{
+    DapNetwork* newNetwork = new DapNetwork(a_networkName, this);
+    m_networks.append(newNetwork);
+    emit this->networkAdded(newNetwork);
 }

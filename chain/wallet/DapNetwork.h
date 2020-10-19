@@ -8,10 +8,15 @@ class DapNetwork: public QObject
     Q_OBJECT
 public:
 
+    static const QString NAME;
+    static const QString STATE;
+    static const QString TARGET_STATE;
+    static const QString NODE_ADDRESS;
+
     enum State
     {
-        Online,
-        Offline
+        ONLINE,
+        OFFLINE
         //...
     };
 
@@ -40,10 +45,13 @@ public:
     State state() const;
     QString stateString() const;
     void setState(State a_state);
+    void setProperties(QVariantMap a_stateMap);
 
     State targetState() const;
     QString targetStateString() const;
     void setTargetState(State a_targetState);
+
+    State stringToState(QString a_stateString);
 
 signals:
     void nameChanged(const QString& a_name);
@@ -67,6 +75,8 @@ private:
     int m_linksCount{};
     int m_activeLinksCount{};
     QString m_nodeAddress;
+
+    static const QMap<State, QString> s_stateStrings;
 };
 
 Q_DECLARE_METATYPE(DapNetwork::State)

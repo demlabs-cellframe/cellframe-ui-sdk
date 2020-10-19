@@ -34,6 +34,7 @@ HEADERS += \
     $$PWD/handlers/DapGetHistoryExecutedCmdCommand.h \
     $$PWD/handlers/DapGetListNetworksCommand.h \
     $$PWD/handlers/DapGetListWalletsCommand.h \
+    $$PWD/handlers/DapGetNetworkStatusCommand.h \
     $$PWD/handlers/DapGetWalletsInfoCommand.h \
     $$PWD/handlers/DapGetWalletAddressesCommand.h \
     $$PWD/handlers/DapGetWalletHistoryCommand.h \
@@ -72,6 +73,7 @@ SOURCES += \
     $$PWD/handlers/DapGetHistoryExecutedCmdCommand.cpp \
     $$PWD/handlers/DapGetListNetworksCommand.cpp \
     $$PWD/handlers/DapGetListWalletsCommand.cpp \
+    $$PWD/handlers/DapGetNetworkStatusCommand.cpp \
     $$PWD/handlers/DapGetWalletsInfoCommand.cpp \
     $$PWD/handlers/DapGetWalletAddressesCommand.cpp \
     $$PWD/handlers/DapGetWalletHistoryCommand.cpp \
