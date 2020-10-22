@@ -19,6 +19,7 @@ HEADERS += \
     $$PWD/DapLogMessage.h \
     $$PWD/DapNetwork.h \
     $$PWD/DapNodeType.h \
+    $$PWD/DapToken.h \
     $$PWD/DapWallet.h \
     $$PWD/DapWalletHistoryEvent.h \
     $$PWD/DapWalletToken.h \
@@ -47,6 +48,7 @@ HEADERS += \
     $$PWD/handlers/DapSaveHistoryExecutedCmdCommand.h \
     $$PWD/handlers/DapUpdateLogsCommand.h \
     $$PWD/models/DapNetworksList.h \
+    $$PWD/models/DapWalletBalanceModel.h \
     $$PWD/models/DapWalletModel.h \
     $$PWD/serviceClient/DapServiceClient.h \
     $$PWD/serviceClient/DapServiceClientNativeAbstract.h \
@@ -60,6 +62,7 @@ SOURCES += \
     $$PWD/DapHistoryType.cpp \
     $$PWD/DapLogMessage.cpp \
     $$PWD/DapNetwork.cpp \
+    $$PWD/DapToken.cpp \
     $$PWD/DapWallet.cpp \
     $$PWD/DapWalletHistoryEvent.cpp \
     $$PWD/DapWalletToken.cpp \
@@ -87,6 +90,7 @@ SOURCES += \
     $$PWD/handlers/DapSaveHistoryExecutedCmdCommand.cpp \
     $$PWD/handlers/DapUpdateLogsCommand.cpp \
     $$PWD/models/DapNetworksList.cpp \
+    $$PWD/models/DapWalletBalanceModel.cpp \
     $$PWD/models/DapWalletModel.cpp \
     $$PWD/serviceClient/DapServiceClient.cpp \
     $$PWD/serviceClient/DapServiceClientNativeAbstract.cpp \
