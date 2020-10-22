@@ -11,7 +11,7 @@ public:
 
     DapNetworksList(QObject *a_parrent = nullptr);
 
-    QList<QObject*> model();
+    Q_INVOKABLE QList<QObject*> model();
 
     DapNetwork* findNetwork(const QString& a_name);
 
