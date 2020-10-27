@@ -252,6 +252,16 @@ void ChChainNetSrvVpn::packetOut(Dap::Stream::Packet *pkt)
     emit pktChOut(hdr,pkt);
 }
 
+void ChChainNetSrvVpn::getAlive() {
+    Dap::Stream::Packet* pkt = reinterpret_cast<Dap::Stream::Packet*>(::calloc(1, sizeof(pkt->header)));
+    pkt->header.op_code = STREAM_SF_PACKET_OP_CODE_RAW_SEND;
+    DapChannelPacketHdr* hdr= reinterpret_cast<DapChannelPacketHdr*>(::calloc(1, sizeof(DapChannelPacketHdr)));
+    hdr->id='S';
+    hdr->type=0x11;
+    hdr->size=sizeof(pkt->header);
+    emit pktChOut(hdr,pkt);
+}
+
 /**
  * @brief DapChSockForw::requestIP
  */
@@ -354,6 +364,11 @@ void ChChainNetSrvVpn::onPktIn(DapChannelPacket* pkt)
     // qDebug() << "onPktIn: id ="<<pkt->hdr()->id << " type = "<< pkt->hdr()->type<< " ch_data_size = "<<pkt->hdr()->size;
     Dap::Stream::Packet * pktSF=(Dap::Stream::Packet *) pkt->data();
     //qDebug() << " onPktIn: SampSFPacket op_code ="<< pktSF->header.op_code;
+    if ((pkt->hdr()->type == 0x12) || (pkt->hdr()->type == 0x11)) {
+        qInfo() << "Alive";
+        emit isAlive();
+    }
+    else {
     switch(pktSF->header.op_code){
         case STREAM_SF_PACKET_OP_CODE_SEND:
         case STREAM_SF_PACKET_OP_CODE_CONNECT:{
@@ -406,7 +421,7 @@ void ChChainNetSrvVpn::onPktIn(DapChannelPacket* pkt)
                 qWarning() << ("[DapChSockForw] onPktIn() Not Find Socket by socket_id!");
             break;*/
     }
-
+    }
     delete pkt;
 }
 
