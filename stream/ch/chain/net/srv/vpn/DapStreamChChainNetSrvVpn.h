@@ -129,7 +129,6 @@ namespace Dap {
 
             DapStreamer * streamer(){ return m_streamer; }
         signals:
-            void isAlive();
             void netConfigReceived(QString,QString);
             void netConfigReceivedSame();
             void tunCreated();

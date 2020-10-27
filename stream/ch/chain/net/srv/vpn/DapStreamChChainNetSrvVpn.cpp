@@ -363,11 +363,6 @@ void ChChainNetSrvVpn::onPktIn(DapChannelPacket* pkt)
 {
     // qDebug() << "onPktIn: id ="<<pkt->hdr()->id << " type = "<< pkt->hdr()->type<< " ch_data_size = "<<pkt->hdr()->size;
     Dap::Stream::Packet * pktSF=(Dap::Stream::Packet *) pkt->data();
-    //qDebug() << " onPktIn: SampSFPacket op_code ="<< pktSF->header.op_code;
-    if ((pkt->hdr()->type == 0x12) || (pkt->hdr()->type == 0x11)) {
-        emit isAlive();
-    }
-    else {
     switch(pktSF->header.op_code){
         case STREAM_SF_PACKET_OP_CODE_SEND:
         case STREAM_SF_PACKET_OP_CODE_CONNECT:{
@@ -419,7 +414,6 @@ void ChChainNetSrvVpn::onPktIn(DapChannelPacket* pkt)
             else
                 qWarning() << ("[DapChSockForw] onPktIn() Not Find Socket by socket_id!");
             break;*/
-    }
     }
     delete pkt;
 }
