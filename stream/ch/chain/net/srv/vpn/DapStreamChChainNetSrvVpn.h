@@ -129,7 +129,7 @@ namespace Dap {
 
             DapStreamer * streamer(){ return m_streamer; }
         signals:
-
+            void isAlive();
             void netConfigReceived(QString,QString);
             void netConfigReceivedSame();
             void tunCreated();
@@ -142,7 +142,7 @@ namespace Dap {
         public slots:
             void onPktIn(DapChannelPacket *pkt) override;
             void packetOut(Dap::Stream::Packet *pkt);
-
+            void getAlive();
             void requestIP(quint32);
             void netConfigClear();
 
