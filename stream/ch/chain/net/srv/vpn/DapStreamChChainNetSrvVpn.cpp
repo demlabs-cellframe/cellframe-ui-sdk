@@ -365,7 +365,6 @@ void ChChainNetSrvVpn::onPktIn(DapChannelPacket* pkt)
     Dap::Stream::Packet * pktSF=(Dap::Stream::Packet *) pkt->data();
     //qDebug() << " onPktIn: SampSFPacket op_code ="<< pktSF->header.op_code;
     if ((pkt->hdr()->type == 0x12) || (pkt->hdr()->type == 0x11)) {
-        qInfo() << "Alive";
         emit isAlive();
     }
     else {
