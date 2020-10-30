@@ -45,6 +45,34 @@ Item
                                             pixelSize: 12 * dapFactor
                                         })
 
+    property font medium14:    Qt.font({
+                                            family: dapFonts.dapProjectFonts[2].name,
+                                            bold: false,
+                                            italic: false,
+                                            pixelSize: 14 * dapFactor
+                                        })
+
+    property font medium16:    Qt.font({
+                                            family: dapFonts.dapProjectFonts[2].name,
+                                            bold: false,
+                                            italic: false,
+                                            pixelSize: 16 * dapFactor
+                                        })
+
+    property font medium18:    Qt.font({
+                                            family: dapFonts.dapProjectFonts[2].name,
+                                            bold: false,
+                                            italic: false,
+                                            pixelSize: 18 * dapFactor
+                                        })
+
+    property font medium26:    Qt.font({
+                                            family: dapFonts.dapProjectFonts[2].name,
+                                            bold: false,
+                                            italic: false,
+                                            pixelSize: 26 * dapFactor
+                                        })
+
     property font medium27:    Qt.font({
                                             family: dapFonts.dapProjectFonts[2].name,
                                             bold: false,
