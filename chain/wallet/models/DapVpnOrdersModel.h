@@ -22,7 +22,7 @@ public:
     };
     Q_ENUM(DapVpnOrdersRoles)
 
-    static DapVpnOrdersModel& instance();
+    Q_INVOKABLE static DapVpnOrdersModel& instance();
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -33,5 +33,6 @@ public:
 private:
     QList<DapVpnOrder> m_orders;
 };
+Q_DECLARE_METATYPE(DapVpnOrdersModel)
 
 #endif // DAPVPNORDERSMODEL_H
