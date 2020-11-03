@@ -5,10 +5,10 @@ DapVpnOrdersModel::DapVpnOrdersModel(QObject *parent): QAbstractListModel(parent
 
 }
 
-DapVpnOrdersModel &DapVpnOrdersModel::instance()
+DapVpnOrdersModel* DapVpnOrdersModel::instance()
 {
     static DapVpnOrdersModel inst;
-    return inst;
+    return &inst;
 }
 
 int DapVpnOrdersModel::rowCount(const QModelIndex &parent) const
@@ -26,13 +26,13 @@ QVariant DapVpnOrdersModel::data(const QModelIndex &index, int role) const
     case NameDisplayRole:
         return m_orders.at(index.row()).name();
     case DateDisplayRole:
-        return m_orders.at(index.row()).date();
+        return m_orders.at(index.row()).date().toString();
     case UnitsDisplayRole:
-        return m_orders.at(index.row()).units();
+        return QString::number(m_orders.at(index.row()).units());
     case TypeDisplayRole:
         return m_orders.at(index.row()).type();
     case ValueDisplayRole:
-        return m_orders.at(index.row()).value();
+        return QString::number(m_orders.at(index.row()).value());
     case TokenDisplayRole:
         return m_orders.at(index.row()).token();
     default: break;
@@ -44,12 +44,12 @@ QHash<int, QByteArray> DapVpnOrdersModel::roleNames() const
 {
     static const QHash<int, QByteArray> roles
     {
-        { NameDisplayRole, "Custom name" },
-        { DateDisplayRole, "Date created" },
-        { UnitsDisplayRole, "Units" },
-        { TypeDisplayRole,  "Units type" },
-        { ValueDisplayRole, "Value" },
-        { TokenDisplayRole, "Token" }
+        { NameDisplayRole, "name" },
+        { DateDisplayRole, "date" },
+        { UnitsDisplayRole, "units" },
+        { TypeDisplayRole,  "type" },
+        { ValueDisplayRole, "value" },
+        { TokenDisplayRole, "token" }
     };
 
     return roles;

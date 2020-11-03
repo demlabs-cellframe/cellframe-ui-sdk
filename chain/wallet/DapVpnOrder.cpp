@@ -17,6 +17,28 @@ DapVpnOrder::DapVpnOrder(QObject *parent): QObject(parent)
 
 }
 
+DapVpnOrder::DapVpnOrder(const DapVpnOrder &aOrder):
+    m_name(aOrder.m_name),
+    m_created(aOrder.m_created),
+    m_units(aOrder.m_units),
+    m_type(aOrder.m_type),
+    m_value(aOrder.m_value),
+    m_tokenName(aOrder.m_tokenName)
+{
+
+}
+
+DapVpnOrder &DapVpnOrder::operator=(const DapVpnOrder &aOrder)
+{
+    m_name = aOrder.m_name;
+    m_created = aOrder.m_created;
+    m_units = aOrder.m_units;
+    m_type = aOrder.m_type;
+    m_value = aOrder.m_value;
+    m_tokenName = aOrder.m_tokenName;
+    return (*this);
+}
+
 QString DapVpnOrder::name() const
 {
     return m_name;

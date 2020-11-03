@@ -24,6 +24,8 @@ public:
     Q_ENUM(UnitType)
 
     Q_INVOKABLE explicit DapVpnOrder(QObject *parent = nullptr);
+    Q_INVOKABLE DapVpnOrder(const DapVpnOrder& aOrder);
+    Q_INVOKABLE DapVpnOrder& operator=(const DapVpnOrder& aOrder);
 
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QDateTime date READ date WRITE setDate NOTIFY dateChanged)
