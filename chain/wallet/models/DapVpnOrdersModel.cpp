@@ -17,6 +17,8 @@ QVariant DapVpnOrdersModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     switch (role) {
+    case Qt::DisplayRole:
+        return QVariant::fromValue(m_orders.at(index.row()));
     case NameDisplayRole:
         return m_orders.at(index.row()).name();
     case DateDisplayRole:
@@ -52,9 +54,8 @@ QHash<int, QByteArray> DapVpnOrdersModel::roleNames() const
 
 void DapVpnOrdersModel::append(const DapVpnOrder &a_order)
 {
-    m_orders.append(a_order);
-
     int lastIndex = m_orders.count() - 1;
     beginInsertRows(QModelIndex(), lastIndex, lastIndex);
+    m_orders.append(a_order);
     endInsertRows();
 }

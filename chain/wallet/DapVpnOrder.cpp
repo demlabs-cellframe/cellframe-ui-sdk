@@ -30,12 +30,14 @@ DapVpnOrder::DapVpnOrder(const DapVpnOrder &aOrder):
 
 DapVpnOrder &DapVpnOrder::operator=(const DapVpnOrder &aOrder)
 {
-    m_name = aOrder.m_name;
-    m_created = aOrder.m_created;
-    m_units = aOrder.m_units;
-    m_type = aOrder.m_type;
-    m_value = aOrder.m_value;
-    m_tokenName = aOrder.m_tokenName;
+    if (aOrder.m_name != m_name) {
+        m_name = aOrder.m_name;
+        m_created = aOrder.m_created;
+        m_units = aOrder.m_units;
+        m_type = aOrder.m_type;
+        m_value = aOrder.m_value;
+        m_tokenName = aOrder.m_tokenName;
+    }
     return (*this);
 }
 
