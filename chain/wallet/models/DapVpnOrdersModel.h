@@ -9,7 +9,6 @@
 class DapVpnOrdersModel: public QAbstractListModel
 {
     Q_OBJECT
-    explicit DapVpnOrdersModel(QObject *parent = Q_NULLPTR);
 
 public:
     enum DapVpnOrdersRoles {
@@ -22,7 +21,7 @@ public:
     };
     Q_ENUM(DapVpnOrdersRoles)
 
-    Q_INVOKABLE static DapVpnOrdersModel* instance();
+    explicit DapVpnOrdersModel(QObject *parent = Q_NULLPTR);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;

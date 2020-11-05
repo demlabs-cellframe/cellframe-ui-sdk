@@ -5,12 +5,6 @@ DapVpnOrdersModel::DapVpnOrdersModel(QObject *parent): QAbstractListModel(parent
 
 }
 
-DapVpnOrdersModel* DapVpnOrdersModel::instance()
-{
-    static DapVpnOrdersModel inst;
-    return &inst;
-}
-
 int DapVpnOrdersModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
