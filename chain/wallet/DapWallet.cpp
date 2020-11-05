@@ -2,13 +2,21 @@
 
 DapWallet::DapWallet(QObject * parent)
     : QObject(parent)
+    , m_balanceModel(new DapWalletBalanceModel(this))
 {
 
 }
 
 DapWallet::DapWallet(const DapWallet &aWallet)
-    : m_sName(aWallet.m_sName), m_dBalance(aWallet.m_dBalance), m_sIcon(aWallet.m_sIcon), m_sAddress(aWallet.m_sAddress),
-      m_aNetworks(aWallet.m_aNetworks), m_aAddresses(aWallet.m_aAddresses), m_aTokens(aWallet.m_aTokens)
+    : m_sName(aWallet.m_sName)
+    , m_dBalance(aWallet.m_dBalance)
+    , m_sIcon(aWallet.m_sIcon)
+    , m_sAddress(aWallet.m_sAddress)
+    , m_aNetworks(aWallet.m_aNetworks)
+    , m_aAddresses(aWallet.m_aAddresses)
+    , m_aTokens(aWallet.m_aTokens)
+    , m_balanceModel(new DapWalletBalanceModel(this))
+
 {
 
 }
@@ -155,6 +163,27 @@ DapWallet DapWallet::fromVariant(const QVariant &aWallet)
     QDataStream in(&data, QIODevice::ReadOnly);
     in >> wallet;
     return wallet;
+}
+
+void DapWallet::setBalance(QMap<const DapNetwork*, QMap<const DapToken*, balance_t>>  a_balanceMap)
+{
+
+    //Remove empty amounts:
+    QMutableMapIterator<decltype (a_balanceMap)::key_type, decltype (a_balanceMap)::mapped_type> networkIt(a_balanceMap);
+    while (networkIt.hasNext()) {
+        networkIt.next();
+        QMutableMapIterator<const DapToken *, balance_t> tokenIt(networkIt.value());
+        while (tokenIt.hasNext()) {
+            tokenIt.next();
+            if (tokenIt.value() == 0)
+                tokenIt.remove();
+        }
+        if (networkIt.value().isEmpty())
+            networkIt.remove();
+    }
+
+
+    m_balanceModel->setBalance(a_balanceMap);
 }
 
 QDataStream& operator << (QDataStream& aOut, const DapWallet& aWallet)

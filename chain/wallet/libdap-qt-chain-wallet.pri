@@ -47,6 +47,7 @@ HEADERS += \
     $$PWD/handlers/DapRunCmdCommand.h \
     $$PWD/handlers/DapSaveHistoryExecutedCmdCommand.h \
     $$PWD/handlers/DapUpdateLogsCommand.h \
+    $$PWD/models/DapBalanceModel.h \
     $$PWD/models/DapNetworksList.h \
     $$PWD/models/DapWalletBalanceModel.h \
     $$PWD/models/DapWalletModel.h \
@@ -89,6 +90,7 @@ SOURCES += \
     $$PWD/handlers/DapRunCmdCommand.cpp \
     $$PWD/handlers/DapSaveHistoryExecutedCmdCommand.cpp \
     $$PWD/handlers/DapUpdateLogsCommand.cpp \
+    $$PWD/models/DapBalanceModel.cpp \
     $$PWD/models/DapNetworksList.cpp \
     $$PWD/models/DapWalletBalanceModel.cpp \
     $$PWD/models/DapWalletModel.cpp \

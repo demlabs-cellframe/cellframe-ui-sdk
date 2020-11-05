@@ -7,6 +7,7 @@
 #include <QQmlEngine>
 
 #include "DapWalletToken.h"
+#include "DapWalletBalanceModel.h"
 
 class DapWallet : public QObject
 {
@@ -40,6 +41,8 @@ public:
 
     static DapWallet fromVariant(const QVariant& aWallet);
 
+    void setBalance(QMap<const DapNetwork *, QMap<const DapToken *, balance_t> > a_balanceMap);
+
 signals:
     void nameChanged(const QString& asName);
     void balanceChanged(const double& adBalance);
@@ -67,6 +70,9 @@ public slots:
     void addToken(DapWalletToken *asToken);
     Q_INVOKABLE QList<DapWalletToken*> findTokens(const QString& asNetwork);
     Q_INVOKABLE QList<QObject*> getTokens() const;
+
+private:
+    DapWalletBalanceModel* m_balanceModel;
 };
 
 Q_DECLARE_METATYPE(DapWallet)
