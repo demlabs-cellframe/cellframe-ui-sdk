@@ -29,6 +29,18 @@ DapNetwork *DapNetworksList::findNetwork(const QString &a_name)
     return *it;
 }
 
+DapNetwork *DapNetworksList::addIfNotExist(const QString &a_name)
+{
+    DapNetwork* network = this->findNetwork(a_name);
+
+    if (!network)
+    {
+        network = this->add(a_name);
+        emit this->modelChanged();
+    }
+    return  network;
+}
+
 
 
 void DapNetworksList::setNetworkProperties(QVariantMap a_networkState)
@@ -58,12 +70,14 @@ void DapNetworksList::fill(QVariant a_stringList)
     }
 
     if (netwarkAdded)
-        emit this->listCompositionChanged();
+        emit this->modelChanged();
 }
 
-void DapNetworksList::add(const QString &a_networkName)
+DapNetwork* DapNetworksList::add(const QString &a_networkName)
 {
     DapNetwork* newNetwork = new DapNetwork(a_networkName, this);
     m_networks.append(newNetwork);
     emit this->networkAdded(newNetwork);
+
+    return  newNetwork;
 }

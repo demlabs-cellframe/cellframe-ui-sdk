@@ -1,5 +1,12 @@
 #include "DapGetWalletInfoCommand.h"
 
+
+const QString DapGetWalletInfoCommand::WALLET_NAME = "walletName";
+const QString DapGetWalletInfoCommand::NETWORKS_INFO = "networksInfo";
+const QString DapGetWalletInfoCommand::ADDRESS = "address";
+const QString DapGetWalletInfoCommand::BALANCE = "balance";
+
+
 /// Overloaded constructor.
 /// @param asServiceName Service name.
 /// @param parent Parent.
@@ -20,8 +27,6 @@ QVariant DapGetWalletInfoCommand::respondToClient(const QVariant &arg1, const QV
                                               const QVariant &arg7, const QVariant &arg8, const QVariant &arg9,
                                               const QVariant &arg10)
 {
-    Q_UNUSED(arg1)
-    Q_UNUSED(arg2)
     Q_UNUSED(arg3)
     Q_UNUSED(arg4)
     Q_UNUSED(arg5)
@@ -31,77 +36,64 @@ QVariant DapGetWalletInfoCommand::respondToClient(const QVariant &arg1, const QV
     Q_UNUSED(arg9)
     Q_UNUSED(arg10)
 
-    QStringList list;
-    QProcess processGetNetworks;
-    processGetNetworks.start(QString("%1 net list").arg(m_sCliPath));
-    processGetNetworks.waitForFinished(-1);
-    QString result = QString::fromLatin1(processGetNetworks.readAll());
-    result.remove(' ');
-    if(!(result.isEmpty() || result.isNull() || result.contains('\'')))
+    QString walletName = arg1.toString();
+    QJsonObject networks;
+
+    QStringList networkLists;
+    if (!arg2.canConvert<QStringList>())
+        networkLists.append(arg2.toString());
+    else
+        networkLists = arg2.toStringList();
+
+
+    QProcess process;
+    QString command(QString("%1 wallet info -w %2 -net %3")
+                    .arg(m_sCliPath)
+                    .arg(walletName));
+
+
+    for (const QString& network: networkLists)
     {
-        list = result.remove("\n").remove("\r").split(":").at(1).split(",");
-    }
+        QString networkCommand = command.arg(network);
+        process.start(networkCommand);
 
-    DapWallet wallet;
-    wallet.setName(arg1.toString());
-    auto begin = list.begin();
-    auto end = list.end();
-    for(; begin != end; ++begin)
-    {
+        process.waitForFinished(-1);
+        QString result(process.readAll());
 
-        wallet.addNetwork(*begin);
+        QRegularExpression regex(R"(wallet: (\S+)\saddr: (\S+)\sbalance:)");
 
-        QProcess processGetTokkens;
-        processGetTokkens.start(QString("%1 wallet info -w %2 -net %3")
-                            .arg(m_sCliPath)
-                            .arg(wallet.getName())
-                            .arg(*begin));
-
-        processGetTokkens.waitForFinished(-1);
-        QByteArray result_tokens = processGetTokkens.readAll();
-        QRegExp regex("wallet: (.+)\\s+addr:\\s+(.+)\\s+(balance)|(\\d+.\\d+)\\s\\((\\d+)\\)\\s(\\w+)");
-
-        int pos = 0;
-        DapWalletToken *token {nullptr};
-        while((pos = regex.indexIn(result_tokens, pos)) != -1)
-        {
-
-            if(!regex.cap(2).isEmpty())
-            {
-                wallet.addAddress(regex.cap(2), *begin);
-            }
-            else
-            {
-                token = new DapWalletToken();
-                token->setName(regex.cap(6).trimmed());
-                token->setBalance(regex.cap(4).toDouble());
-                QString str = regex.cap(5);
-                token->setEmission(regex.cap(5).toULongLong());
-                token->setNetwork(*begin);
-                wallet.addToken(token);
-            }
-
-            pos += regex.matchedLength();
+        QRegularExpressionMatch match = regex.match(result);
+        if (!match.hasMatch()) {
+            return {};
         }
+
+        QRegularExpression balanceRegex(R"((\d+.\d+) \((\d+)\) (\w+))");
+        QRegularExpressionMatchIterator matchIt = balanceRegex.globalMatch(result);
+
+        QString address = match.captured(2);
+
+        QJsonObject balance;
+        while (matchIt.hasNext())
+        {
+            QRegularExpressionMatch match = matchIt.next();
+            QString amount = match.captured(2);
+            QString token = match.captured(3);
+            balance.insert(token, amount);
+        }
+        QJsonObject networkInfo{
+            {ADDRESS, address},
+            {BALANCE, balance}
+        };
+        networks.insert(network, networkInfo);
     }
 
-    QByteArray datas;
-    QDataStream out(&datas, QIODevice::WriteOnly);
-    out << wallet;
 
-    return QJsonValue::fromVariant(datas.toHex());
+    QJsonObject returnValue({
+                                {WALLET_NAME  , walletName },
+                                {NETWORKS_INFO, networks   }
+                            });
+
+
+
+    return returnValue;
 }
-
-
-/// Reply from service.
-/// @details Performed on the service side.
-/// @return Service reply.
-QVariant DapGetWalletInfoCommand::replyFromService()
-{
-    DapRpcServiceReply *reply = static_cast<DapRpcServiceReply *>(sender());
-
-    emit serviceResponded(reply->response().toJsonValue().toVariant().toByteArray());
-
-    return reply->response().toJsonValue().toVariant();
-}
-

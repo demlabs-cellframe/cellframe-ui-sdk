@@ -15,6 +15,11 @@
 class DapGetWalletInfoCommand : public DapAbstractCommand
 {
 public:
+
+    static const QString WALLET_NAME;
+    static const QString NETWORKS_INFO;
+    static const QString ADDRESS;
+    static const QString BALANCE;
     /// Overloaded constructor.
     /// @param asServiceName Service name.
     /// @param parent Parent.
@@ -31,7 +36,6 @@ public slots:
                              const QVariant &arg5 = QVariant(), const QVariant &arg6 = QVariant(),
                              const QVariant &arg7 = QVariant(), const QVariant &arg8 = QVariant(),
                              const QVariant &arg9 = QVariant(), const QVariant &arg10 = QVariant()) override;
-    QVariant replyFromService() override;
 };
 
 #endif // DAPGETWALLETINFOCOMMAND_H
