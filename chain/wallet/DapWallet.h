@@ -34,6 +34,8 @@ public:
     Q_PROPERTY(QStringList Networks MEMBER m_aNetworks READ getNetworks NOTIFY networksChanged)
     Q_PROPERTY(QList<QObject*> Tokens READ getTokens NOTIFY tokensChanged)
 
+    Q_PROPERTY(DapWalletBalanceModel* balanceModel READ getBalanceModel CONSTANT)
+
 
     friend QDataStream& operator << (QDataStream& aOut, const DapWallet& aToken);
     friend QDataStream& operator >> (QDataStream& aOut, DapWallet& aToken);
@@ -43,6 +45,8 @@ public:
 
     void setBalance(QMap<const DapNetwork *, QMap<const DapToken *, balance_t> > a_balanceMap);
 
+    DapWalletBalanceModel *getBalanceModel() const;
+    
 signals:
     void nameChanged(const QString& asName);
     void balanceChanged(const double& adBalance);

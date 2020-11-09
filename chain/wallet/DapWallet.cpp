@@ -156,6 +156,11 @@ QList<QObject *> DapWallet::getTokens() const
     return tokens;
 }
 
+DapWalletBalanceModel *DapWallet::getBalanceModel() const
+{
+    return m_balanceModel;
+}
+
 DapWallet DapWallet::fromVariant(const QVariant &aWallet)
 {
     DapWallet wallet;

@@ -20,6 +20,13 @@ void DapWalletBalanceModel::setBalance(WalletBallanceInfo_t a_balanceMap)
     {
         this->setBalance(it.key(), it.value());
     }
+
+    //FOR TEST!!!:
+//    for (int i = 1; i<=18; i++)
+//    {
+//        DapBalanceModel::BalanceInfo_t info({{new DapToken("KELT", this), 32}, {new DapToken("DAPG", this), 14}});
+//        this->setBalance(new DapNetwork("network 1", this),  info);
+//    }
 }
 
 void DapWalletBalanceModel::setBalance(const DapNetwork *a_network, DapBalanceModel::BalanceInfo_t &a_balanceMap)
@@ -59,7 +66,10 @@ bool DapWalletBalanceModel::insertBalanceModel(const DapNetwork *a_network, cons
     if (lowerBoundIt.key() == a_network)
         return false;
 
-    auto index = std::distance(lowerBoundIt, m_networkBalances.begin());
+    int index = 0;
+    if (!m_networkBalances.isEmpty())
+        index = std::distance(m_networkBalances.begin(), lowerBoundIt);
+
     QAbstractListModel::beginInsertRows(QModelIndex(), index, index);
 
     m_networkBalances[a_network] = new DapBalanceModel(a_balanceMap, this);
