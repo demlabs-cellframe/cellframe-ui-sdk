@@ -1,5 +1,9 @@
 #include "DapAddWalletCommand.h"
 
+const QString DapAddWalletCommand::SUCCESS = "success";
+const QString DapAddWalletCommand::MESSAGE = "message";
+const QString DapAddWalletCommand::WALLET_NAME = "walletName";
+
 /// Overloaded constructor.
 /// @param asServiceName Service name.
 /// @param parent Parent.
@@ -33,14 +37,14 @@ QVariant DapAddWalletCommand::respondToClient(const QVariant &arg1, const QVaria
     QString resources = QString::fromLatin1(process.readAll());
     if(resources.contains("successfully created"))
     {
-        result.insert("created",QJsonValue(true));
-        result.insert("message",QJsonValue("Wallet successfully created"));
-        result.insert("walletName",QJsonValue(arg1.toString()));
+        result.insert(SUCCESS,QJsonValue(true));
+        result.insert(MESSAGE,QJsonValue("Wallet successfully created"));
+        result.insert(WALLET_NAME,QJsonValue(arg1.toString()));
     }
     else
     {
-        result.insert("created",QJsonValue(false));
-        result.insert("message",QJsonValue("Wallet already exists"));
+        result.insert(SUCCESS,QJsonValue(false));
+        result.insert(MESSAGE,QJsonValue("Wallet already exists"));
     }
     return result;
 }
