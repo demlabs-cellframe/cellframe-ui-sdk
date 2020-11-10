@@ -30,5 +30,5 @@ private:
     DapToken* m_token{Q_NULLPTR};
     balance_t m_amount{};
 };
-Q_DECLARE_METATYPE (DapTokenValue)
+//Q_DECLARE_METATYPE (DapTokenValue)
 #endif // DAPTOKENVALUE_H
