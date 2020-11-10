@@ -48,8 +48,10 @@ QString DapVpnOrder::name() const
 
 void DapVpnOrder::setName(const QString &a_name)
 {
-    m_name = a_name;
-    emit nameChanged(m_name);
+    if (a_name != m_name) {
+        m_name = a_name;
+        emit nameChanged(m_name);
+    }
 }
 
 QDateTime DapVpnOrder::date() const
