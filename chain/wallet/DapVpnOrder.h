@@ -5,6 +5,7 @@
 #include <QString>
 #include <QDateTime>
 #include "DapToken.h"
+#include "DapTokenValue.h"
 
 class DapVpnOrder : public QObject
 {
@@ -31,8 +32,8 @@ public:
     Q_PROPERTY(QDateTime date READ date WRITE setDate NOTIFY dateChanged)
     Q_PROPERTY(int units READ units WRITE setUnits NOTIFY unitsChanged)
     Q_PROPERTY(QString type READ type WRITE setType NOTIFY typeChanged)
-    Q_PROPERTY(double value READ value WRITE setValue NOTIFY valueChanged)
-    Q_PROPERTY(QString token READ token WRITE setToken NOTIFY tokenChanged)
+    Q_PROPERTY(balance_t amount READ amount WRITE setAmount NOTIFY amountChanged)
+    Q_PROPERTY(DapToken* token READ token WRITE setToken NOTIFY tokenChanged)
 
     QString name() const;
     void setName(const QString &a_name);
@@ -42,18 +43,18 @@ public:
     void setUnits(int a_units);
     QString type() const;
     void setType(const QString &a_type);
-    double value() const;
-    void setValue(double a_value);
-    QString token() const;
-    void setToken(const QString& a_token);
+    balance_t amount() const            { return m_tokenValue.amount();     }
+    DapToken* token()  const            { return m_tokenValue.token();      }
+    void setAmount(balance_t a_amount)  { m_tokenValue.setAmount(a_amount); }
+    void setToken(DapToken* a_token)    { m_tokenValue.setToken(a_token);   }
 
 signals:
     void nameChanged(const QString& a_name);
     void dateChanged(const QDateTime& a_date);
     void unitsChanged(int a_units);
     void typeChanged(const QString& a_type);
-    void valueChanged(double a_value);
-    void tokenChanged(const QString& a_tokenName);
+    void amountChanged(balance_t);
+    void tokenChanged(DapToken*);
 
 private:
     static QStringList s_types;
@@ -61,8 +62,7 @@ private:
     QDateTime m_created;
     int       m_units = 0;
     UnitType  m_type = UnitType::Unknown;
-    double    m_value = 0.0;
-    QString   m_tokenName;
+    DapTokenValue m_tokenValue{};
 };
 Q_DECLARE_METATYPE(DapVpnOrder)
 

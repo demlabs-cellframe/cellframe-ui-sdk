@@ -28,9 +28,9 @@ QVariant DapVpnOrdersModel::data(const QModelIndex &index, int role) const
     case TypeDisplayRole:
         return m_orders.at(index.row()).type();
     case ValueDisplayRole:
-        return QString::number(m_orders.at(index.row()).value());
+        return QString::number(m_orders.at(index.row()).amount());
     case TokenDisplayRole:
-        return m_orders.at(index.row()).token();
+        return QVariant::fromValue<QObject*>(m_orders.at(index.row()).token());
     default: break;
     }
     return QVariant();

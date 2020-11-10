@@ -12,9 +12,11 @@ QStringList DapVpnOrder::s_types = {
     QString("Month")
 };
 
-DapVpnOrder::DapVpnOrder(QObject *parent): QObject(parent)
+DapVpnOrder::DapVpnOrder(QObject *parent)
+    : QObject(parent)
 {
-
+    connect(&m_tokenValue, &DapTokenValue::tokenChanged, this, &DapVpnOrder::tokenChanged);
+    connect(&m_tokenValue, &DapTokenValue::amountChanged, this, &DapVpnOrder::amountChanged);
 }
 
 DapVpnOrder::DapVpnOrder(const DapVpnOrder &aOrder):
@@ -22,8 +24,7 @@ DapVpnOrder::DapVpnOrder(const DapVpnOrder &aOrder):
     m_created(aOrder.m_created),
     m_units(aOrder.m_units),
     m_type(aOrder.m_type),
-    m_value(aOrder.m_value),
-    m_tokenName(aOrder.m_tokenName)
+    m_tokenValue(aOrder.m_tokenValue)
 {
 
 }
@@ -35,8 +36,7 @@ DapVpnOrder &DapVpnOrder::operator=(const DapVpnOrder &aOrder)
         m_created = aOrder.m_created;
         m_units = aOrder.m_units;
         m_type = aOrder.m_type;
-        m_value = aOrder.m_value;
-        m_tokenName = aOrder.m_tokenName;
+        m_tokenValue = aOrder.m_tokenValue;
     }
     return (*this);
 }
@@ -98,32 +98,6 @@ void DapVpnOrder::setType(const QString &a_type)
             break;
         }
         ++i;
-    }
-}
-
-double DapVpnOrder::value() const
-{
-    return m_value;
-}
-
-void DapVpnOrder::setValue(double a_value)
-{
-    if (a_value != m_value) {
-        m_value = a_value;
-        emit valueChanged(m_value);
-    }
-}
-
-QString DapVpnOrder::token() const
-{
-    return m_tokenName;
-}
-
-void DapVpnOrder::setToken(const QString &a_token)
-{
-    if (a_token != m_tokenName) {
-        m_tokenName = a_token;
-        emit tokenChanged(m_tokenName);
     }
 }
 
