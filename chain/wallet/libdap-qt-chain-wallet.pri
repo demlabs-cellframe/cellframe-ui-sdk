@@ -20,6 +20,7 @@ HEADERS += \
     $$PWD/DapNetwork.h \
     $$PWD/DapNodeType.h \
     $$PWD/DapToken.h \
+    $$PWD/DapTokenValue.h \
     $$PWD/DapWallet.h \
     $$PWD/DapWalletHistoryEvent.h \
     $$PWD/DapWalletToken.h \
@@ -64,6 +65,7 @@ SOURCES += \
     $$PWD/DapLogMessage.cpp \
     $$PWD/DapNetwork.cpp \
     $$PWD/DapToken.cpp \
+    $$PWD/DapTokenValue.cpp \
     $$PWD/DapWallet.cpp \
     $$PWD/DapWalletHistoryEvent.cpp \
     $$PWD/DapWalletToken.cpp \
