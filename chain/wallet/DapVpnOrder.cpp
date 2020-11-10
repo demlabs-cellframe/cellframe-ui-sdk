@@ -61,8 +61,10 @@ QDateTime DapVpnOrder::date() const
 
 void DapVpnOrder::setDate(const QDateTime &a_date)
 {
-    m_created = a_date;
-    emit dateChanged(m_created);
+    if (a_date != m_created) {
+        m_created = a_date;
+        emit dateChanged(m_created);
+    }
 }
 
 int DapVpnOrder::units() const
@@ -72,8 +74,10 @@ int DapVpnOrder::units() const
 
 void DapVpnOrder::setUnits(int a_units)
 {
-    m_units = a_units;
-    emit unitsChanged(m_units);
+    if (a_units != m_units) {
+        m_units = a_units;
+        emit unitsChanged(m_units);
+    }
 }
 
 QString DapVpnOrder::type() const
@@ -83,6 +87,9 @@ QString DapVpnOrder::type() const
 
 void DapVpnOrder::setType(const QString &a_type)
 {
+    if (a_type != type())
+        return;
+
     int i = 0;
     for (auto str : s_types) {
         if (str == a_type) {
@@ -101,8 +108,10 @@ double DapVpnOrder::value() const
 
 void DapVpnOrder::setValue(double a_value)
 {
-    m_value = a_value;
-    emit valueChanged(m_value);
+    if (a_value != m_value) {
+        m_value = a_value;
+        emit valueChanged(m_value);
+    }
 }
 
 QString DapVpnOrder::token() const
@@ -112,7 +121,9 @@ QString DapVpnOrder::token() const
 
 void DapVpnOrder::setToken(const QString &a_token)
 {
-    m_tokenName = a_token;
-    emit tokenChanged(m_tokenName);
+    if (a_token != m_tokenName) {
+        m_tokenName = a_token;
+        emit tokenChanged(m_tokenName);
+    }
 }
 
