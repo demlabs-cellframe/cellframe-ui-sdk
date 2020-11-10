@@ -21,6 +21,7 @@ HEADERS += \
     $$PWD/DapNodeType.h \
     $$PWD/DapToken.h \
     $$PWD/DapTokenValue.h \
+    $$PWD/DapVpnOrder.h \
     $$PWD/DapWallet.h \
     $$PWD/DapWalletHistoryEvent.h \
     $$PWD/DapWalletToken.h \
@@ -50,6 +51,7 @@ HEADERS += \
     $$PWD/handlers/DapUpdateLogsCommand.h \
     $$PWD/models/DapBalanceModel.h \
     $$PWD/models/DapNetworksList.h \
+    $$PWD/models/DapVpnOrdersModel.h \
     $$PWD/models/DapWalletBalanceModel.h \
     $$PWD/models/DapWalletModel.h \
     $$PWD/serviceClient/DapServiceClient.h \
@@ -66,6 +68,7 @@ SOURCES += \
     $$PWD/DapNetwork.cpp \
     $$PWD/DapToken.cpp \
     $$PWD/DapTokenValue.cpp \
+    $$PWD/DapVpnOrder.cpp \
     $$PWD/DapWallet.cpp \
     $$PWD/DapWalletHistoryEvent.cpp \
     $$PWD/DapWalletToken.cpp \
@@ -94,6 +97,7 @@ SOURCES += \
     $$PWD/handlers/DapUpdateLogsCommand.cpp \
     $$PWD/models/DapBalanceModel.cpp \
     $$PWD/models/DapNetworksList.cpp \
+    $$PWD/models/DapVpnOrdersModel.cpp \
     $$PWD/models/DapWalletBalanceModel.cpp \
     $$PWD/models/DapWalletModel.cpp \
     $$PWD/serviceClient/DapServiceClient.cpp \
