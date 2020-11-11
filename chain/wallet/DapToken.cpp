@@ -3,6 +3,12 @@
 QMap<QString , DapToken*> DapToken::s_tokens;
 
 
+DapToken::DapToken(QObject *parent)
+    : QObject(parent)
+    , m_name("")
+{
+}
+
 DapToken::DapToken(const QString &a_name, QObject *parent)
     : QObject(parent)
     , m_name(a_name)
