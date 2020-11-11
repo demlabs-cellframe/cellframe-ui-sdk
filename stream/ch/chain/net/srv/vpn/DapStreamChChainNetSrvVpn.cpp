@@ -257,7 +257,7 @@ void ChChainNetSrvVpn::getAlive() {
     pkt->header.op_code = STREAM_SF_PACKET_OP_CODE_RAW_SEND;
     DapChannelPacketHdr* hdr= reinterpret_cast<DapChannelPacketHdr*>(::calloc(1, sizeof(DapChannelPacketHdr)));
     hdr->id='S';
-    hdr->type=0x11;
+    hdr->type=CH_KEEPALIVE_PKT;
     hdr->size=sizeof(pkt->header);
     emit pktChOut(hdr,pkt);
 }
