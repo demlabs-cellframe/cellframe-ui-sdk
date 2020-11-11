@@ -17,7 +17,7 @@ DapToken::DapToken(const QString &a_name, QObject *parent)
 
 DapToken &DapToken::operator=(const DapToken &a_token)
 {
-    if(this != &a_token) m_name = a_token.m_name;
+    if(this != &a_token) this->setName(a_token.m_name);
     return *this;
 }
 

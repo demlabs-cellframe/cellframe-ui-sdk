@@ -15,8 +15,6 @@ QStringList DapVpnOrder::s_types = {
 DapVpnOrder::DapVpnOrder(QObject *parent)
     : QObject(parent)
 {
-    connect(&m_tokenValue, &DapTokenValue::tokenChanged, this, &DapVpnOrder::tokenChanged);
-    connect(&m_tokenValue, &DapTokenValue::amountChanged, this, &DapVpnOrder::amountChanged);
 }
 
 DapVpnOrder::DapVpnOrder(const DapVpnOrder &aOrder):

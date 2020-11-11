@@ -13,8 +13,8 @@ DapTokenValue &DapTokenValue::operator=(const DapTokenValue &a_token)
 {
     if(this != &a_token)
     {
-        m_token = a_token.m_token;
-        m_amount = a_token.m_amount;
+        this->setToken(a_token.m_token);
+        this->setAmount(a_token.m_amount);
     }
     return *this;
 }

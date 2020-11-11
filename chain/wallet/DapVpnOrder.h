@@ -32,8 +32,7 @@ public:
     Q_PROPERTY(QDateTime date READ date WRITE setDate NOTIFY dateChanged)
     Q_PROPERTY(int units READ units WRITE setUnits NOTIFY unitsChanged)
     Q_PROPERTY(QString type READ type WRITE setType NOTIFY typeChanged)
-    Q_PROPERTY(balance_t amount READ amount WRITE setAmount NOTIFY amountChanged)
-    Q_PROPERTY(DapToken* token READ token WRITE setToken NOTIFY tokenChanged)
+    Q_PROPERTY(DapTokenValue* tokenValue READ tokenValue CONSTANT)
 
     QString name() const;
     void setName(const QString &a_name);
@@ -45,6 +44,7 @@ public:
     void setType(const QString &a_type);
     balance_t amount() const            { return m_tokenValue.amount();     }
     DapToken* token()  const            { return m_tokenValue.token();      }
+    DapTokenValue* tokenValue()         { return &m_tokenValue;             }
     void setAmount(balance_t a_amount)  { m_tokenValue.setAmount(a_amount); }
     void setToken(DapToken* a_token)    { m_tokenValue.setToken(a_token);   }
 
@@ -53,8 +53,6 @@ signals:
     void dateChanged(const QDateTime& a_date);
     void unitsChanged(int a_units);
     void typeChanged(const QString& a_type);
-    void amountChanged(balance_t);
-    void tokenChanged(DapToken*);
 
 private:
     static QStringList s_types;

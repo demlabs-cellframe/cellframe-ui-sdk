@@ -17,19 +17,19 @@ public:
     Q_INVOKABLE DapTokenValue(const DapTokenValue& a_token);
     Q_INVOKABLE DapTokenValue& operator=(const DapTokenValue& a_token);
 
-    Q_INVOKABLE DapToken* token()        const { return m_token;  }
-    Q_INVOKABLE balance_t amount()       const { return m_amount; }
+    DapToken* token()  const { return m_token;  }
+    balance_t amount() const { return m_amount; }
     Q_INVOKABLE QString representation() const { return QString::number(m_amount) + " " + m_token->name(); }
 
-    Q_INVOKABLE void setToken(DapToken *a_token);
-    Q_INVOKABLE void setAmount(balance_t a_amount);
+    void setToken(DapToken *a_token);
+    void setAmount(balance_t a_amount);
 
 signals:
     void tokenChanged(DapToken*);
     void amountChanged(balance_t);
 
 private:
-    DapToken* m_token{Q_NULLPTR};
+    DapToken* m_token = nullptr;
     balance_t m_amount{};
 };
 Q_DECLARE_METATYPE (DapTokenValue)
