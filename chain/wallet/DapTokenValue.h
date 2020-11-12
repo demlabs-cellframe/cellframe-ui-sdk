@@ -12,10 +12,10 @@ class DapTokenValue : public QObject
     Q_PROPERTY(balance_t amount READ amount WRITE setAmount NOTIFY amountChanged)
 
 public:
-    Q_INVOKABLE explicit DapTokenValue (QObject* a_parent = nullptr) : QObject(a_parent){}
-    Q_INVOKABLE explicit DapTokenValue(DapToken* a_token, balance_t a_amount, QObject *a_parent = nullptr);
-    Q_INVOKABLE DapTokenValue(const DapTokenValue& a_token);
-    Q_INVOKABLE DapTokenValue& operator=(const DapTokenValue& a_token);
+    explicit DapTokenValue (QObject* a_parent = nullptr) : QObject(a_parent){}
+    explicit DapTokenValue(DapToken* a_token, balance_t a_amount, QObject *a_parent = nullptr);
+    DapTokenValue(const DapTokenValue& a_token);
+    DapTokenValue& operator=(const DapTokenValue& a_token);
 
     DapToken* token()  const { return m_token;  }
     balance_t amount() const { return m_amount; }
