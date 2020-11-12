@@ -21,11 +21,12 @@ QVariant DapTransactionsModel::data(const QModelIndex &index, int role) const
     case NetworkDisplayRole:
         return QVariant::fromValue<QObject*>(m_transactions.at(index.row())->network());
     case StatusDisplayRole:
-        return QVariant();
+        return m_transactions.at(index.row())->status();
     case ConfirmationsCountDisplayRole:
-        return QVariant();
+        return QVariant::fromValue<size_t>(m_transactions.at(index.row())->confirmationsCount());
     case TokenValueDisplayRole:
         return QVariant();
+        //return QVariant::fromValue<QObject*>(m_transactions.at(index.row())->tokenValue());
     }
 
     return QVariant();
