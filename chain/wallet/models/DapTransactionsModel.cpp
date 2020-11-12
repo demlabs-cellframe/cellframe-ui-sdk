@@ -17,8 +17,7 @@ QVariant DapTransactionsModel::data(const QModelIndex &index, int role) const
     switch (role)
     {
     case Qt::DisplayRole:
-        return QVariant::fromValue(m_transactions.at(index.row()));
-        //return QVariant::fromValue<QObject*>(m_transactions.at(index.row())->tokenValue());
+        return QVariant::fromValue<QObject*>(m_transactions.at(index.row()));
     }
 
     return QVariant();
@@ -26,8 +25,7 @@ QVariant DapTransactionsModel::data(const QModelIndex &index, int role) const
 
 QHash<int, QByteArray> DapTransactionsModel::roleNames() const
 {
-    static const QHash<int, QByteArray> roles
-    { };
+    static const QHash<int, QByteArray> roles{};
     return roles;
 }
 

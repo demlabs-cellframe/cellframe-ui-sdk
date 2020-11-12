@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include "DapNetwork.h"
-//#include "DatTokenValue.h"
+#include "DapTokenValue.h"
 
 enum DapTransactionStatus
 {
@@ -16,40 +16,42 @@ enum DapTransactionStatus
 class DapTransaction : public QObject
 {
     Q_OBJECT
-public:
-    explicit DapTransaction(QObject* a_parent = nullptr);
-    explicit DapTransaction(DapNetwork* a_network,
-                                        DapTransactionStatus a_status,
-                                        size_t a_confirmationsCount,
-                                        //DapTokenValue* a_tokenValue,
-                                        QObject* a_parent = nullptr);
-
     Q_PROPERTY(DapNetwork*          network             READ network            WRITE setNetwork            NOTIFY networkChanged)
     Q_PROPERTY(DapTransactionStatus status              READ status             WRITE setStatus             NOTIFY statusChanged)
     Q_PROPERTY(size_t               confirmationsCount  READ confirmationsCount WRITE setConfirmationsCount NOTIFY confirmationsCountChanged)
     Q_PROPERTY(DapTokenValue*       tokenValue          READ tokenValue         WRITE setTokenValue         NOTIFY tokenValueChanged)
 
-    DapNetwork* network()         { return m_network; }
-    DapTransactionStatus status() { return m_status;  }
+public:
+    explicit DapTransaction(QObject* a_parent = nullptr);
+    explicit DapTransaction(DapNetwork* a_network,
+                                        DapTransactionStatus a_status,
+                                        size_t a_confirmationsCount,
+                                        DapTokenValue* a_tokenValue,
+                                        QObject* a_parent = nullptr);
+    DapTransaction(const DapTransaction& a_transaction);
+    DapTransaction &operator=(const DapTransaction& a_transaction);
+
+    DapNetwork* network()         { return m_network;            }
+    DapTransactionStatus status() { return m_status;             }
     size_t confirmationsCount()   { return m_confirmationsCount; }
-    //DapTokenValue* tokenValue()   { return m_tokenValue; }
+    DapTokenValue* tokenValue()   { return m_tokenValue;         }
 
     void setNetwork(DapNetwork* a_network);
     void setStatus (DapTransactionStatus a_status);
     void setConfirmationsCount(size_t a_confirmationsCount);
-    //void setTokenValue (DapTokenValue* a_tokenValue);
+    void setTokenValue (DapTokenValue* a_tokenValue);
 
 signals:
     void networkChanged(DapNetwork*);
     void statusChanged(DapTransactionStatus);
     void confirmationsCountChanged(size_t);
-    //void tokenValueChanged(DapTokenValue*);
+    void tokenValueChanged(DapTokenValue*);
 
 private:
-    DapNetwork* m_network = nullptr;
+    DapNetwork*          m_network = nullptr;
     DapTransactionStatus m_status{};
-    size_t m_confirmationsCount{};
-    //DapTokenValue* m_tokenValue = nullptr;
+    size_t               m_confirmationsCount{};
+    DapTokenValue*       m_tokenValue = nullptr;
 };
 Q_DECLARE_METATYPE(DapTransaction)
 #endif // DAPTRANSACTION_H
