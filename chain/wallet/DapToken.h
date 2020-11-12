@@ -10,6 +10,7 @@ class DapToken : public QObject
 
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
 public:
+    DapToken(QObject *parent = nullptr);
     explicit DapToken(const QString& a_name, QObject *parent = nullptr);
 
     QString name() const;
@@ -27,6 +28,5 @@ private:
 
     static QMap<QString , DapToken*> s_tokens;
 };
-
 
 #endif // DAPTOKEN_H

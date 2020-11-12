@@ -89,7 +89,8 @@ bool DapBalanceModel::insertTokenAmount(const DapToken *a_token, balance_t a_amo
     if (lowerBoundIt.key() == a_token)
         return false;
 
-    auto index = std::distance(lowerBoundIt, m_tokensAmount.begin());
+    int index = this->rowOf(lowerBoundIt);
+
     QAbstractListModel::beginInsertRows(QModelIndex(), index, index);
 
     m_tokensAmount[a_token] = a_amount;
@@ -110,6 +111,9 @@ int DapBalanceModel::rowOf(const DapToken *a_token)
 
 int DapBalanceModel::rowOf(BalanceInfo_t::iterator a_iterator)
 {
+    if (m_tokensAmount.isEmpty())
+        return 0;
+
     return std::distance(m_tokensAmount.begin(), a_iterator);
 }
 
