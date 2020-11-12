@@ -12,8 +12,6 @@ class DapToken : public QObject
 public:
     DapToken(QObject *parent = nullptr);
     explicit DapToken(const QString& a_name, QObject *parent = nullptr);
-    DapToken(const DapToken& a_token) : m_name(a_token.m_name){}
-    DapToken& operator=(const DapToken& a_token);
 
     QString name() const;
     void setName(const QString &a_name);
@@ -31,5 +29,4 @@ private:
     static QMap<QString , DapToken*> s_tokens;
 };
 
-Q_DECLARE_METATYPE (DapToken)
 #endif // DAPTOKEN_H

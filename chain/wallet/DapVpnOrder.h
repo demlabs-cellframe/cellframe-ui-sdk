@@ -42,8 +42,8 @@ public:
     void setUnits(int a_units);
     QString type() const;
     void setType(const QString &a_type);
-    DapTokenValue* tokenValue() const { return m_tokenValue; }
-    void setTokenValue(DapTokenValue* a_tokenValue);
+    DapTokenValue* tokenValue() { return &m_tokenValue; }
+    void setTokenValue(const DapTokenValue& a_tokenValue);
 
 signals:
     void nameChanged(const QString& a_name);
@@ -58,7 +58,7 @@ private:
     QDateTime m_created;
     int       m_units = 0;
     UnitType  m_type = UnitType::Unknown;
-    DapTokenValue* m_tokenValue = nullptr;
+    DapTokenValue m_tokenValue;
 };
 Q_DECLARE_METATYPE(DapVpnOrder)
 

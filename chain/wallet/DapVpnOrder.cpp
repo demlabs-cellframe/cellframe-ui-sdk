@@ -99,10 +99,9 @@ void DapVpnOrder::setType(const QString &a_type)
     }
 }
 
-void DapVpnOrder::setTokenValue(DapTokenValue *a_tokenValue)
+void DapVpnOrder::setTokenValue(const DapTokenValue &a_tokenValue)
 {
-    if (m_tokenValue == a_tokenValue) return;
+    if (&m_tokenValue == &a_tokenValue) return;
     m_tokenValue = a_tokenValue;
-    emit tokenValueChanged(a_tokenValue);
 }
 
