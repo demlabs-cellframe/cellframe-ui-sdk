@@ -3,6 +3,11 @@
 QMap<QString , DapToken*> DapToken::s_tokens;
 
 
+DapToken::DapToken(QObject *parent)
+    : QObject(parent)
+{
+}
+
 DapToken::DapToken(const QString &a_name, QObject *parent)
     : QObject(parent)
     , m_name(a_name)
@@ -27,6 +32,8 @@ const DapToken *DapToken::token(const QString &a_name)
 {
     if (!s_tokens.contains(a_name))
     {
+        // TODO: Removing objects.
+        //DapTokensModel
         DapToken* newToken = new DapToken(a_name);
         s_tokens.insert(a_name, newToken);
         return newToken;
