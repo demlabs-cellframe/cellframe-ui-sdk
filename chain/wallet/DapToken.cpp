@@ -3,10 +3,22 @@
 QMap<QString , DapToken*> DapToken::s_tokens;
 
 
+DapToken::DapToken(QObject *parent)
+    : QObject(parent)
+    , m_name("")
+{
+}
+
 DapToken::DapToken(const QString &a_name, QObject *parent)
     : QObject(parent)
     , m_name(a_name)
 {
+}
+
+DapToken &DapToken::operator=(const DapToken &a_token)
+{
+    if(this != &a_token) this->setName(a_token.m_name);
+    return *this;
 }
 
 QString DapToken::name() const

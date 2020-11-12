@@ -17,8 +17,8 @@ class DapTransaction : public QObject
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE explicit DapTransaction(QObject* a_parent = nullptr);
-    Q_INVOKABLE explicit DapTransaction(DapNetwork* a_network,
+    explicit DapTransaction(QObject* a_parent = nullptr);
+    explicit DapTransaction(DapNetwork* a_network,
                                         DapTransactionStatus a_status,
                                         size_t a_confirmationsCount,
                                         //DapTokenValue* a_tokenValue,
@@ -29,15 +29,15 @@ public:
     Q_PROPERTY(size_t               confirmationsCount  READ confirmationsCount WRITE setConfirmationsCount NOTIFY confirmationsCountChanged)
     Q_PROPERTY(DapTokenValue*       tokenValue          READ tokenValue         WRITE setTokenValue         NOTIFY tokenValueChanged)
 
-    Q_INVOKABLE DapNetwork* network()         { return m_network; }
-    Q_INVOKABLE DapTransactionStatus status() { return m_status;  }
-    Q_INVOKABLE size_t confirmationsCount()   { return m_confirmationsCount; }
-    //Q_INVOKABLE DapTokenValue* tokenValue()   { return m_tokenValue; }
+    DapNetwork* network()         { return m_network; }
+    DapTransactionStatus status() { return m_status;  }
+    size_t confirmationsCount()   { return m_confirmationsCount; }
+    //DapTokenValue* tokenValue()   { return m_tokenValue; }
 
-    Q_INVOKABLE void setNetwork(DapNetwork* a_network);
-    Q_INVOKABLE void setStatus (DapTransactionStatus a_status);
-    Q_INVOKABLE void setConfirmationsCount(size_t a_confirmationsCount);
-    //Q_INVOKABLE void setTokenValue (DapTokenValue* a_tokenValue);
+    void setNetwork(DapNetwork* a_network);
+    void setStatus (DapTransactionStatus a_status);
+    void setConfirmationsCount(size_t a_confirmationsCount);
+    //void setTokenValue (DapTokenValue* a_tokenValue);
 
 signals:
     void networkChanged(DapNetwork*);
@@ -46,10 +46,10 @@ signals:
     //void tokenValueChanged(DapTokenValue*);
 
 private:
-    DapNetwork* m_network{Q_NULLPTR};
+    DapNetwork* m_network = nullptr;
     DapTransactionStatus m_status{};
     size_t m_confirmationsCount{};
-    //DapTokenValue* m_tokenValue{Q_NULLPTR};
+    //DapTokenValue* m_tokenValue = nullptr;
 };
 Q_DECLARE_METATYPE(DapTransaction)
 #endif // DAPTRANSACTION_H

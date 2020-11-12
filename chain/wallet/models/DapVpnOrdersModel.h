@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <QList>
 #include "DapVpnOrder.h"
+#include "DapTokenValue.h"
 
 class DapVpnOrdersModel: public QAbstractListModel
 {
@@ -16,8 +17,7 @@ public:
         DateDisplayRole,
         UnitsDisplayRole,
         TypeDisplayRole,
-        ValueDisplayRole,
-        TokenDisplayRole
+        TokenValueDisplayRole
     };
     Q_ENUM(DapVpnOrdersRoles)
 
@@ -27,10 +27,10 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
-    Q_INVOKABLE void append(const DapVpnOrder& a_order);
+    Q_INVOKABLE void append(DapVpnOrder *a_order);
 
 private:
-    QList<DapVpnOrder> m_orders;
+    QList<DapVpnOrder*> m_orders;
 };
 
 #endif // DAPVPNORDERSMODEL_H
