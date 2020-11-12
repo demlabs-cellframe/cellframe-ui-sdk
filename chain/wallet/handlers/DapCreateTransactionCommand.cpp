@@ -1,5 +1,8 @@
 #include "DapCreateTransactionCommand.h"
 
+const QString DapCreateTransactionCommand::SUCCESS = "success";
+const QString DapCreateTransactionCommand::ERRORMESSAGE = "errorMessage";
+
 /// Overloaded constructor.
 /// @param asServiceName Service name.
 /// @param parent Parent.
@@ -38,14 +41,20 @@ QVariant DapCreateTransactionCommand::respondToClient(const QVariant &arg1, cons
                   .arg(arg6.toString()));
 
     processCreate.waitForFinished(-1);
-    QByteArray result = processCreate.readAll();
 
+    QJsonObject resultObj;
+    QString result = QString::fromLatin1(processCreate.readAll());
     QRegExp rx("transfer=(\\w+)");
     rx.indexIn(result, 0);
 
     if(rx.cap(1) == "Ok")
     {
-        return true;
+        resultObj.insert(SUCCESS,true);
     }
-    return false;
+    else
+    {
+        resultObj = DapErrors::getErrorNumber(result);
+        resultObj.insert(SUCCESS,false);
+    }
+    return resultObj;
 }

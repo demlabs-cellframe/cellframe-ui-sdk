@@ -55,7 +55,8 @@ HEADERS += \
     $$PWD/serviceClient/DapServiceClientNativeAbstract.h \
     $$PWD/serviceClient/DapServiceClientNativeLinux.h \
     $$PWD/serviceClient/DapServiceClientNativeMacOS.h \
-    $$PWD/serviceClient/DapServiceClientNativeWin.h
+    $$PWD/serviceClient/DapServiceClientNativeWin.h \
+    $$PWD/DapErrors.h
 
 SOURCES += \
     $$PWD/CellframeNodeConfig.cpp \
@@ -98,7 +99,8 @@ SOURCES += \
     $$PWD/serviceClient/DapServiceClientNativeAbstract.cpp \
     $$PWD/serviceClient/DapServiceClientNativeLinux.cpp \
     $$PWD/serviceClient/DapServiceClientNativeMacOS.cpp \
-    $$PWD/serviceClient/DapServiceClientNativeWin.cpp
+    $$PWD/serviceClient/DapServiceClientNativeWin.cpp \
+    $$PWD/DapErrors.cpp
 
 
 

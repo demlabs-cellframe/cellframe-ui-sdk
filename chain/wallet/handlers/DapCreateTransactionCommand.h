@@ -2,12 +2,14 @@
 #define DAPCREATETRANSACTIONCOMMAND_H
 
 #include <QProcess>
-
+#include "DapErrors.h"
 #include "DapAbstractCommand.h"
 
 class DapCreateTransactionCommand : public DapAbstractCommand
 {
 public:
+    static const QString SUCCESS;
+    static const QString ERRORMESSAGE;
     /// Overloaded constructor.
     /// @param asServiceName Service name.
     /// @param parent Parent.
