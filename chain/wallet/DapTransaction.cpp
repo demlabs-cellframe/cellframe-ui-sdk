@@ -5,8 +5,8 @@ DapTransaction::DapTransaction(QObject *a_parent)
 {
 }
 
-DapTransaction::DapTransaction(DapNetwork* a_network,
-                               DapTransactionStatus a_status,
+DapTransaction::DapTransaction(const DapNetwork* a_network,
+                               Status a_status,
                                size_t a_confirmationsCount,
                                DapTokenValue* a_tokenValue,
                                QObject* a_parent)
@@ -41,11 +41,11 @@ DapTransaction &DapTransaction::operator=(const DapTransaction &a_transaction)
 void DapTransaction::setNetwork(const DapNetwork *a_network)
 {
     if (a_network == m_network) return;
-    m_network = const_cast<DapNetwork*>(a_network);
+    m_network = a_network;
     emit networkChanged(m_network);
 }
 
-void DapTransaction::setStatus(DapTransactionStatus a_status)
+void DapTransaction::setStatus(Status a_status)
 {
     if (a_status == m_status) return;
     m_status = a_status;
