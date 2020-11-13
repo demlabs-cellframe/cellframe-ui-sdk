@@ -24,22 +24,23 @@ class DapTransaction : public QObject
 public:
     explicit DapTransaction(QObject* a_parent = nullptr);
     explicit DapTransaction(DapNetwork* a_network,
-                                        DapTransactionStatus a_status,
-                                        size_t a_confirmationsCount,
-                                        DapTokenValue* a_tokenValue,
-                                        QObject* a_parent = nullptr);
+                            DapTransactionStatus a_status,
+                            size_t a_confirmationsCount,
+                            DapTokenValue* a_tokenValue,
+                            QObject* a_parent = nullptr);
+
     DapTransaction(const DapTransaction& a_transaction);
     DapTransaction &operator=(const DapTransaction& a_transaction);
 
-    DapNetwork* network()         { return m_network;            }
-    DapTransactionStatus status() { return m_status;             }
-    size_t confirmationsCount()   { return m_confirmationsCount; }
-    DapTokenValue* tokenValue()   { return m_tokenValue;         }
+    DapNetwork* network()         const { return m_network;            }
+    DapTransactionStatus status() const { return m_status;             }
+    size_t confirmationsCount()   const { return m_confirmationsCount; }
+    DapTokenValue* tokenValue()         { return &m_tokenValue;        }
 
-    void setNetwork(DapNetwork* a_network);
+    void setNetwork(const DapNetwork* a_network);
     void setStatus (DapTransactionStatus a_status);
     void setConfirmationsCount(size_t a_confirmationsCount);
-    void setTokenValue (DapTokenValue* a_tokenValue);
+    void setTokenValue (const DapTokenValue &a_tokenValue);
 
 signals:
     void networkChanged(DapNetwork*);
@@ -51,7 +52,6 @@ private:
     DapNetwork*          m_network = nullptr;
     DapTransactionStatus m_status{};
     size_t               m_confirmationsCount{};
-    DapTokenValue*       m_tokenValue = nullptr;
+    DapTokenValue        m_tokenValue{};
 };
-Q_DECLARE_METATYPE(DapTransaction)
 #endif // DAPTRANSACTION_H

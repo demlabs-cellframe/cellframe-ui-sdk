@@ -38,11 +38,11 @@ DapTransaction &DapTransaction::operator=(const DapTransaction &a_transaction)
     return *this;
 }
 
-void DapTransaction::setNetwork(DapNetwork *a_network)
+void DapTransaction::setNetwork(const DapNetwork *a_network)
 {
     if (a_network == m_network) return;
-    m_network = a_network;
-    emit networkChanged(a_network);
+    m_network = const_cast<DapNetwork*>(a_network);
+    emit networkChanged(m_network);
 }
 
 void DapTransaction::setStatus(DapTransactionStatus a_status)
@@ -59,9 +59,9 @@ void DapTransaction::setConfirmationsCount(size_t a_confirmationsCount)
     emit confirmationsCountChanged(a_confirmationsCount);
 }
 
-void DapTransaction::setTokenValue(DapTokenValue* a_tokenValue)
+void DapTransaction::setTokenValue(const DapTokenValue &a_tokenValue)
 {
-    if (a_tokenValue == m_tokenValue) return;
+    if (&a_tokenValue == &m_tokenValue) return;
     m_tokenValue = a_tokenValue;
-    emit tokenValueChanged(a_tokenValue);
+    emit tokenValueChanged(&m_tokenValue);
 }
