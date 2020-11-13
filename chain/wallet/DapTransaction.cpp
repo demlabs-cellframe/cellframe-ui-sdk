@@ -14,7 +14,7 @@ DapTransaction::DapTransaction(DapNetwork* a_network,
     , m_network             (a_network)
     , m_status              (a_status)
     , m_confirmationsCount  (a_confirmationsCount)
-    , m_tokenValue          (a_tokenValue)
+    , m_tokenValue          (*a_tokenValue)
 {
 }
 
@@ -61,7 +61,6 @@ void DapTransaction::setConfirmationsCount(size_t a_confirmationsCount)
 
 void DapTransaction::setTokenValue(const DapTokenValue &a_tokenValue)
 {
-    if (&a_tokenValue == &m_tokenValue) return;
+    if (&m_tokenValue == &a_tokenValue) return;
     m_tokenValue = a_tokenValue;
-    emit tokenValueChanged(&m_tokenValue);
 }

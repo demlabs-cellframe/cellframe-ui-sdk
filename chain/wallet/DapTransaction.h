@@ -19,7 +19,8 @@ class DapTransaction : public QObject
     Q_PROPERTY(DapNetwork*          network             READ network            WRITE setNetwork            NOTIFY networkChanged)
     Q_PROPERTY(DapTransactionStatus status              READ status             WRITE setStatus             NOTIFY statusChanged)
     Q_PROPERTY(size_t               confirmationsCount  READ confirmationsCount WRITE setConfirmationsCount NOTIFY confirmationsCountChanged)
-    Q_PROPERTY(DapTokenValue*       tokenValue          READ tokenValue         WRITE setTokenValue         NOTIFY tokenValueChanged)
+    Q_PROPERTY(DapTokenValue*       tokenValue          READ tokenValue         CONSTANT)
+
 
 public:
     explicit DapTransaction(QObject* a_parent = nullptr);
@@ -46,12 +47,11 @@ signals:
     void networkChanged(DapNetwork*);
     void statusChanged(DapTransactionStatus);
     void confirmationsCountChanged(size_t);
-    void tokenValueChanged(DapTokenValue*);
 
 private:
     DapNetwork*          m_network = nullptr;
     DapTransactionStatus m_status{};
     size_t               m_confirmationsCount{};
-    DapTokenValue        m_tokenValue{};
+    DapTokenValue        m_tokenValue;
 };
 #endif // DAPTRANSACTION_H
