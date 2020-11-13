@@ -32,7 +32,7 @@ public:
     Q_PROPERTY(QDateTime date READ date WRITE setDate NOTIFY dateChanged)
     Q_PROPERTY(int units READ units WRITE setUnits NOTIFY unitsChanged)
     Q_PROPERTY(QString type READ type WRITE setType NOTIFY typeChanged)
-    Q_PROPERTY(DapTokenValue* tokenValue READ tokenValue WRITE setTokenValue NOTIFY tokenValueChanged)
+    Q_PROPERTY(DapTokenValue* tokenValue READ tokenValue CONSTANT)
 
     QString name() const;
     void setName(const QString &a_name);
@@ -50,7 +50,6 @@ signals:
     void dateChanged(const QDateTime& a_date);
     void unitsChanged(int a_units);
     void typeChanged(const QString& a_type);
-    void tokenValueChanged(DapTokenValue*);
 
 private:
     static QStringList s_types;
@@ -60,6 +59,5 @@ private:
     UnitType  m_type = UnitType::Unknown;
     DapTokenValue m_tokenValue;
 };
-Q_DECLARE_METATYPE(DapVpnOrder)
 
 #endif // DAPVPNORDER_H
