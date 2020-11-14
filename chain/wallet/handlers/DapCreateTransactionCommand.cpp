@@ -1,7 +1,7 @@
 #include "DapCreateTransactionCommand.h"
 
 const QString DapCreateTransactionCommand::SUCCESS = "success";
-const QString DapCreateTransactionCommand::ERRORMESSAGE = "errorMessage";
+const QString DapCreateTransactionCommand::ERROR_MESSAGE = "errorMessage";
 
 /// Overloaded constructor.
 /// @param asServiceName Service name.
@@ -53,8 +53,14 @@ QVariant DapCreateTransactionCommand::respondToClient(const QVariant &arg1, cons
     }
     else
     {
-        resultObj = DapErrors::getErrorNumber(result);
+        QRegExp rxError("not enough funds for transfer");
+        rxError.indexIn(result, 0);
+        if(!rxError.cap(0).isEmpty())
+            resultObj.insert(ERROR_MESSAGE,DapErrors::Error::NOT_ENOUGH_FOUNDS_FOR_TRANSFER);
+        else
+             resultObj.insert(ERROR_MESSAGE,DapErrors::Error::UNKNOWN_ERROR);
         resultObj.insert(SUCCESS,false);
+
     }
     return resultObj;
 }

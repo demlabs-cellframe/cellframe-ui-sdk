@@ -9,7 +9,7 @@ class DapCreateTransactionCommand : public DapAbstractCommand
 {
 public:
     static const QString SUCCESS;
-    static const QString ERRORMESSAGE;
+    static const QString ERROR_MESSAGE;
     /// Overloaded constructor.
     /// @param asServiceName Service name.
     /// @param parent Parent.
