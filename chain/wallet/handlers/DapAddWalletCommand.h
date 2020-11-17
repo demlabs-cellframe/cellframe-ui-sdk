@@ -17,6 +17,10 @@
 class DapAddWalletCommand : public DapAbstractCommand
 {
 public:
+
+    static const QString SUCCESS;
+    static const QString MESSAGE;
+    static const QString WALLET_NAME;
     /// Overloaded constructor.
     /// @param asServiceName Service name.
     /// @param parent Parent.
