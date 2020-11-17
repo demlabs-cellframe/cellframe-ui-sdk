@@ -9,7 +9,7 @@ class DapTransactionsProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
     Q_PROPERTY(DapTransactionsProxyModel::Date dateFilter   READ dateFilter   WRITE setDateFilter NOTIFY dateFilterChanged)
-    Q_PROPERTY(QVector<DapTransaction::Status> statusFilter READ statusFilter NOTIFY statusFilterChanged)
+    Q_PROPERTY(QVariantList                    statusFilter READ statusFilter NOTIFY statusFilterChanged)
 
 public:
 
@@ -26,8 +26,8 @@ public:
     explicit DapTransactionsProxyModel(QAbstractListModel* a_model,
                                        QObject *a_parent = nullptr);
 
-    DapTransactionsProxyModel::Date dateFilter()   const { return m_date;     }
-    QVector<DapTransaction::Status> statusFilter() const { return m_statuses; }
+    DapTransactionsProxyModel::Date dateFilter()   const { return m_date; }
+    QVariantList statusFilter() const;
 
     void setDateFilter(const DapTransactionsProxyModel::Date a_date = DapTransactionsProxyModel::Date::AllTime);
     Q_INVOKABLE void addStatusFilter(const DapTransaction::Status a_status);

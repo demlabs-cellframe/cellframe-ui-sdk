@@ -13,6 +13,14 @@ DapTransactionsProxyModel::DapTransactionsProxyModel(QAbstractListModel *a_model
     setSourceModel(a_model);
 }
 
+QVariantList DapTransactionsProxyModel::statusFilter() const
+{
+    QVariantList list;
+    for(const DapTransaction::Status el:m_statuses)
+        list << QVariant::fromValue(el);
+    return list;
+}
+
 void DapTransactionsProxyModel::setDateFilter(const Date a_date)
 {
     if (a_date == m_date)
