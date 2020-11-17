@@ -28,7 +28,7 @@ public:
     explicit DapTransaction(const DapNetwork* a_network,
                             Status a_status,
                             size_t a_confirmationsCount,
-                            DapTokenValue* a_tokenValue,
+                            const DapTokenValue& a_tokenValue,
                             QObject* a_parent = nullptr);
 
     DapTransaction(const DapTransaction& a_transaction);

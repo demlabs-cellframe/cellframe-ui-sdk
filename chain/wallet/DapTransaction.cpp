@@ -8,13 +8,13 @@ DapTransaction::DapTransaction(QObject *a_parent)
 DapTransaction::DapTransaction(const DapNetwork* a_network,
                                Status a_status,
                                size_t a_confirmationsCount,
-                               DapTokenValue* a_tokenValue,
+                               const DapTokenValue &a_tokenValue,
                                QObject* a_parent)
     : QObject               (a_parent)
     , m_network             (a_network)
     , m_status              (a_status)
     , m_confirmationsCount  (a_confirmationsCount)
-    , m_tokenValue          (*a_tokenValue)
+    , m_tokenValue          (a_tokenValue)
 {
 }
 
