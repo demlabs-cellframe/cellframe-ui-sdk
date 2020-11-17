@@ -9,6 +9,10 @@ class DapTransactionsModel : public QAbstractListModel
     Q_OBJECT
 public:
 
+    enum DapTransactionsRoles {
+        TransactionDisplayRole = 1
+    }; Q_ENUM(DapTransactionsRoles)
+
     explicit DapTransactionsModel(QObject *parent = nullptr);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;

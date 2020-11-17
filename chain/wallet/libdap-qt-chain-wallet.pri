@@ -52,6 +52,7 @@ HEADERS += \
     $$PWD/handlers/DapUpdateLogsCommand.h \
     $$PWD/models/DapBalanceModel.h \
     $$PWD/models/DapNetworksList.h \
+    $$PWD/models/DapTransactionsProxyModel.h \
     $$PWD/models/DapTransactionsModel.h \
     $$PWD/models/DapVpnOrdersModel.h \
     $$PWD/models/DapWalletBalanceModel.h \
@@ -101,6 +102,7 @@ SOURCES += \
     $$PWD/handlers/DapUpdateLogsCommand.cpp \
     $$PWD/models/DapBalanceModel.cpp \
     $$PWD/models/DapNetworksList.cpp \
+    $$PWD/models/DapTransactionsProxyModel.cpp \
     $$PWD/models/DapTransactionsModel.cpp \
     $$PWD/models/DapVpnOrdersModel.cpp \
     $$PWD/models/DapWalletBalanceModel.cpp \
