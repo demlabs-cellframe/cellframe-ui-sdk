@@ -21,7 +21,7 @@ QVariantList DapTransactionsProxyModel::statusFilter() const
     return list;
 }
 
-void DapTransactionsProxyModel::setDateFilter(const Date a_date)
+void DapTransactionsProxyModel::setDateFilter(int a_date)
 {
     if (a_date == m_date)
         return;
@@ -30,20 +30,20 @@ void DapTransactionsProxyModel::setDateFilter(const Date a_date)
     invalidateFilter();
 }
 
-void DapTransactionsProxyModel::addStatusFilter(const DapTransaction::Status a_status)
+void DapTransactionsProxyModel::addStatusFilter(int a_status)
 {
-    if (m_statuses.contains(a_status))
+    if (m_statuses.contains(static_cast<DapTransaction::Status>(a_status)))
         return;
-    m_statuses.push_back(a_status);
+    m_statuses.push_back(static_cast<DapTransaction::Status>(a_status));
     emit statusFilterChanged(m_statuses);
     invalidateFilter();
 }
 
-void DapTransactionsProxyModel::removeStatusFilter(const DapTransaction::Status a_status)
+void DapTransactionsProxyModel::removeStatusFilter(int a_status)
 {
-    if (!m_statuses.contains(a_status))
+    if (!m_statuses.contains(static_cast<DapTransaction::Status>(a_status)))
         return;
-    m_statuses.removeOne(a_status);
+    m_statuses.removeOne(static_cast<DapTransaction::Status>(a_status));
     emit statusFilterChanged(m_statuses);
     invalidateFilter();
 }
