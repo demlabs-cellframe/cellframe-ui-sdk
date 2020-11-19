@@ -2,6 +2,14 @@
 
 #include <QRegularExpression>
 
+const QString DapGetNetworkStatusCommand::NAME = "name";
+const QString DapGetNetworkStatusCommand::STATE = "state";
+const QString DapGetNetworkStatusCommand::TARGET_STATE = "targetState";
+const QString DapGetNetworkStatusCommand::ACTIVE_LINKS_COUNT = "activeLinksCount";
+const QString DapGetNetworkStatusCommand::LINKS_COUNT = "linksCount";
+const QString DapGetNetworkStatusCommand::NODE_ADDRESS = "nodeAddress";
+
+
 /// Overloaded constructor.
 /// @param asServiceName Service name.
 /// @param parent Parent.
@@ -37,18 +45,20 @@ QVariant DapGetNetworkStatusCommand::respondToClient(const QVariant &arg1, const
     process.waitForFinished(-1);
     QString result = QString::fromLatin1(process.readAll());
 
-    QRegularExpression rx(R"(Network "\S+" has state (\S+) \(target state (\S*)\), cur node address ([A-F0-9]{4}::[A-F0-9]{4}::[A-F0-9]{4}::[A-F0-9]{4}))");
+    QRegularExpression rx(R"***(Network "(\S+)" has state (\S+) \(target state (\S*)\), active links (\d+) from (\d+), cur node address ([A-F0-9]{4}::[A-F0-9]{4}::[A-F0-9]{4}::[A-F0-9]{4}))***");
     QRegularExpressionMatch match = rx.match(result);
     if (!match.hasMatch()) {
         return {};
     }
 
-    QJsonObject returnValue({
-                                {"name"      , network},
-                                {"state"        , match.captured(1)},
-                                {"targetState"  , match.captured(2)},
-                                {"nodeAddress"  , match.captured(3)}
+    QJsonObject resultObj({
+                                {NAME               , match.captured(1)},
+                                {STATE              , match.captured(2)},
+                                {TARGET_STATE       , match.captured(3)},
+                                {ACTIVE_LINKS_COUNT , match.captured(4)},
+                                {LINKS_COUNT        , match.captured(5)},
+                                {NODE_ADDRESS       , match.captured(6)}
                             });
 
-    return returnValue;
+    return resultObj;
 }
