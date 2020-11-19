@@ -1,5 +1,4 @@
 #include "DapTransactionsProxyModel.h"
-#include <QDebug>
 
 DapTransactionsProxyModel::DapTransactionsProxyModel(QObject *a_parent)
     : QSortFilterProxyModel(a_parent)
@@ -61,25 +60,28 @@ bool DapTransactionsProxyModel::filterAcceptsRow(int sourceRow, const QModelInde
             return true;
 
         case Date::Today:
-            if(transaction->date() == QDate::currentDate()) return true;
-            else return false;
+            return transaction->date().date() == QDate::currentDate();
 
         case Date::Yesterday:
-            if(transaction->date() == QDate::currentDate().addDays(-1)) return true;
-            else return false;
+            return transaction->date().date() == QDate::currentDate().addDays(-1);
 
         case Date::ThisWeek:
-            if(transaction->date() > QDate::currentDate().addDays(-QDate::currentDate().dayOfWeek())
-                    && transaction->date() <= QDate::currentDate().addDays(7 - QDate::currentDate().dayOfWeek()))
-                return true;
-            else return false;
+            return transaction->date().date() > QDate::currentDate().addDays(-QDate::currentDate().dayOfWeek())
+                    && transaction->date().date() <= QDate::currentDate().addDays(7 - QDate::currentDate().dayOfWeek());
 
         case Date::LastWeek:
-            if(transaction->date() <= QDate::currentDate().addDays(-QDate::currentDate().dayOfWeek())
-                    && transaction->date() > QDate::currentDate().addDays(-QDate::currentDate().dayOfWeek() - 7))
-                return true;
-            else return false;
+            return transaction->date().date() <= QDate::currentDate().addDays(-QDate::currentDate().dayOfWeek())
+                    && transaction->date().date() > QDate::currentDate().addDays(-QDate::currentDate().dayOfWeek() - 7);
         }
     }
-    else return false;
+    return false;
+}
+
+bool DapTransactionsProxyModel::lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const
+{
+    QObject* obj = qvariant_cast<QObject*>(sourceModel()->data(source_left));
+    DapTransaction* left_transaction = qobject_cast<DapTransaction*>(obj);
+    obj = qvariant_cast<QObject*>(sourceModel()->data(source_right));
+    DapTransaction* right_transaction = qobject_cast<DapTransaction*>(obj);
+    return left_transaction->date() < right_transaction->date();
 }

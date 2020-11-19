@@ -21,6 +21,7 @@ public:
     };
 
     Q_INVOKABLE explicit DapNetwork(const QString& a_name, QObject * a_parent = nullptr);
+    explicit DapNetwork(QObject * a_parent = nullptr) : QObject(a_parent){}
 
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString state READ stateString NOTIFY stateChanged)

@@ -27,7 +27,9 @@ QVariant DapTransactionsModel::data(const QModelIndex &index, int role) const
 QHash<int, QByteArray> DapTransactionsModel::roleNames() const
 {
     static const QHash<int, QByteArray> roles
-    { {TransactionDisplayRole, "transaction" } };
+    {
+        { TransactionDisplayRole, "transaction" }
+    };
     return roles;
 }
 

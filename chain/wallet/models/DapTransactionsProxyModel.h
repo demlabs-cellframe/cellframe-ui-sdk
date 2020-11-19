@@ -39,6 +39,7 @@ signals:
 
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const  override;
+    bool lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const override;
 
 private:
     int m_date = Date::AllTime;
