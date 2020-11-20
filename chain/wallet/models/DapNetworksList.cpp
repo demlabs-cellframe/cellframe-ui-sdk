@@ -70,3 +70,8 @@ const QList<DapNetwork *> &DapNetworksList::all() const
 {
     return m_networks;
 }
+
+bool DapNetworksList::isEmpty() const
+{
+    return m_networks.isEmpty();
+}

@@ -17,6 +17,7 @@ public:
     DapNetwork* addIfNotExist(const QString& a_name);
 
     const QList<DapNetwork *>& all() const;
+    bool isEmpty() const;
 
 public slots:
     QList<DapNetwork*> fill(QStringList a_NetworksNames);
