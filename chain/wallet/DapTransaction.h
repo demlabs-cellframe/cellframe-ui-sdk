@@ -11,7 +11,7 @@ class DapTransaction : public QObject
     Q_OBJECT
     Q_PROPERTY(DapNetwork*          network             READ network            WRITE setNetwork            NOTIFY networkChanged)
     Q_PROPERTY(Status               status              READ status             WRITE setStatus             NOTIFY statusChanged)
-    Q_PROPERTY(unsigned int         confirmationsCount  READ confirmationsCount WRITE setConfirmationsCount NOTIFY confirmationsCountChanged)
+    Q_PROPERTY(unsigned long        confirmationsCount  READ confirmationsCount WRITE setConfirmationsCount NOTIFY confirmationsCountChanged)
     Q_PROPERTY(DapTokenValue*       tokenValue          READ tokenValue         CONSTANT)
     Q_PROPERTY(QDateTime            date                READ date               WRITE setDate               NOTIFY dateChanged)
 
