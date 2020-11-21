@@ -41,36 +41,20 @@ DapNetwork *DapNetworksList::addIfNotExist(const QString &a_name)
     return  network;
 }
 
-
-
-void DapNetworksList::setNetworkProperties(QVariantMap a_networkState)
+QList<DapNetwork*> DapNetworksList::fill(QStringList a_NetworksNames)
 {
-    DapNetwork* network = this->findNetwork(a_networkState.value(DapNetwork::NAME).toString());
-    network->setProperties(a_networkState);
-}
-
-void DapNetworksList::fill(QVariant a_stringList)
-{
-    if (!a_stringList.isValid() || !a_stringList.canConvert<QStringList>())
-    {
-        qWarning() << "wrong parametr in DapNetworksList::fill";
-        return;
-    }
-
-    bool netwarkAdded = false;
-    for (QString curNetworkName: a_stringList.toStringList())
+    QList<DapNetwork*> newNetworks;
+    for (QString curNetworkName: a_NetworksNames)
     {
         DapNetwork* network = this->findNetwork(curNetworkName);
         if (!network)
-        {           
-            this->add(curNetworkName);
-
-            netwarkAdded = true;
-        }
+            newNetworks.append(this->add(curNetworkName));
     }
 
-    if (netwarkAdded)
+    if (!newNetworks.isEmpty())
         emit this->modelChanged();
+
+    return newNetworks;
 }
 
 DapNetwork* DapNetworksList::add(const QString &a_networkName)
@@ -80,4 +64,14 @@ DapNetwork* DapNetworksList::add(const QString &a_networkName)
     emit this->networkAdded(newNetwork);
 
     return  newNetwork;
+}
+
+const QList<DapNetwork *> &DapNetworksList::all() const
+{
+    return m_networks;
+}
+
+bool DapNetworksList::isEmpty() const
+{
+    return m_networks.isEmpty();
 }

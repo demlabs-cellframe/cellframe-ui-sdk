@@ -16,10 +16,11 @@ public:
     DapNetwork* findNetwork(const QString& a_name);
     DapNetwork* addIfNotExist(const QString& a_name);
 
-    void setNetworkProperties(QVariantMap a_networkState);
+    const QList<DapNetwork *>& all() const;
+    bool isEmpty() const;
 
 public slots:
-    void fill(QVariant a_stringList);
+    QList<DapNetwork*> fill(QStringList a_NetworksNames);
 
 signals:
     void networkAdded(DapNetwork* network);

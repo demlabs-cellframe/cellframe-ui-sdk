@@ -7,20 +7,16 @@ class DapNetwork: public QObject
 {
     Q_OBJECT
 public:
-
-    static const QString NAME;
-    static const QString STATE;
-    static const QString TARGET_STATE;
-    static const QString NODE_ADDRESS;
-
     enum State
     {
         ONLINE,
-        OFFLINE
+        OFFLINE,
+        UNDEFINED
         //...
     };
 
     Q_INVOKABLE explicit DapNetwork(const QString& a_name, QObject * a_parent = nullptr);
+    explicit DapNetwork(QObject * a_parent = nullptr) : QObject(a_parent){}
 
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString state READ stateString NOTIFY stateChanged)
@@ -51,7 +47,7 @@ public:
     QString targetStateString() const;
     void setTargetState(State a_targetState);
 
-    State stringToState(QString a_stateString);
+    static State stringToState(QString a_stateString);
 
 signals:
     void nameChanged(const QString& a_name);

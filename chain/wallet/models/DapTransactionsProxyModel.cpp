@@ -1,5 +1,5 @@
 #include "DapTransactionsProxyModel.h"
-#include <QDebug>
+#include <QLocale>
 
 DapTransactionsProxyModel::DapTransactionsProxyModel(QObject *a_parent)
     : QSortFilterProxyModel(a_parent)
@@ -21,7 +21,7 @@ QVariantList DapTransactionsProxyModel::statusFilter() const
     return list;
 }
 
-void DapTransactionsProxyModel::setDateFilter(const Date a_date)
+void DapTransactionsProxyModel::setDateFilter(int a_date)
 {
     if (a_date == m_date)
         return;
@@ -30,22 +30,54 @@ void DapTransactionsProxyModel::setDateFilter(const Date a_date)
     invalidateFilter();
 }
 
-void DapTransactionsProxyModel::addStatusFilter(const DapTransaction::Status a_status)
+void DapTransactionsProxyModel::addStatusFilter(int a_status)
 {
-    if (m_statuses.contains(a_status))
+    if (m_statuses.contains(static_cast<DapTransaction::Status>(a_status)))
         return;
-    m_statuses.push_back(a_status);
+    m_statuses.push_back(static_cast<DapTransaction::Status>(a_status));
     emit statusFilterChanged(m_statuses);
     invalidateFilter();
 }
 
-void DapTransactionsProxyModel::removeStatusFilter(const DapTransaction::Status a_status)
+void DapTransactionsProxyModel::removeStatusFilter(int a_status)
 {
-    if (!m_statuses.contains(a_status))
+    if (!m_statuses.contains(static_cast<DapTransaction::Status>(a_status)))
         return;
-    m_statuses.removeOne(a_status);
+    m_statuses.removeOne(static_cast<DapTransaction::Status>(a_status));
     emit statusFilterChanged(m_statuses);
     invalidateFilter();
+}
+
+bool DapTransactionsProxyModel::needShowDate(int a_index)
+{
+    if (a_index < 0 || a_index >= this->rowCount()) return false;
+    if (a_index == 0) return true;
+    QModelIndex leftIndex = this->index(a_index - 1, 0);
+    QModelIndex rigntIndex = this->index(a_index, 0);
+    DapTransaction* leftTransaction = qobject_cast<DapTransaction*>(
+                qvariant_cast<QObject*>(this->data(leftIndex)));
+    DapTransaction* rightTransaction = qobject_cast<DapTransaction*>(
+                qvariant_cast<QObject*>(this->data(rigntIndex)));
+    return leftTransaction->date().date() != rightTransaction->date().date();
+}
+
+QString DapTransactionsProxyModel::displayDate(int a_index)
+{
+    if (a_index < 0 || a_index >= this->rowCount()) return "";
+    QModelIndex index = this->index(a_index, 0);
+    DapTransaction* transaction = qobject_cast<DapTransaction*>(
+                qvariant_cast<QObject*>(this->data(index)));
+    if (transaction->date().date() == QDate::currentDate())
+        return tr("Today");
+    else if (transaction->date().date() == QDate::currentDate().addDays(-1))
+        return tr("Yesterday");
+    return QLocale(QLocale::Language::English).toString(transaction->date().date(), "MMMM, d");
+}
+
+void DapTransactionsProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
+{
+    QSortFilterProxyModel::setSourceModel(sourceModel);
+    this->sort(0,Qt::SortOrder::DescendingOrder);
 }
 
 bool DapTransactionsProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
@@ -61,25 +93,28 @@ bool DapTransactionsProxyModel::filterAcceptsRow(int sourceRow, const QModelInde
             return true;
 
         case Date::Today:
-            if(transaction->date() == QDate::currentDate()) return true;
-            else return false;
+            return transaction->date().date() == QDate::currentDate();
 
         case Date::Yesterday:
-            if(transaction->date() == QDate::currentDate().addDays(-1)) return true;
-            else return false;
+            return transaction->date().date() == QDate::currentDate().addDays(-1);
 
         case Date::ThisWeek:
-            if(transaction->date() > QDate::currentDate().addDays(-QDate::currentDate().dayOfWeek())
-                    && transaction->date() <= QDate::currentDate().addDays(7 - QDate::currentDate().dayOfWeek()))
-                return true;
-            else return false;
+            return transaction->date().date() > QDate::currentDate().addDays(-QDate::currentDate().dayOfWeek())
+                    && transaction->date().date() <= QDate::currentDate().addDays(7 - QDate::currentDate().dayOfWeek());
 
         case Date::LastWeek:
-            if(transaction->date() <= QDate::currentDate().addDays(-QDate::currentDate().dayOfWeek())
-                    && transaction->date() > QDate::currentDate().addDays(-QDate::currentDate().dayOfWeek() - 7))
-                return true;
-            else return false;
+            return transaction->date().date() <= QDate::currentDate().addDays(-QDate::currentDate().dayOfWeek())
+                    && transaction->date().date() > QDate::currentDate().addDays(-QDate::currentDate().dayOfWeek() - 7);
         }
     }
-    else return false;
+    return false;
+}
+
+bool DapTransactionsProxyModel::lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const
+{
+    QObject* obj = qvariant_cast<QObject*>(sourceModel()->data(source_left));
+    DapTransaction* left_transaction = qobject_cast<DapTransaction*>(obj);
+    obj = qvariant_cast<QObject*>(sourceModel()->data(source_right));
+    DapTransaction* right_transaction = qobject_cast<DapTransaction*>(obj);
+    return left_transaction->date() < right_transaction->date();
 }

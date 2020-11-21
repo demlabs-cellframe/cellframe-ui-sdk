@@ -8,6 +8,14 @@
 class DapGetNetworkStatusCommand : public DapAbstractCommand
 {
 public:
+    
+    static const QString NAME;
+    static const QString STATE;
+    static const QString TARGET_STATE;
+    static const QString ACTIVE_LINKS_COUNT;
+    static const QString LINKS_COUNT;
+    static const QString NODE_ADDRESS;
+    
     /// Overloaded constructor.
     /// @param asServiceName Service name.
     /// @param parent Parent.

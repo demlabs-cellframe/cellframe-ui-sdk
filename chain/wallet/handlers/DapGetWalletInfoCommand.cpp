@@ -37,7 +37,6 @@ QVariant DapGetWalletInfoCommand::respondToClient(const QVariant &arg1, const QV
     Q_UNUSED(arg10)
 
     QString walletName = arg1.toString();
-    QJsonObject networks;
 
     QStringList networkLists;
     if (!arg2.canConvert<QStringList>())
@@ -51,7 +50,8 @@ QVariant DapGetWalletInfoCommand::respondToClient(const QVariant &arg1, const QV
                     .arg(m_sCliPath)
                     .arg(walletName));
 
-
+    QJsonObject returnValue;
+    QJsonObject networks;
     for (const QString& network: networkLists)
     {
         QString networkCommand = command.arg(network);
@@ -60,17 +60,24 @@ QVariant DapGetWalletInfoCommand::respondToClient(const QVariant &arg1, const QV
         process.waitForFinished(-1);
         QString result(process.readAll());
 
-        QRegularExpression regex(R"(wallet: (\S+)\saddr: (\S+)\sbalance:)");
 
+        //Name:
+        QRegularExpression regex(R"(^wallet: (\S+)\naddr: (\S+)\nnetwork: (\S+)\nbalance:)");
         QRegularExpressionMatch match = regex.match(result);
         if (!match.hasMatch()) {
+            qWarning() << "Can't parse result";
             return {};
         }
+        returnValue.insert(WALLET_NAME, match.captured(1));
 
+        QString networkName = match.captured(3);
+        QJsonObject networkInfo {{
+            ADDRESS, match.captured(2)
+        }};
+
+        //Balance:
         QRegularExpression balanceRegex(R"((\d+.\d+) \((\d+)\) (\w+))");
         QRegularExpressionMatchIterator matchIt = balanceRegex.globalMatch(result);
-
-        QString address = match.captured(2);
 
         QJsonObject balance;
         while (matchIt.hasNext())
@@ -80,20 +87,10 @@ QVariant DapGetWalletInfoCommand::respondToClient(const QVariant &arg1, const QV
             QString token = match.captured(3);
             balance.insert(token, amount);
         }
-        QJsonObject networkInfo{
-            {ADDRESS, address},
-            {BALANCE, balance}
-        };
-        networks.insert(network, networkInfo);
+
+        networkInfo.insert(BALANCE, balance);
+        networks.insert(networkName, networkInfo);
     }
-
-
-    QJsonObject returnValue({
-                                {WALLET_NAME  , walletName },
-                                {NETWORKS_INFO, networks   }
-                            });
-
-
-
+    returnValue.insert(NETWORKS_INFO, networks);
     return returnValue;
 }

@@ -21,6 +21,10 @@ public:
     static const QString SUCCESS;
     static const QString MESSAGE;
     static const QString WALLET_NAME;
+
+    static const QString SIGNATURE_TYPE;
+    static const QString USE_EXISTING;
+
     /// Overloaded constructor.
     /// @param asServiceName Service name.
     /// @param parent Parent.

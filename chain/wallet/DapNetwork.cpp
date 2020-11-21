@@ -3,14 +3,10 @@
 #include <QJsonObject>
 #include <QDebug>
 
-const QString DapNetwork::NAME {"name"};
-const QString DapNetwork::STATE {"state"};
-const QString DapNetwork::TARGET_STATE {"targetState"};
-const QString DapNetwork::NODE_ADDRESS {"nodeAddress"};
-
 const QMap<DapNetwork::State, QString> DapNetwork::s_stateStrings = {
     { DapNetwork::State::OFFLINE, "NET_STATE_OFFLINE"},
-    { DapNetwork::State::OFFLINE, "NET_STATE_ONLINE"}
+    { DapNetwork::State::ONLINE, "NET_STATE_ONLINE"},
+    { DapNetwork::State::UNDEFINED, "Undefined state"}
 };
 
 
@@ -27,7 +23,11 @@ int DapNetwork::linksCount() const
 
 void DapNetwork::setLinksCount(int a_linksCount)
 {
+    if (m_linksCount == a_linksCount)
+        return;
     m_linksCount = a_linksCount;
+
+    emit this->linksCountChanged(a_linksCount);
 }
 
 int DapNetwork::activeLinksCount() const
@@ -89,23 +89,6 @@ void DapNetwork::setState(DapNetwork::State a_state)
     m_state = a_state;
 
     emit this->stateChanged(DapNetwork::stateToString(a_state));
-}
-
-void DapNetwork::setProperties(QVariantMap a_stateMap)
-{
-    QJsonValue jsonValue;
-
-    if (a_stateMap.contains(STATE))
-        this->setTargetState(DapNetwork::stringToState(a_stateMap[STATE].toString()));
-
-    if (a_stateMap.contains(TARGET_STATE))
-        this->setTargetState(DapNetwork::stringToState(a_stateMap[TARGET_STATE].toString()));
-
-    if (this->nodeAddress().isEmpty()) //Is not necrssary to set node address if already set
-    {
-        if (a_stateMap.contains(NODE_ADDRESS))
-            this->setNodeAddress(a_stateMap[NODE_ADDRESS].toString());
-    }
 }
 
 DapNetwork::State DapNetwork::targetState() const
