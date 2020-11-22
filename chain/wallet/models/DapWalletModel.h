@@ -14,9 +14,8 @@ class DapWalletModel : public QAbstractListModel
 
     QList<DapWallet>    m_aWallets;
 
-    explicit DapWalletModel(QObject *parent = nullptr);
-
 public:
+    explicit DapWalletModel(QObject *parent = nullptr);
     Q_PROPERTY(QStringList WalletList READ getWalletList NOTIFY walletListChanged)
 
     enum DapWalletRole

@@ -67,7 +67,7 @@ void DapWalletModel::appendWallet(const DapWallet &aWallet)
 
     emit walletListChanged(getWalletList());
 
-    int lastIndex = m_aWallets.count() - 1;
+    int lastIndex = m_aWallets.count();
     beginInsertRows(QModelIndex(), lastIndex, lastIndex);
     endInsertRows();
 }
