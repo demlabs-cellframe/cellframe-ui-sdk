@@ -29,9 +29,9 @@ public:
 public slots:
     /// Send a response to the client.
     /// @details Performed on the service side.
-    /// @param arg1
-    /// @param arg2
-    /// @param arg3
+    /// @param arg1 name Wallet
+    /// @param arg2 natwork
+    /// @param arg3 chain
     /// @param arg4
     /// @param arg5
     /// @param arg6
@@ -42,7 +42,6 @@ public slots:
                              const QVariant &arg7 = QVariant(), const QVariant &arg8 = QVariant(),
                              const QVariant &arg9 = QVariant(), const QVariant &arg10 = QVariant()) override;
 
-//    const QStringList m_days{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
     const QStringList m_month{"Jan", "Feb", "Mar", "Apr", "May", "Jun",
                             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 };

@@ -25,7 +25,13 @@ QVariant DapTransactionsModel::data(const QModelIndex &index, int role) const
 
 void DapTransactionsModel::append(DapTransaction *a_transaction)
 {
-    int lastIndex = m_transactions.count() - 1;
+    for(auto transaction: m_transactions)
+    {
+        if(transaction->hash() == a_transaction->hash())
+            return;
+    }
+
+    int lastIndex = m_transactions.count() ;
     beginInsertRows(QModelIndex(), lastIndex, lastIndex);
     m_transactions.append(a_transaction);
     endInsertRows();
