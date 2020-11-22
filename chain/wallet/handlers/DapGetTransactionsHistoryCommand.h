@@ -1,5 +1,5 @@
-#ifndef DAPGETHISTORYTRANSACTIONCOMMAND_H
-#define DAPGETHISTORYTRANSACTIONCOMMAND_H
+#ifndef DapGetTransactionHistoryCommand_H
+#define DapGetTransactionHistoryCommand_H
 
 #include <QProcess>
 #include <QString>
@@ -8,15 +8,15 @@
 
 #include "DapAbstractCommand.h"
 
-class DapGetHistoryTransactionCommand : public DapAbstractCommand
+class DapGetTransactionsHistoryCommand : public DapAbstractCommand
 {
 public:
-    static const QString TransactionTime;
-    static const QString TransactionAction;
-    static const QString TransactionAmount;
-    static const QString TransactionTokenName;
-    static const QString TransactionAddress;
-    static const QString TransactionHash;
+    static const QString TIME;
+    static const QString ACTION;
+    static const QString AMOUNT;
+    static const QString TOKEN;
+    static const QString ADDRESS;
+    static const QString HASH;
 
     enum Action{GET,GIVE};
     /// Overloaded constructor.
@@ -24,7 +24,7 @@ public:
     /// @param parent Parent.
     /// @details The parent must be either DapRPCSocket or DapRPCLocalServer.
     /// @param asCliPath The path to cli nodes.
-    DapGetHistoryTransactionCommand(const QString &asServicename, QObject *parent = nullptr, const QString &asCliPath = QString());
+    DapGetTransactionsHistoryCommand(const QString &asServicename, QObject *parent = nullptr, const QString &asCliPath = QString());
 
 public slots:
     /// Send a response to the client.
@@ -46,4 +46,4 @@ public slots:
                             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 };
 
-#endif // DAPGETHISTORYTRANSACTIONCOMMAND_H
+#endif // DapGetTransactionHistoryCommand_H

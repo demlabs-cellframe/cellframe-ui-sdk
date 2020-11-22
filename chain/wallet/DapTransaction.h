@@ -31,7 +31,7 @@ public:
                             size_t a_confirmationsCount,
                             const DapTokenValue& a_tokenValue,
                             QDateTime a_date,
-                            QString a_hash,
+                            const QString& a_hash,
                             QObject* a_parent = nullptr);
 
     DapTransaction(const DapTransaction& a_transaction);

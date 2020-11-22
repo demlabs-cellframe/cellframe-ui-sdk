@@ -17,7 +17,7 @@ public:
     DapNetwork* findNetwork(const QString& a_name);
     DapNetwork* addIfNotExist(const QString& a_name);
 
-    const QList<DapNetwork *>& all() ;
+    const QList<DapNetwork *>& all() const;
     bool isEmpty() const;
 
 public slots:

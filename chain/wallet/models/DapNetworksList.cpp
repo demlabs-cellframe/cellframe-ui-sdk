@@ -66,7 +66,7 @@ DapNetwork* DapNetworksList::add(const QString &a_networkName)
     return  newNetwork;
 }
 
-const QList<DapNetwork *> &DapNetworksList::all()
+const QList<DapNetwork *> &DapNetworksList::all() const
 {
     return m_networks;
 }

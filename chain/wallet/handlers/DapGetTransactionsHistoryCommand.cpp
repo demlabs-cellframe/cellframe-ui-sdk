@@ -1,18 +1,18 @@
-#include "DapGetHistoryTransactionCommand.h"
+#include "DapGetTransactionsHistoryCommand.h"
 
-const QString DapGetHistoryTransactionCommand::TransactionTime = "time";
-const QString DapGetHistoryTransactionCommand::TransactionAction = "action";
-const QString DapGetHistoryTransactionCommand::TransactionAmount = "amount";
-const QString DapGetHistoryTransactionCommand::TransactionTokenName = "tokenName";
-const QString DapGetHistoryTransactionCommand::TransactionAddress = "address";
-const QString DapGetHistoryTransactionCommand::TransactionHash = "hash";
+const QString DapGetTransactionsHistoryCommand::TIME = "time";
+const QString DapGetTransactionsHistoryCommand::ACTION = "action";
+const QString DapGetTransactionsHistoryCommand::AMOUNT = "amount";
+const QString DapGetTransactionsHistoryCommand::TOKEN = "tokenName";
+const QString DapGetTransactionsHistoryCommand::ADDRESS = "address";
+const QString DapGetTransactionsHistoryCommand::HASH = "hash";
 
 /// Overloaded constructor.
 /// @param asServiceName Service name.
 /// @param parent Parent.
 /// @details The parent must be either DapRPCSocket or DapRPCLocalServer.
 /// @param asCliPath The path to cli nodes.
-DapGetHistoryTransactionCommand::DapGetHistoryTransactionCommand(const QString &asServicename, QObject *parent, const QString &asCliPath)
+DapGetTransactionsHistoryCommand::DapGetTransactionsHistoryCommand(const QString &asServicename, QObject *parent, const QString &asCliPath)
     : DapAbstractCommand(asServicename, parent, asCliPath)
 {
 
@@ -22,7 +22,7 @@ DapGetHistoryTransactionCommand::DapGetHistoryTransactionCommand(const QString &
 /// @details Performed on the service side.
 /// @param arg1...arg10 Parameters.
 /// @return Reply to client.
-QVariant DapGetHistoryTransactionCommand::respondToClient(const QVariant &arg1, const QVariant &arg2, const QVariant &arg3,
+QVariant DapGetTransactionsHistoryCommand::respondToClient(const QVariant &arg1, const QVariant &arg2, const QVariant &arg3,
                                                           const QVariant &arg4, const QVariant &arg5, const QVariant &arg6,
                                                           const QVariant &arg7, const QVariant &arg8, const QVariant &arg9,
                                                           const QVariant &arg10)
@@ -47,22 +47,22 @@ QVariant DapGetHistoryTransactionCommand::respondToClient(const QVariant &arg1, 
 
 
     QStringList resultList = QString::fromLatin1(processCreate.readAll()).split("tx hash ");
-    for(auto iter:resultList)
+    for(auto curTx:resultList)
     {
-        if(iter.contains("history") || iter.isEmpty())
+        if(curTx.contains("history") || curTx.isEmpty())
             continue;
 
         QJsonObject resultObj;
 
         QRegExp rxHash("^(\\w+)");
-        rxHash.indexIn(iter);
+        rxHash.indexIn(curTx);
         if(!rxHash.cap(1).isEmpty())
-            resultObj.insert(TransactionHash,rxHash.cap(1));
+            resultObj.insert(HASH,rxHash.cap(1));
         else
-            resultObj.insert(TransactionHash,"");
+            resultObj.insert(HASH,"");
 
         QRegExp rxTime("([A-Za-z]{3}) ([A-Za-z]{3}) ([0-9]{2}) ([0-9\\:]{8}) ([0-9]{4})");
-        rxTime.indexIn(iter);
+        rxTime.indexIn(curTx);
 
         if(!rxTime.cap(0).isEmpty())
         {
@@ -77,33 +77,33 @@ QVariant DapGetHistoryTransactionCommand::respondToClient(const QVariant &arg1, 
             QDate date(rxTime.cap(5).toInt(),month,rxTime.cap(3).toInt());
             QTime time = QTime::fromString(QString("%1").arg(rxTime.cap(4)),"hh:mm:ss");
 
-            resultObj.insert(TransactionTime,QDateTime(date,time).toString());
+            resultObj.insert(TIME, QDateTime(date,time).toString());
         }
         else
         {
-            resultObj.insert(TransactionTime,"");
+            resultObj.insert(TIME, "");
         }
 
-        if(iter.contains("recv")||iter.contains("send"))
+        if(curTx.contains("recv") || curTx.contains("send"))
         {
             QRegExp rxSendRecv("(recv|send) ([0-9]{0,}) ([A-Z]{0,}) (from|to) ([A-Za-z0-9]{0,})");
-            rxSendRecv.indexIn(iter);
+            rxSendRecv.indexIn(curTx);
             if(rxSendRecv.cap(2) == "send")
-                resultObj.insert(TransactionAction,Action::GIVE);
+                resultObj.insert(ACTION,Action::GIVE);
             else
-                resultObj.insert(TransactionAction,Action::GET);
-            resultObj.insert(TransactionAmount,rxSendRecv.cap(2));
-            resultObj.insert(TransactionTokenName,rxSendRecv.cap(3));
-            resultObj.insert(TransactionAddress,rxSendRecv.cap(5));
+                resultObj.insert(ACTION,Action::GET);
+            resultObj.insert(AMOUNT,rxSendRecv.cap(2));
+            resultObj.insert(TOKEN,rxSendRecv.cap(3));
+            resultObj.insert(ADDRESS,rxSendRecv.cap(5));
 
         }
-        if(iter.contains("emit"))
+        else if(curTx.contains("emit"))
         {
             QRegExp rxEmit("(emit) ([0-9]{0,}) ([A-Z]{0,})");
-            rxEmit.indexIn(iter);
-            resultObj.insert(TransactionAction,Action::GET);
-            resultObj.insert(TransactionAmount,rxEmit.cap(2));
-            resultObj.insert(TransactionTokenName,rxEmit.cap(3));
+            rxEmit.indexIn(curTx);
+            resultObj.insert(ACTION, Action::GET);
+            resultObj.insert(AMOUNT, rxEmit.cap(2));
+            resultObj.insert(TOKEN, rxEmit.cap(3));
         }
 
         //  Requires clarification
