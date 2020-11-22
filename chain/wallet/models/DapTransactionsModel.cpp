@@ -1,5 +1,5 @@
 #include "DapTransactionsModel.h"
-
+#include <QDebug>
 DapTransactionsModel::DapTransactionsModel(QObject* a_parent)
     : QAbstractListModel(a_parent)
 { 

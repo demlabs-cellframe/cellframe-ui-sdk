@@ -13,11 +13,12 @@ class DapGetHistoryTransactionCommand : public DapAbstractCommand
 public:
     static const QString TransactionTime;
     static const QString TransactionAction;
-    static const QString TransactionPrice;
+    static const QString TransactionAmount;
     static const QString TransactionTokenName;
     static const QString TransactionAddress;
-    static const QString SUCCESS;
-    static const QString ERROR_MESSAGE;
+    static const QString TransactionHash;
+
+    enum Action{GET,GIVE};
     /// Overloaded constructor.
     /// @param asServiceName Service name.
     /// @param parent Parent.

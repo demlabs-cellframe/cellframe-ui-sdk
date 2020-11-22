@@ -31,6 +31,7 @@ public:
                             size_t a_confirmationsCount,
                             const DapTokenValue& a_tokenValue,
                             QDateTime a_date,
+                            QString a_hash,
                             QObject* a_parent = nullptr);
 
     DapTransaction(const DapTransaction& a_transaction);
@@ -41,13 +42,14 @@ public:
     size_t confirmationsCount()   const { return m_confirmationsCount; }
     DapTokenValue* tokenValue()         { return &m_tokenValue;        }
     QDateTime date()              const { return m_date;               }
+    QString  hash()               const { return m_hash;               }
 
     void setNetwork(DapNetwork* a_network);
     void setStatus (Status a_status);
     void setConfirmationsCount(size_t a_confirmationsCount);
     void setTokenValue (const DapTokenValue &a_tokenValue);
     void setDate(QDateTime a_date);
-
+    void setHash(QString a_hash);
 signals:
     void networkChanged(DapNetwork*);
     void statusChanged(Status);
@@ -60,5 +62,6 @@ private:
     size_t               m_confirmationsCount{};
     DapTokenValue        m_tokenValue;
     QDateTime            m_date{};
+    QString              m_hash;
 };
 #endif // DAPTRANSACTION_H

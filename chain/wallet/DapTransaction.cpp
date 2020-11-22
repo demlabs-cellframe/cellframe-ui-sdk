@@ -10,6 +10,7 @@ DapTransaction::DapTransaction(DapNetwork* a_network,
                                size_t a_confirmationsCount,
                                const DapTokenValue &a_tokenValue,
                                QDateTime a_date,
+                               QString a_hash,
                                QObject* a_parent)
     : QObject               (a_parent)
     , m_network             (a_network)
@@ -17,6 +18,7 @@ DapTransaction::DapTransaction(DapNetwork* a_network,
     , m_confirmationsCount  (a_confirmationsCount)
     , m_tokenValue          (a_tokenValue)
     , m_date                (a_date)
+    , m_hash                (a_hash)
 {
 }
 
@@ -26,6 +28,7 @@ DapTransaction::DapTransaction(const DapTransaction &a_transaction)
     , m_confirmationsCount  (a_transaction.m_confirmationsCount)
     , m_tokenValue          (a_transaction.m_tokenValue)
     , m_date                (a_transaction.m_date)
+    ,m_hash                 (a_transaction.m_hash)
 {
 }
 
@@ -79,4 +82,9 @@ void DapTransaction::setDate(QDateTime a_date)
         return;
     m_date = a_date;
     emit dateChanged(a_date);
+}
+
+void DapTransaction::setHash(QString a_hash)
+{
+    m_hash = a_hash;
 }
