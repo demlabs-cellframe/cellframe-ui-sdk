@@ -60,6 +60,39 @@ QVariant DapWalletBalanceModel::data(const QModelIndex &a_index, int a_role) con
     }
 }
 
+QVariantList DapWalletBalanceModel::networks()
+{
+    QVariantList networksList;
+    for (auto curNetwork: m_networkBalances.keys())
+    {
+        networksList.append(QVariant::fromValue(const_cast<DapNetwork*>(curNetwork)));
+    }
+    return networksList;
+}
+
+bool DapWalletBalanceModel::isEmpty()
+{
+    return m_networkBalances.isEmpty();
+}
+
+DapBalanceModel *DapWalletBalanceModel::getBalanceModel(const QString& a_networkName)
+{
+    const DapNetwork* network = nullptr;
+    for (auto curNetwork: m_networkBalances.keys())
+    {
+        if (a_networkName == curNetwork->name())
+        {
+            network = curNetwork;
+            break;
+        }
+    }
+
+    if (!network)
+        return {};
+
+    return m_networkBalances.value(network);
+}
+
 bool DapWalletBalanceModel::insertBalanceModel(const DapNetwork *a_network, const DapBalanceModel::BalanceInfo_t &a_balanceMap)
 {
     auto lowerBoundIt = m_networkBalances.lowerBound(a_network);
@@ -75,6 +108,10 @@ bool DapWalletBalanceModel::insertBalanceModel(const DapNetwork *a_network, cons
     m_networkBalances[a_network] = new DapBalanceModel(a_balanceMap, this);
 
     QAbstractListModel::endInsertRows();
+
+    emit networksChanged(this->networks());
+    if (m_networkBalances.count() == 1)
+        emit this->isEmptyChanged(true);
 
     return true;
 }

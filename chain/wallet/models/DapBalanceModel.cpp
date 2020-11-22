@@ -83,6 +83,16 @@ QVariant DapBalanceModel::data(const QModelIndex &a_index, int a_role) const
     }
 }
 
+QVariantList DapBalanceModel::tokens() const
+{
+    QVariantList tokens;
+    for (auto curToken: m_tokensAmount.keys())
+    {
+        tokens.append(QVariant::fromValue(const_cast<DapToken*>(curToken)));
+    }
+    return tokens;
+}
+
 bool DapBalanceModel::insertTokenAmount(const DapToken *a_token, balance_t a_amount)
 {
     auto lowerBoundIt = m_tokensAmount.lowerBound(a_token);
@@ -94,6 +104,8 @@ bool DapBalanceModel::insertTokenAmount(const DapToken *a_token, balance_t a_amo
     QAbstractListModel::beginInsertRows(QModelIndex(), index, index);
 
     m_tokensAmount[a_token] = a_amount;
+
+    emit this->tokensChanged(this->tokens());
 
     QAbstractListModel::endInsertRows();
 

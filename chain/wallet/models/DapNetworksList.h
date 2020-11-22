@@ -7,11 +7,12 @@
 class DapNetworksList: public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QList<QObject*> model READ model NOTIFY modelChanged)
 public:
 
     DapNetworksList(QObject *a_parrent = nullptr);
 
-    Q_INVOKABLE QList<QObject*> model();
+    QList<QObject*> model();
 
     DapNetwork* findNetwork(const QString& a_name);
     DapNetwork* addIfNotExist(const QString& a_name);
@@ -24,7 +25,7 @@ public slots:
 
 signals:
     void networkAdded(DapNetwork* network);
-    void modelChanged();
+    void modelChanged(const QList<QObject*>& a_model);
 
 private:
     //If you call this method you need manually emit listCompositionChanged();

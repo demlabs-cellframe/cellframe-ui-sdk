@@ -12,9 +12,7 @@ typedef ulong balance_t;
 class DapBalanceModel : public QAbstractListModel
 {
     Q_OBJECT
-
-
-
+    Q_PROPERTY(QVariantList tokens READ tokens NOTIFY tokensChanged)
     enum Roles
     {
         Token = Qt::UserRole,
@@ -35,6 +33,11 @@ public:
     virtual int rowCount(const QModelIndex &a_parent) const override;
     virtual QVariant data(const QModelIndex &a_index, int a_role) const override;
 
+    QVariantList tokens() const;
+
+signals:
+    void tokensChanged(const QVariantList& a_model);
+
 private:
     bool insertTokenAmount(const DapToken *a_token, balance_t a_amount);
 
@@ -43,5 +46,7 @@ private:
 
     BalanceInfo_t m_tokensAmount;
 };
+
+Q_DECLARE_METATYPE(DapBalanceModel*)
 
 #endif // DAPBALLANCEMODEL_H

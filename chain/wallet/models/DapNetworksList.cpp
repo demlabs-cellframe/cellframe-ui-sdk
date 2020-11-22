@@ -36,7 +36,7 @@ DapNetwork *DapNetworksList::addIfNotExist(const QString &a_name)
     if (!network)
     {
         network = this->add(a_name);
-        emit this->modelChanged();
+        emit this->modelChanged(this->model());
     }
     return  network;
 }
@@ -52,7 +52,7 @@ QList<DapNetwork*> DapNetworksList::fill(QStringList a_NetworksNames)
     }
 
     if (!newNetworks.isEmpty())
-        emit this->modelChanged();
+        emit this->modelChanged(this->model());
 
     return newNetworks;
 }
