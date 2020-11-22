@@ -7,7 +7,7 @@
 #include "DapNetwork.h"
 #include "DapToken.h"
 
-typedef ulong balance_t;
+typedef long balance_t;
 
 class DapBalanceModel : public QAbstractListModel
 {

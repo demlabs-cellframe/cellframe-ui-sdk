@@ -38,3 +38,8 @@ void DapTokenValue::setAmount(balance_t a_amount)
     m_amount = a_amount;
     emit amountChanged(a_amount);
 }
+
+QString DapTokenValue::representation(bool a_signed /*= false*/) const
+{
+    return ((a_signed && m_amount > 0) ? "+" : "") + QString::number(m_amount) + " " + m_token->name();
+}
