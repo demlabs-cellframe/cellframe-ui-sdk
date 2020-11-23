@@ -1,6 +1,4 @@
 #include "DapWallet.h"
-#include <QApplication>
-#include <QClipboard>
 
 DapWallet::DapWallet(QObject * parent)
     : QObject(parent)

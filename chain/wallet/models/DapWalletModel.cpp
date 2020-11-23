@@ -1,4 +1,5 @@
 #include "DapWalletModel.h"
+#include <QDebug>
 
 DapWalletModel::DapWalletModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -34,6 +35,8 @@ QVariant DapWalletModel::data(const QModelIndex &index, int role) const
         case TokensDisplayRole:
             return QVariant::fromValue<QList<QObject*>>(getTokens(index.row()));
         case WalletsDisplayRole:    return getWalletList();
+        case WalletDisplayRole:
+            return QVariant::fromValue<QObject*>(const_cast<DapWallet*>(&m_aWallets[index.row()]));
         default: break;
     }
 
@@ -116,13 +119,14 @@ QHash<int, QByteArray> DapWalletModel::roleNames() const
 {
     static const QHash<int, QByteArray> roles
     {
-        { NameDisplayRole, "name" },
-        { BalanceDisplayRole, "balance" },
-        { AddressDisplayRole, "address" },
-        { IconDisplayRole, "iconPath" },
-        { NetworksDisplayRole, "networks" },
-        { TokensDisplayRole, "tokens" },
-        { WalletsDisplayRole, "walletList" }
+        { NameDisplayRole,      "name"       },
+        { BalanceDisplayRole,   "balance"    },
+        { AddressDisplayRole,   "address"    },
+        { IconDisplayRole,      "iconPath"   },
+        { NetworksDisplayRole,  "networks"   },
+        { TokensDisplayRole,    "tokens"     },
+        { WalletsDisplayRole,   "walletList" },
+        { WalletDisplayRole,    "wallet"     }
     };
 
     return roles;

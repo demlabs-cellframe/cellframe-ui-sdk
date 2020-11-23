@@ -26,7 +26,8 @@ public:
         IconDisplayRole,
         NetworksDisplayRole,
         TokensDisplayRole,
-        WalletsDisplayRole
+        WalletsDisplayRole,
+        WalletDisplayRole
     };
     Q_ENUM(DapWalletRole)
 
