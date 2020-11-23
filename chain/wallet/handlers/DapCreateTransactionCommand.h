@@ -10,6 +10,13 @@ class DapCreateTransactionCommand : public DapAbstractCommand
 public:
     static const QString SUCCESS;
     static const QString ERROR_MESSAGE;
+
+    static const QString WALLET_NAME;
+    static const QString NETWORK;
+    static const QString RECIEVER_ADDRESS;
+    static const QString AMOUNT;
+    static const QString TOKEN;
+
     /// Overloaded constructor.
     /// @param asServiceName Service name.
     /// @param parent Parent.
