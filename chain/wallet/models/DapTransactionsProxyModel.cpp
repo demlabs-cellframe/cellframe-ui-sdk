@@ -80,6 +80,20 @@ void DapTransactionsProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
     this->sort(0,Qt::SortOrder::DescendingOrder);
 }
 
+void DapTransactionsProxyModel::setDefaultFilters()
+{
+    if (!m_statuses.contains(DapTransaction::Status::Local))
+        m_statuses.push_back(DapTransaction::Status::Local);
+    if (!m_statuses.contains(DapTransaction::Status::Mempool))
+        m_statuses.push_back(DapTransaction::Status::Mempool);
+    if (!m_statuses.contains(DapTransaction::Status::Canceled))
+        m_statuses.push_back(DapTransaction::Status::Canceled);
+    if (!m_statuses.contains(DapTransaction::Status::Successful))
+        m_statuses.push_back(DapTransaction::Status::Successful);
+    m_date = Date::AllTime;
+    invalidateFilter();
+}
+
 bool DapTransactionsProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
     QModelIndex modelIndex = sourceModel()->index(sourceRow, 0, sourceParent);

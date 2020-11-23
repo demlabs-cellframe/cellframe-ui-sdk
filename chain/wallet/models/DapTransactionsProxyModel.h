@@ -36,6 +36,7 @@ public:
     Q_INVOKABLE bool needShowDate(int a_index);
     Q_INVOKABLE QString displayDate(int a_index);
     void setSourceModel(QAbstractItemModel *sourceModel) override;
+    void setDefaultFilters();
 
 signals:
     void dateFilterChanged(int);
