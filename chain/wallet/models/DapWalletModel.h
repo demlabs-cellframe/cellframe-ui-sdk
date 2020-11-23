@@ -12,7 +12,6 @@ class DapWalletModel : public QAbstractListModel
 {
     Q_OBJECT
 
-    QList<DapWallet>    m_aWallets;
 
 public:
     explicit DapWalletModel(QObject *parent = nullptr);
@@ -43,15 +42,21 @@ public:
 
     QStringList getWalletList() const;
 
+    DapWallet* findByName(const QString& a_name);
+
 signals:
     void walletListChanged(const QStringList& aWalletList);
 
 public slots:
 
-    Q_INVOKABLE void appendWallet(const DapWallet& aWallet);
+    Q_INVOKABLE void appendWallet(DapWallet *aWallet);
     Q_INVOKABLE void appendToken(const QString& asWalletAddress, DapWalletToken* aToken);
     Q_INVOKABLE void removeWallet(const QString& asWalletAddress);
     Q_INVOKABLE void removeWallet(const int aWalletIndex);
+
+private:
+    QList<DapWallet*> m_wallets;
+
 };
 
 #endif // DAPWALLETMODEL_H

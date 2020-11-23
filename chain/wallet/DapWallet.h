@@ -13,14 +13,6 @@ class DapWallet : public QObject
 {
     Q_OBJECT
 
-    QString         m_sName;
-    double          m_dBalance {0.0};
-    QString         m_sIcon;
-    QString         m_sAddress = "private";
-    QStringList     m_aNetworks;
-    QMap<QString, QString>   m_aAddresses;
-    mutable QList<DapWalletToken*>   m_aTokens;
-
 public:
     Q_INVOKABLE explicit DapWallet(QObject * parent = nullptr);
     Q_INVOKABLE DapWallet(const DapWallet& aWallet);
@@ -77,6 +69,14 @@ public slots:
 
 private:
     DapWalletBalanceModel* m_balanceModel;
+
+    QString         m_sName;
+    double          m_dBalance {0.0};
+    QString         m_sIcon;
+    QString         m_sAddress;
+    QStringList     m_aNetworks;
+    QMap<QString, QString>   m_aAddresses;
+    mutable QList<DapWalletToken*>   m_aTokens;
 };
 
 Q_DECLARE_METATYPE(DapWallet)

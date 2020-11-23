@@ -16,7 +16,7 @@ int DapWalletModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
 
-    return m_aWallets.count();
+    return m_wallets.count();
 }
 
 QVariant DapWalletModel::data(const QModelIndex &index, int role) const
@@ -26,16 +26,16 @@ QVariant DapWalletModel::data(const QModelIndex &index, int role) const
 
     switch (role)
     {
-        case NameDisplayRole:       return m_aWallets[index.row()].getName();
-        case BalanceDisplayRole:    return m_aWallets[index.row()].getBalance();
-        case AddressDisplayRole:    return m_aWallets[index.row()].getAddress();
-        case IconDisplayRole:       return m_aWallets[index.row()].getIcon();
-        case NetworksDisplayRole:   return m_aWallets[index.row()].getNetworks();
+        case NameDisplayRole:       return m_wallets[index.row()]->getName();
+        case BalanceDisplayRole:    return m_wallets[index.row()]->getBalance();
+        case AddressDisplayRole:    return m_wallets[index.row()]->getAddress();
+        case IconDisplayRole:       return m_wallets[index.row()]->getIcon();
+        case NetworksDisplayRole:   return m_wallets[index.row()]->getNetworks();
         case TokensDisplayRole:
             return QVariant::fromValue<QList<QObject*>>(getTokens(index.row()));
         case WalletsDisplayRole:    return getWalletList();
         case WalletDisplayRole:
-            return QVariant::fromValue<QObject*>(const_cast<DapWallet*>(&m_aWallets[index.row()]));
+            return QVariant::fromValue<QObject*>(m_wallets[index.row()]);
         default: break;
     }
 
@@ -45,8 +45,8 @@ QVariant DapWalletModel::data(const QModelIndex &index, int role) const
 QList<QObject*> DapWalletModel::getTokens(const int aIndex) const
 {
     QList<QObject*> tokens;
-    auto cbegin = m_aWallets[aIndex].getTokens().cbegin();
-    auto cend = m_aWallets[aIndex].getTokens().cend();
+    auto cbegin = m_wallets[aIndex]->getTokens().cbegin();
+    auto cend = m_wallets[aIndex]->getTokens().cend();
     for(; cbegin != cend; ++ cbegin)
         tokens.append(*cbegin);
 
@@ -56,43 +56,55 @@ QList<QObject*> DapWalletModel::getTokens(const int aIndex) const
 QStringList DapWalletModel::getWalletList() const
 {
     QStringList walletList;
-    foreach (auto wallet, m_aWallets)
+    foreach (auto wallet, m_wallets)
     {
-        walletList.append(wallet.getName());
+        walletList.append(wallet->getName());
     }
     return walletList;
 }
 
-void DapWalletModel::appendWallet(const DapWallet &aWallet)
+DapWallet *DapWalletModel::findByName(const QString &a_name)
 {
-    m_aWallets.append(aWallet);
+    auto it = std::find_if(m_wallets.begin(), m_wallets.end(), [&a_name] (DapWallet* a_wallet)
+    {
+        return a_wallet->getName() == a_name;
+    });
+    if (it == m_wallets.end())
+        return nullptr;
+
+    return *it;
+}
+
+void DapWalletModel::appendWallet(DapWallet* aWallet)
+{
+    m_wallets.append(aWallet);
 
     emit walletListChanged(getWalletList());
 
-    int lastIndex = m_aWallets.count();
+    int lastIndex = m_wallets.count();
     beginInsertRows(QModelIndex(), lastIndex, lastIndex);
     endInsertRows();
 }
 
 void DapWalletModel::appendToken(const QString &asWalletAddress, DapWalletToken* aToken)
 {
-    auto wallet = std::find_if(m_aWallets.begin(), m_aWallets.end(), [=] (const DapWallet& aWallet)
+    auto wallet = std::find_if(m_wallets.begin(), m_wallets.end(), [=] (DapWallet* aWallet)
     {
-        return aWallet.getAddresses().values().contains(asWalletAddress);
+        return aWallet->getAddresses().values().contains(asWalletAddress);
     });
 
-    return wallet->addToken(aToken);
+    return (*wallet)->addToken(aToken);
 }
 
 void DapWalletModel::removeWallet(const QString &asWalletAddress)
 {
     int removeIndex = -1;
-    auto wallet = std::find_if(m_aWallets.cbegin(), m_aWallets.cend(), [=] (const DapWallet& aWallet)
+    auto wallet = std::find_if(m_wallets.cbegin(), m_wallets.cend(), [=] (DapWallet* aWallet)
     {
-        return aWallet.getAddresses().values().contains(asWalletAddress);
+        return aWallet->getAddresses().values().contains(asWalletAddress);
     });
-    removeIndex = m_aWallets.indexOf(*wallet);
-    m_aWallets.removeAt(removeIndex);
+    removeIndex = m_wallets.indexOf(*wallet);
+    m_wallets.removeAt(removeIndex);
 
     emit walletListChanged(getWalletList());
 
@@ -104,10 +116,10 @@ void DapWalletModel::removeWallet(const QString &asWalletAddress)
 
 void DapWalletModel::removeWallet(const int aWalletIndex)
 {
-    if(aWalletIndex >= m_aWallets.count() || m_aWallets.count() < aWalletIndex)
+    if(aWalletIndex >= m_wallets.count() || m_wallets.count() < aWalletIndex)
         return;
     beginRemoveRows(QModelIndex(), aWalletIndex, aWalletIndex);
-    m_aWallets.removeAt(aWalletIndex);
+    m_wallets.removeAt(aWalletIndex);
 
     emit walletListChanged(getWalletList());
 

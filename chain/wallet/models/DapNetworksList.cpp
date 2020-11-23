@@ -41,6 +41,15 @@ DapNetwork *DapNetworksList::addIfNotExist(const QString &a_name)
     return  network;
 }
 
+QStringList DapNetworksList::names()
+{
+    QStringList namesList;
+    for (auto curNetwork: this->all()) {
+        namesList.append(curNetwork->name());
+    }
+    return namesList;
+}
+
 QList<DapNetwork*> DapNetworksList::fill(QStringList a_NetworksNames)
 {
     QList<DapNetwork*> newNetworks;
