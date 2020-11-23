@@ -84,7 +84,8 @@ QStringList DapWallet::getNetworks() const
 
 void DapWallet::setAddress(const QString &asNetwork)
 {
-    m_sAddress = m_aAddresses.find(asNetwork).value();
+    //m_sAddress = m_aAddresses.find(asNetwork).value();
+    m_sAddress = asNetwork;
 
     emit addressChanged(m_sAddress);
 }
