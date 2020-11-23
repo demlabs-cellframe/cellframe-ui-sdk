@@ -18,7 +18,7 @@ public:
     static const QString ADDRESS;
     static const QString HASH;
 
-    enum Action{GET,GIVE};
+
     /// Overloaded constructor.
     /// @param asServiceName Service name.
     /// @param parent Parent.
