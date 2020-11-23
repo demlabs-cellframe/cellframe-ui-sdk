@@ -1,5 +1,4 @@
 #include "DapWalletModel.h"
-#include <QDebug>
 
 DapWalletModel::DapWalletModel(QObject *parent)
     : QAbstractListModel(parent)
