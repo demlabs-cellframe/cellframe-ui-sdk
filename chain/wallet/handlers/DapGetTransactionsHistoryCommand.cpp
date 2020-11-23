@@ -89,9 +89,7 @@ QVariant DapGetTransactionsHistoryCommand::respondToClient(const QVariant &arg1,
             QRegExp rxSendRecv("(recv|send) ([0-9]{0,}) ([A-Z]{0,}) (from|to) ([A-Za-z0-9]{0,})");
             rxSendRecv.indexIn(curTx);
             if(rxSendRecv.cap(2) == "send")
-                resultObj.insert(ACTION,Action::GIVE);
-            else
-                resultObj.insert(ACTION,Action::GET);
+                resultObj.insert(AMOUNT,"-"+rxSendRecv.cap(2));
             resultObj.insert(AMOUNT,rxSendRecv.cap(2));
             resultObj.insert(TOKEN,rxSendRecv.cap(3));
             resultObj.insert(ADDRESS,rxSendRecv.cap(5));
@@ -101,7 +99,6 @@ QVariant DapGetTransactionsHistoryCommand::respondToClient(const QVariant &arg1,
         {
             QRegExp rxEmit("(emit) ([0-9]{0,}) ([A-Z]{0,})");
             rxEmit.indexIn(curTx);
-            resultObj.insert(ACTION, Action::GET);
             resultObj.insert(AMOUNT, rxEmit.cap(2));
             resultObj.insert(TOKEN, rxEmit.cap(3));
         }
