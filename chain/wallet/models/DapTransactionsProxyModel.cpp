@@ -34,18 +34,18 @@ void DapTransactionsProxyModel::addStatusFilter(int a_status)
 {
     if (m_statuses.contains(static_cast<DapTransaction::Status>(a_status)))
         return;
-    m_statuses.push_back(static_cast<DapTransaction::Status>(a_status));
+    m_statuses << static_cast<DapTransaction::Status>(a_status);
     emit statusFilterChanged(m_statuses);
     invalidateFilter();
 }
 
 void DapTransactionsProxyModel::removeStatusFilter(int a_status)
 {
-    if (!m_statuses.contains(static_cast<DapTransaction::Status>(a_status)))
-        return;
-    m_statuses.removeOne(static_cast<DapTransaction::Status>(a_status));
-    emit statusFilterChanged(m_statuses);
-    invalidateFilter();
+    if (m_statuses.remove(static_cast<DapTransaction::Status>(a_status)))
+    {
+        emit statusFilterChanged(m_statuses);
+        invalidateFilter();
+    }
 }
 
 bool DapTransactionsProxyModel::needShowDate(int a_index)
@@ -82,14 +82,10 @@ void DapTransactionsProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
 
 void DapTransactionsProxyModel::setDefaultFilters()
 {
-    if (!m_statuses.contains(DapTransaction::Status::Local))
-        m_statuses.push_back(DapTransaction::Status::Local);
-    if (!m_statuses.contains(DapTransaction::Status::Mempool))
-        m_statuses.push_back(DapTransaction::Status::Mempool);
-    if (!m_statuses.contains(DapTransaction::Status::Canceled))
-        m_statuses.push_back(DapTransaction::Status::Canceled);
-    if (!m_statuses.contains(DapTransaction::Status::Successful))
-        m_statuses.push_back(DapTransaction::Status::Successful);
+    m_statuses << DapTransaction::Status::Local
+               << DapTransaction::Status::Mempool
+               << DapTransaction::Status::Canceled
+               << DapTransaction::Status::Successful;
     m_date = Date::AllTime;
     invalidateFilter();
 }

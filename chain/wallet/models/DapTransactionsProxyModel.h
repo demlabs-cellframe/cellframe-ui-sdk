@@ -2,6 +2,7 @@
 #define DAPTRANSACTIONSPROXYMODEL_H
 
 #include <QSortFilterProxyModel>
+#include <QSet>
 #include "DapTransactionsModel.h"
 #include "DapTransaction.h"
 
@@ -40,7 +41,7 @@ public:
 
 signals:
     void dateFilterChanged(int);
-    void statusFilterChanged(QVector<DapTransaction::Status>);
+    void statusFilterChanged(QSet<DapTransaction::Status>);
 
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const  override;
@@ -48,7 +49,7 @@ protected:
 
 private:
     int m_date = Date::AllTime;
-    QVector<DapTransaction::Status> m_statuses
+    QSet<DapTransaction::Status> m_statuses
     {
         DapTransaction::Status::Local,
         DapTransaction::Status::Mempool,
