@@ -67,14 +67,14 @@ QVariant DapCreateTransactionCommand::respondToClient(const QVariant &arg1, cons
     }
     else
     {
+        resultObj.insert(SUCCESS,false);
+
         QRegExp rxError("not enough funds for transfer");
         rxError.indexIn(result, 0);
         if(!rxError.cap(0).isEmpty())
             resultObj.insert(ERROR_MESSAGE,DapErrors::Error::NOT_ENOUGH_FUNDS_FOR_TRANSFER);
         else
              resultObj.insert(ERROR_MESSAGE,DapErrors::Error::UNKNOWN_ERROR);
-        resultObj.insert(SUCCESS,false);
-
     }
     return resultObj;
 }
