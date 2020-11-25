@@ -51,7 +51,7 @@ HEADERS += \
     $$PWD/handlers/DapSaveHistoryExecutedCmdCommand.h \
     $$PWD/handlers/DapUpdateLogsCommand.h \
     $$PWD/models/DapBalanceModel.h \
-    $$PWD/models/DapNetworksList.h \
+    $$PWD/models/DapNetworksModel.h \
     $$PWD/models/DapTransactionsProxyModel.h \
     $$PWD/models/DapTransactionsModel.h \
     $$PWD/models/DapVpnOrdersModel.h \
@@ -102,7 +102,7 @@ SOURCES += \
     $$PWD/handlers/DapSaveHistoryExecutedCmdCommand.cpp \
     $$PWD/handlers/DapUpdateLogsCommand.cpp \
     $$PWD/models/DapBalanceModel.cpp \
-    $$PWD/models/DapNetworksList.cpp \
+    $$PWD/models/DapNetworksModel.cpp \
     $$PWD/models/DapTransactionsProxyModel.cpp \
     $$PWD/models/DapTransactionsModel.cpp \
     $$PWD/models/DapVpnOrdersModel.cpp \

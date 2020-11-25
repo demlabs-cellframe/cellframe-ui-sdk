@@ -3,12 +3,23 @@
 #include <QJsonObject>
 #include <QDebug>
 
-const QMap<DapNetwork::State, QString> DapNetwork::s_stateStrings = {
-    { DapNetwork::State::OFFLINE, "NET_STATE_OFFLINE"},
-    { DapNetwork::State::ONLINE, "NET_STATE_ONLINE"},
-    { DapNetwork::State::UNDEFINED, "Undefined state"}
+const QMap<QString, DapNetwork::State> DapNetwork::s_stateStrings = {
+    { "NET_STATE_OFFLINE", DapNetwork::State::OFFLINE},
+    { "NET_STATE_ONLINE", DapNetwork::State::ONLINE},
+    { "NET_STATE_LINKS_PREPARE", DapNetwork::State::INKS_PREPARE},
+    { "NET_STATE_LINKS_CONNECTING", DapNetwork::State::LINKS_CONNECTING},
+    { "NET_STATE_SYNC_CHAINS", DapNetwork::State::SYNC_CHAINS},
+    { "UNDEFINED", DapNetwork::State::UNDEFINED}
 };
 
+const QMap<DapNetwork::State, QString> DapNetwork::s_stateRepresentations = {
+    { DapNetwork::State::OFFLINE         , "OFFLINE"},
+    { DapNetwork::State::ONLINE          , "ONLINE"},
+    { DapNetwork::State::INKS_PREPARE    , "LINKS PREPARE"},
+    { DapNetwork::State::LINKS_CONNECTING, "LINKS CONNECTING"},
+    { DapNetwork::State::SYNC_CHAINS     , "SYNC CHAINS"},
+    { DapNetwork::State::UNDEFINED       , "UNDEFINED"}
+};
 
 DapNetwork::DapNetwork(const QString& a_name, QObject * a_parent /*= nullptr*/)
     : QObject(a_parent)
@@ -68,9 +79,9 @@ DapNetwork::State DapNetwork::state() const
     return m_state;
 }
 
-QString DapNetwork::stateString() const
+QString DapNetwork::stateRepresentation() const
 {
-    return DapNetwork::stateToString(m_state);
+    return DapNetwork::toRepresentation(m_state);
 }
 
 void DapNetwork::setName(const QString &a_name)
@@ -88,7 +99,8 @@ void DapNetwork::setState(DapNetwork::State a_state)
         return;
     m_state = a_state;
 
-    emit this->stateChanged(DapNetwork::stateToString(a_state));
+    emit this->stateChanged(a_state);
+    emit this->stateRepresentationChanged(DapNetwork::toRepresentation(a_state));
 }
 
 DapNetwork::State DapNetwork::targetState() const
@@ -96,9 +108,9 @@ DapNetwork::State DapNetwork::targetState() const
     return m_targetState;
 }
 
-QString DapNetwork::targetStateString() const
+QString DapNetwork::targetStateRepresentation() const
 {
-    return DapNetwork::stateToString(m_targetState);
+    return DapNetwork::toRepresentation(m_targetState);
 }
 
 void DapNetwork::setTargetState(DapNetwork::State a_targetState)
@@ -107,17 +119,17 @@ void DapNetwork::setTargetState(DapNetwork::State a_targetState)
         return;
     m_targetState = a_targetState;
 
-    emit this->targetStateChanged(DapNetwork::stateToString(a_targetState));
-    //    emit this->targetStateChanged(a_targetState);
+    emit this->targetStateChanged(a_targetState);
+    emit this->targetStateRepresentationChanged(DapNetwork::toRepresentation(a_targetState));
 }
 
-DapNetwork::State DapNetwork::stringToState(QString a_stateString)
+DapNetwork::State DapNetwork::toState(QString a_stateString)
 {
-    return s_stateStrings.key(a_stateString);
+    return s_stateStrings.value(a_stateString, State::UNDEFINED);
 }
 
-QString DapNetwork::stateToString(DapNetwork::State a_state)
+QString DapNetwork::toRepresentation(DapNetwork::State a_state)
 {
-    return s_stateStrings.value(a_state);
+    return s_stateRepresentations.value(a_state);
 }
 
