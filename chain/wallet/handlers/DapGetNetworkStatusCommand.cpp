@@ -45,7 +45,9 @@ QVariant DapGetNetworkStatusCommand::respondToClient(const QVariant &arg1, const
     process.waitForFinished(-1);
     QString result = QString::fromLatin1(process.readAll());
 
-    QRegularExpression rx(R"***(Network "(\S+)" has state (\S+) \(target state (\S*)\), active links (\d+) from (\d+), cur node address ([A-F0-9]{4}::[A-F0-9]{4}::[A-F0-9]{4}::[A-F0-9]{4}))***");
+    // ---------- State & TargetState ----------------
+
+    QRegularExpression rx(R"***(^Network "(\S+)" has state (\S+) \(target state (\S*)\), .*cur node address ([A-F0-9]{4}::[A-F0-9]{4}::[A-F0-9]{4}::[A-F0-9]{4}))***");
     QRegularExpressionMatch match = rx.match(result);
     if (!match.hasMatch()) {
         return {};
@@ -55,10 +57,18 @@ QVariant DapGetNetworkStatusCommand::respondToClient(const QVariant &arg1, const
                                 {NAME               , match.captured(1)},
                                 {STATE              , match.captured(2)},
                                 {TARGET_STATE       , match.captured(3)},
-                                {ACTIVE_LINKS_COUNT , match.captured(4)},
-                                {LINKS_COUNT        , match.captured(5)},
-                                {NODE_ADDRESS       , match.captured(6)}
+                                {NODE_ADDRESS       , match.captured(4)}
                             });
+
+    // ---------- Links count ----------------
+    QRegularExpression rxLinks(R"(\), active links (\d+) from (\d+),)");
+    match = rxLinks.match(result);
+    if (!match.hasMatch()) {
+        return resultObj;
+    }
+
+    resultObj.insert(ACTIVE_LINKS_COUNT, match.captured(1));
+    resultObj.insert(LINKS_COUNT, match.captured(2));
 
     return resultObj;
 }

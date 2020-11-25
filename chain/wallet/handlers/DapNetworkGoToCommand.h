@@ -19,6 +19,10 @@
 class DapNetworkGoToCommand : public DapAbstractCommand
 {
 public:
+    static const QString NETWORK_NAME;
+    static const QString STATE;
+    static const QString TARGET_STATE;
+
     /// Overloaded constructor.
     /// @param asServiceName Service name.
     /// @param parent Parent.

@@ -2,6 +2,10 @@
 
 #include <QRegularExpression>
 
+const QString DapNetworkGoToCommand::NETWORK_NAME = "name";
+const QString DapNetworkGoToCommand::STATE = "state";
+const QString DapNetworkGoToCommand::TARGET_STATE = "targetState";
+
 /// Overloaded constructor.
 /// @param asServiceName Service name.
 /// @param parent Parent.
@@ -32,18 +36,24 @@ QVariant DapNetworkGoToCommand::respondToClient(const QVariant &arg1, const QVar
     Q_UNUSED(arg10)
 
     QProcess process;
-    QString command(QString("%1 net -net %2 go %3").arg(m_sCliPath).arg(arg1.toString()).arg(arg2.toString()));
+    QString command(QString("%1 net -net %2 go %3").arg(m_sCliPath).arg(arg1.toString()));
+
+    QString target = arg2.toBool() ? "online" : "offline";
+    command = command.arg(target);
+
     process.start(command);
     process.waitForFinished(-1);
     QString result = QString::fromLatin1(process.readAll());
 
-    QVariantMap resultObj;
-
-    QRegularExpression rx(QString(R"(Network "%1" go from state \S+ to (\S+))").arg(arg1.toString()));
+    QRegularExpression rx(R"***(Network "(\S+)" go from state (\S+) to (\S+))***");
     QRegularExpressionMatch match = rx.match(result);
     if (!match.hasMatch()) {
-        return QString();
+        return {};
     }
 
-    return match.captured(1);
+    return QJsonObject{
+        {NETWORK_NAME, match.captured(1)},
+        {STATE       , match.captured(2)},
+        {TARGET_STATE, match.captured(3)}
+    };
 }
