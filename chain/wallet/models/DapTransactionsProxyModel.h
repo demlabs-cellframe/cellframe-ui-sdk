@@ -34,8 +34,6 @@ public:
     Q_INVOKABLE void addStatusFilter(int a_status);
     Q_INVOKABLE void removeStatusFilter(int a_status);
 
-    Q_INVOKABLE bool needShowDate(int a_index);
-    Q_INVOKABLE QString displayDate(int a_index);
     void setSourceModel(QAbstractItemModel *sourceModel) override;
     void setDefaultFilters();
 
