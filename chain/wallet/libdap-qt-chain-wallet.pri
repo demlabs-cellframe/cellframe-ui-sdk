@@ -63,7 +63,8 @@ HEADERS += \
     $$PWD/serviceClient/DapServiceClientNativeMacOS.h \
     $$PWD/serviceClient/DapServiceClientNativeWin.h \
     $$PWD/DapErrors.h \
-    $$PWD/handlers/DapGetTransactionsHistoryCommand.h
+    $$PWD/handlers/DapGetTransactionsHistoryCommand.h \
+    $$PWD/DapSaveTransaction.h
 
 SOURCES += \
     $$PWD/CellframeNodeConfig.cpp \
@@ -114,7 +115,8 @@ SOURCES += \
     $$PWD/serviceClient/DapServiceClientNativeMacOS.cpp \
     $$PWD/serviceClient/DapServiceClientNativeWin.cpp \
     $$PWD/DapErrors.cpp \
-    $$PWD/handlers/DapGetTransactionsHistoryCommand.cpp
+    $$PWD/handlers/DapGetTransactionsHistoryCommand.cpp \
+    $$PWD/DapSaveTransaction.cpp
 
 
 

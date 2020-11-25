@@ -1,11 +1,10 @@
-#ifndef DapGetTransactionHistoryCommand_H
-#define DapGetTransactionHistoryCommand_H
+#pragma once
 
 #include <QProcess>
 #include <QString>
 #include "DapErrors.h"
 #include <QDateTime>
-
+#include "DapSaveTransaction.h"
 #include "DapAbstractCommand.h"
 
 class DapGetTransactionsHistoryCommand : public DapAbstractCommand
@@ -17,7 +16,9 @@ public:
     static const QString TOKEN;
     static const QString ADDRESS;
     static const QString HASH;
+    static const QString STATE_TRANSACTION;
 
+    enum StateTrasaction{MEMPOOL,SUCCESSFUL,CENCELED};
 
     /// Overloaded constructor.
     /// @param asServiceName Service name.
@@ -41,9 +42,8 @@ public slots:
                              const QVariant &arg5 = QVariant(), const QVariant &arg6 = QVariant(),
                              const QVariant &arg7 = QVariant(), const QVariant &arg8 = QVariant(),
                              const QVariant &arg9 = QVariant(), const QVariant &arg10 = QVariant()) override;
-
+private:
     const QStringList m_month{"Jan", "Feb", "Mar", "Apr", "May", "Jun",
                             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    QString convertTimeFromHistory(const QString& a_string);
 };
-
-#endif // DapGetTransactionHistoryCommand_H
