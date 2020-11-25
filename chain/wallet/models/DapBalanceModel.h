@@ -28,6 +28,8 @@ public:
     void setBalance(const BalanceInfo_t &a_balanceMap);
     void setBalance(const DapToken* a_token, balance_t a_amount);
 
+    Q_INVOKABLE int balance(const QString &a_tokenName) const;
+
     virtual QHash<int, QByteArray> roleNames() const override;
 
     virtual int rowCount(const QModelIndex &a_parent) const override;

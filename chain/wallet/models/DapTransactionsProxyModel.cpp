@@ -34,50 +34,34 @@ void DapTransactionsProxyModel::addStatusFilter(int a_status)
 {
     if (m_statuses.contains(static_cast<DapTransaction::Status>(a_status)))
         return;
-    m_statuses.push_back(static_cast<DapTransaction::Status>(a_status));
+    m_statuses << static_cast<DapTransaction::Status>(a_status);
     emit statusFilterChanged(m_statuses);
     invalidateFilter();
 }
 
 void DapTransactionsProxyModel::removeStatusFilter(int a_status)
 {
-    if (!m_statuses.contains(static_cast<DapTransaction::Status>(a_status)))
-        return;
-    m_statuses.removeOne(static_cast<DapTransaction::Status>(a_status));
-    emit statusFilterChanged(m_statuses);
-    invalidateFilter();
-}
-
-bool DapTransactionsProxyModel::needShowDate(int a_index)
-{
-    if (a_index < 0 || a_index >= this->rowCount()) return false;
-    if (a_index == 0) return true;
-    QModelIndex leftIndex = this->index(a_index - 1, 0);
-    QModelIndex rigntIndex = this->index(a_index, 0);
-    DapTransaction* leftTransaction = qobject_cast<DapTransaction*>(
-                qvariant_cast<QObject*>(this->data(leftIndex)));
-    DapTransaction* rightTransaction = qobject_cast<DapTransaction*>(
-                qvariant_cast<QObject*>(this->data(rigntIndex)));
-    return leftTransaction->date().date() != rightTransaction->date().date();
-}
-
-QString DapTransactionsProxyModel::displayDate(int a_index)
-{
-    if (a_index < 0 || a_index >= this->rowCount()) return "";
-    QModelIndex index = this->index(a_index, 0);
-    DapTransaction* transaction = qobject_cast<DapTransaction*>(
-                qvariant_cast<QObject*>(this->data(index)));
-    if (transaction->date().date() == QDate::currentDate())
-        return tr("Today");
-    else if (transaction->date().date() == QDate::currentDate().addDays(-1))
-        return tr("Yesterday");
-    return QLocale(QLocale::Language::English).toString(transaction->date().date(), "MMMM, d");
+    if (m_statuses.remove(static_cast<DapTransaction::Status>(a_status)))
+    {
+        emit statusFilterChanged(m_statuses);
+        invalidateFilter();
+    }
 }
 
 void DapTransactionsProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
 {
     QSortFilterProxyModel::setSourceModel(sourceModel);
     this->sort(0,Qt::SortOrder::DescendingOrder);
+}
+
+void DapTransactionsProxyModel::setDefaultFilters()
+{
+    m_statuses << DapTransaction::Status::Local
+               << DapTransaction::Status::Mempool
+               << DapTransaction::Status::Canceled
+               << DapTransaction::Status::Successful;
+    m_date = Date::AllTime;
+    invalidateFilter();
 }
 
 bool DapTransactionsProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const

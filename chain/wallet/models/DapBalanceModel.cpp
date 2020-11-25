@@ -61,6 +61,11 @@ void DapBalanceModel::setBalance(const DapToken *a_token, balance_t a_amount)
     }
 }
 
+int DapBalanceModel::balance(const QString& a_tokenName) const
+{
+    return m_tokensAmount.value(DapToken::token(a_tokenName));
+}
+
 int DapBalanceModel::rowCount(const QModelIndex &a_parent) const
 {
     Q_UNUSED(a_parent)

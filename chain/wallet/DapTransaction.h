@@ -50,6 +50,9 @@ public:
     void setTokenValue (const DapTokenValue &a_tokenValue);
     void setDate(QDateTime a_date);
     void setHash(QString a_hash);
+
+    Q_INVOKABLE QString statusRepresentation() const;
+
 signals:
     void networkChanged(DapNetwork*);
     void statusChanged(Status);
