@@ -88,3 +88,18 @@ void DapTransaction::setHash(QString a_hash)
 {
     m_hash = a_hash;
 }
+
+QString DapTransaction::statusRepresentation() const
+{
+    QString returnStr{};
+    switch (this->status())
+    {
+    case Local:      returnStr = tr("Local");      break;
+    case Mempool:    returnStr = tr("Mempool");    break;
+    case Successful: returnStr = tr("Successful"); break;
+    case Canceled:   returnStr = tr("Canceled");   break;
+    }
+    if(this->confirmationsCount() > 0)
+        returnStr += " (" + QString::number(this->confirmationsCount()) + tr(" Confirms)");
+    return returnStr;
+}
