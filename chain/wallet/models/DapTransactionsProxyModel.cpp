@@ -48,32 +48,6 @@ void DapTransactionsProxyModel::removeStatusFilter(int a_status)
     }
 }
 
-bool DapTransactionsProxyModel::needShowDate(int a_index)
-{
-    if (a_index < 0 || a_index >= this->rowCount()) return false;
-    if (a_index == 0) return true;
-    QModelIndex leftIndex = this->index(a_index - 1, 0);
-    QModelIndex rigntIndex = this->index(a_index, 0);
-    DapTransaction* leftTransaction = qobject_cast<DapTransaction*>(
-                qvariant_cast<QObject*>(this->data(leftIndex)));
-    DapTransaction* rightTransaction = qobject_cast<DapTransaction*>(
-                qvariant_cast<QObject*>(this->data(rigntIndex)));
-    return leftTransaction->date().date() != rightTransaction->date().date();
-}
-
-QString DapTransactionsProxyModel::displayDate(int a_index)
-{
-    if (a_index < 0 || a_index >= this->rowCount()) return "";
-    QModelIndex index = this->index(a_index, 0);
-    DapTransaction* transaction = qobject_cast<DapTransaction*>(
-                qvariant_cast<QObject*>(this->data(index)));
-    if (transaction->date().date() == QDate::currentDate())
-        return tr("Today");
-    else if (transaction->date().date() == QDate::currentDate().addDays(-1))
-        return tr("Yesterday");
-    return QLocale(QLocale::Language::English).toString(transaction->date().date(), "MMMM, d");
-}
-
 void DapTransactionsProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
 {
     QSortFilterProxyModel::setSourceModel(sourceModel);
