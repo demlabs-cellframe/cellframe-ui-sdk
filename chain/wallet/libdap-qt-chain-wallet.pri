@@ -46,6 +46,7 @@ HEADERS += \
     $$PWD/handlers/DapGetWalletTokenInfoCommand.h \
     $$PWD/handlers/DapMempoolProcessCommand.h \
     $$PWD/handlers/DapNetworkGoToCommand.h \
+    $$PWD/handlers/DapNetworkSyncCommand.h \
     $$PWD/handlers/DapQuitApplicationCommand.h \
     $$PWD/handlers/DapRunCmdCommand.h \
     $$PWD/handlers/DapSaveHistoryExecutedCmdCommand.h \
@@ -97,6 +98,7 @@ SOURCES += \
     $$PWD/handlers/DapGetWalletTokenInfoCommand.cpp \
     $$PWD/handlers/DapMempoolProcessCommand.cpp \
     $$PWD/handlers/DapNetworkGoToCommand.cpp \
+    $$PWD/handlers/DapNetworkSyncCommand.cpp \
     $$PWD/handlers/DapQuitApplicationCommand.cpp \
     $$PWD/handlers/DapRunCmdCommand.cpp \
     $$PWD/handlers/DapSaveHistoryExecutedCmdCommand.cpp \
