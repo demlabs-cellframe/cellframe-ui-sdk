@@ -53,21 +53,20 @@ void DapSaveTransaction::saveToFileFromCreat(QJsonArray &a_array)
 }
 void DapSaveTransaction::saveToFile(QJsonArray &a_array)
 {
+    QSettings settings(DAP_BRAND + QString("ini"), QSettings::IniFormat);
+    int count = a_array.count();
+    settings.setValue(TRANSACRIONS_COUNT,count);
+    for(int i = 0; i<count; ++i)
+    {
+        settings.beginGroup(QString::number(i));
+        settings.setValue(DapGetTransactionsHistoryCommand::HASH,a_array.at(i).toVariant().toMap().value(DapGetTransactionsHistoryCommand::HASH).toString());
+        settings.setValue(DapGetTransactionsHistoryCommand::TIME,a_array.at(i).toVariant().toMap().value(DapGetTransactionsHistoryCommand::TIME).toString());
+        settings.setValue(DapGetTransactionsHistoryCommand::AMOUNT,a_array.at(i).toVariant().toMap().value(DapGetTransactionsHistoryCommand::AMOUNT).toString());
+        settings.setValue(DapGetTransactionsHistoryCommand::TOKEN,a_array.at(i).toVariant().toMap().value(DapGetTransactionsHistoryCommand::TOKEN).toString());
+        settings.setValue(DapGetTransactionsHistoryCommand::ADDRESS,a_array.at(i).toVariant().toMap().value(DapGetTransactionsHistoryCommand::ADDRESS).toString());
 
-        QSettings settings(DAP_BRAND + QString("ini"), QSettings::IniFormat);
-        int count = a_array.count();
-        settings.setValue(TRANSACRIONS_COUNT,count);
-        for(int i = 0; i<count; ++i)
-        {
-            settings.beginGroup(QString::number(i));
-            settings.setValue(DapGetTransactionsHistoryCommand::HASH,a_array.at(i).toVariant().toMap().value(DapGetTransactionsHistoryCommand::HASH).toString());
-            settings.setValue(DapGetTransactionsHistoryCommand::TIME,a_array.at(i).toVariant().toMap().value(DapGetTransactionsHistoryCommand::TIME).toString());
-            settings.setValue(DapGetTransactionsHistoryCommand::AMOUNT,a_array.at(i).toVariant().toMap().value(DapGetTransactionsHistoryCommand::AMOUNT).toString());
-            settings.setValue(DapGetTransactionsHistoryCommand::TOKEN,a_array.at(i).toVariant().toMap().value(DapGetTransactionsHistoryCommand::TOKEN).toString());
-            settings.setValue(DapGetTransactionsHistoryCommand::ADDRESS,a_array.at(i).toVariant().toMap().value(DapGetTransactionsHistoryCommand::ADDRESS).toString());
-
-            settings.endGroup();
-        }
+        settings.endGroup();
+    }
 }
 
 void DapSaveTransaction::saveTransactionBySpecifyingTime(const QDateTime &a_time, const QString &a_amount,
