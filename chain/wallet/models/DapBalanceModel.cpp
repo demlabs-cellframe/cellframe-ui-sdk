@@ -18,6 +18,8 @@ void DapBalanceModel::setBalance(const BalanceInfo_t &a_balanceMap)
     QMutableMapIterator<BalanceInfo_t::key_type,  BalanceInfo_t::mapped_type> it(m_tokensAmount);
     while (it.hasNext())
     {
+        it.next();
+
         if (!a_balanceMap.contains(it.key()))
         {
             int row = this->rowOf(it.key());

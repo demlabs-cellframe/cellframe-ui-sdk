@@ -9,6 +9,7 @@ const QMap<QString, DapNetwork::State> DapNetwork::s_stateStrings = {
     { "NET_STATE_LINKS_PREPARE", DapNetwork::State::INKS_PREPARE},
     { "NET_STATE_LINKS_CONNECTING", DapNetwork::State::LINKS_CONNECTING},
     { "NET_STATE_SYNC_CHAINS", DapNetwork::State::SYNC_CHAINS},
+    { "NET_STATE_SYNC_GDB", DapNetwork::State::SYNC_GDB},
     { "UNDEFINED", DapNetwork::State::UNDEFINED}
 };
 
@@ -18,6 +19,7 @@ const QMap<DapNetwork::State, QString> DapNetwork::s_stateRepresentations = {
     { DapNetwork::State::INKS_PREPARE    , "LINKS PREPARE"},
     { DapNetwork::State::LINKS_CONNECTING, "LINKS CONNECTING"},
     { DapNetwork::State::SYNC_CHAINS     , "SYNC CHAINS"},
+    { DapNetwork::State::SYNC_GDB        , "SYNC GDB"},
     { DapNetwork::State::UNDEFINED       , "UNDEFINED"}
 };
 

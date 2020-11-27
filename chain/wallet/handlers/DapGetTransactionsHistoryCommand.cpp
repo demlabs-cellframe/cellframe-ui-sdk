@@ -29,6 +29,7 @@ QVariant DapGetTransactionsHistoryCommand::respondToClient(const QVariant &arg1,
                                                            const QVariant &arg7, const QVariant &arg8, const QVariant &arg9,
                                                            const QVariant &arg10)
 {
+    Q_UNUSED(arg3)
     Q_UNUSED(arg4)
     Q_UNUSED(arg5)
     Q_UNUSED(arg6)
