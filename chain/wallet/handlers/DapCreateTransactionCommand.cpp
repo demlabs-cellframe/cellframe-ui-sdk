@@ -44,7 +44,6 @@ QVariant DapCreateTransactionCommand::respondToClient(const QVariant &arg1, cons
     Q_UNUSED(arg10)
 
     QVariantMap dataMap = arg1.toMap();
-    QDateTime time = QDateTime::currentDateTime();
 
     QString command = QString("%1 tx_create -net %2 -chain bronze -from_wallet %3 -to_addr %4 -token %5 -value %6").arg(m_sCliPath);
     command = command.arg(dataMap.value(NETWORK).toString());
@@ -64,7 +63,10 @@ QVariant DapCreateTransactionCommand::respondToClient(const QVariant &arg1, cons
 
     if(rx.cap(1) == "Ok")
     {
-        DapSaveTransaction::saveTransactionBySpecifyingTime(time,"-" + dataMap.value(AMOUNT).toString(),dataMap.value(TOKEN).toString(),dataMap.value(RECIEVER_ADDRESS).toString());
+        QRegExp rxHash("tx_hash=(\\w+)");
+        rxHash.indexIn(result, 0);
+
+        DapSaveTransaction::saveTransactionBySpecifyingTime(rxHash.cap(1),"","-" + dataMap.value(AMOUNT).toString(),dataMap.value(TOKEN).toString(),dataMap.value(RECIEVER_ADDRESS).toString());
         resultObj.insert(SUCCESS,true);
     }
     else

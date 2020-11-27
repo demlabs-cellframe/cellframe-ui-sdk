@@ -37,18 +37,60 @@ QVariant DapGetTransactionsHistoryCommand::respondToClient(const QVariant &arg1,
     Q_UNUSED(arg9)
     Q_UNUSED(arg10)
 
-    QProcess processCreate;
-    processCreate.start(QString("%1 tx_history -w %2 -net %3 -chain %4")
+    QProcess processCreate, processCreate2;
+    processCreate.start(QString("%1 tx_history -w %2 -net %3 -chain zerochain")
                         .arg(m_sCliPath)
                         .arg(arg1.toString())
-                        .arg(arg2.toString())
-                        .arg(arg3.toString()));
+                        .arg(arg2.toString()));
 
     processCreate.waitForFinished(-1);
     QJsonArray resultArray;
 
+    processCreate2.start(QString("%1 tx_history -w %2 -net %3 -chain bronze")
+                        .arg(m_sCliPath)
+                        .arg(arg1.toString())
+                        .arg(arg2.toString()));
 
-    QStringList resultList = QString::fromLatin1(processCreate.readAll()).split("tx hash ");
+    processCreate2.waitForFinished(-1);
+
+    addToTransactionArray(resultArray, QString::fromLatin1(processCreate.readAll()));
+
+    addToTransactionArray(resultArray, QString::fromLatin1(processCreate2.readAll()));
+
+    processCreate.start(QString("%1 mempool_list -net %2")
+                        .arg(m_sCliPath)
+                        .arg(arg2.toString()));
+
+    processCreate.waitForFinished(-1);
+    //resultList.clear();
+    QStringList resultMempoolList = QString(processCreate.readAll()).split("\n");
+
+    QJsonArray mempoolArray;
+    for(auto line:resultMempoolList)
+    {
+        if(!line.isEmpty() && line != "\r")
+        {
+            QRegExp rxMempool("data_hash=(\\w+) ts_create=([A-Za-z]{3} [A-Za-z]{3} [0-9]{2} [0-9\\:]{8} [0-9]{4})");
+            rxMempool.indexIn(line);
+            if(!rxMempool.cap(0).isEmpty())
+            {
+
+                QJsonObject tmpResult;
+                tmpResult.insert(HASH, rxMempool.cap(1));
+                tmpResult.insert(TIME, convertTimeFromHistory(rxMempool.cap(2)));
+                mempoolArray.append(tmpResult);
+            }
+        }
+    }
+    if(!mempoolArray.isEmpty())
+        DapSaveTransaction::creatLocalHistory(resultArray,mempoolArray);
+
+    return resultArray;
+}
+
+void DapGetTransactionsHistoryCommand::addToTransactionArray(QJsonArray &a_array, const QString &a_string)
+{
+    QStringList resultList = a_string.split("tx hash ");
     for(auto curTx:resultList)
     {
         if(curTx.contains("history") || curTx.isEmpty())
@@ -101,39 +143,10 @@ QVariant DapGetTransactionsHistoryCommand::respondToClient(const QVariant &arg1,
         //            resultObj.insert(TransactionRecipientAddress,rxSend.cap(6));
         //        }
         resultObj.insert(STATE_TRANSACTION, StateTrasaction::SUCCESSFUL);
-        resultArray.append(resultObj);
+        a_array.append(resultObj);
     }
-
-    processCreate.start(QString("%1 mempool_list -net %2")
-                        .arg(m_sCliPath)
-                        .arg(arg2.toString()));
-
-    processCreate.waitForFinished(-1);
-    //resultList.clear();
-    QStringList resultMempoolList = QString(processCreate.readAll()).split("\n");
-
-    QJsonArray mempoolArray;
-    for(auto line:resultMempoolList)
-    {
-        if(!line.isEmpty() && line != "\r")
-        {
-            QRegExp rxMempool("data_hash=(\\w+) ts_create=([A-Za-z]{3} [A-Za-z]{3} [0-9]{2} [0-9\\:]{8} [0-9]{4})");
-            rxMempool.indexIn(line);
-            if(!rxMempool.cap(0).isEmpty())
-            {
-
-                QJsonObject tmpResult;
-                tmpResult.insert(HASH,rxMempool.cap(1));
-                tmpResult.insert(TIME,convertTimeFromHistory(rxMempool.cap(2)));
-                mempoolArray.append(tmpResult);
-            }
-        }
-    }
-    if(!mempoolArray.isEmpty())
-        DapSaveTransaction::creatLocalHistory(resultArray,mempoolArray);
-
-    return resultArray;
 }
+
 QString DapGetTransactionsHistoryCommand::convertTimeFromHistory(const QString& a_string)
 {
     QRegExp rxTime("([A-Za-z]{3}) ([A-Za-z]{3}) ([0-9]{2}) ([0-9\\:]{8}) ([0-9]{4})");

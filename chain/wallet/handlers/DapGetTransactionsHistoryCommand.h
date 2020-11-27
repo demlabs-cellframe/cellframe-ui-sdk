@@ -43,7 +43,8 @@ public slots:
                              const QVariant &arg7 = QVariant(), const QVariant &arg8 = QVariant(),
                              const QVariant &arg9 = QVariant(), const QVariant &arg10 = QVariant()) override;
 private:
-    const QStringList m_month{"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    void addToTransactionArray(QJsonArray &a_array,const QString &a_string);
+
+    const QStringList m_month{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     QString convertTimeFromHistory(const QString& a_string);
 };
