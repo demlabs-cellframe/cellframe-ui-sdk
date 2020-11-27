@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>resources/QML/DapFontRoboto.qml</file>
         <file>resources/fonts/LICENSE.txt</file>
         <file>resources/fonts/roboto_black_italic.ttf</file>
         <file>resources/fonts/roboto_black.ttf</file>
@@ -23,6 +22,14 @@
         <file>resources/fonts/Quicksand/Quicksand-SemiBold.ttf</file>
         <file>resources/fonts/Quicksand/Quicksand-VariableFont_wght.ttf</file>
         <file>resources/fonts/Quicksand/README.txt</file>
-        <file>resources/QML/DapFontQuicksand.qml</file>
+        <file>resources/fonts/Blinker/Blinker-Black.ttf</file>
+        <file>resources/fonts/Blinker/Blinker-ExtraBold.ttf</file>
+        <file>resources/fonts/Blinker/Blinker-Bold.ttf</file>
+        <file>resources/fonts/Blinker/Blinker-SemiBold.ttf</file>
+        <file>resources/fonts/Blinker/Blinker-Regular.ttf</file>
+        <file>resources/fonts/Blinker/Blinker-Light.ttf</file>
+        <file>resources/fonts/Blinker/Blinker-ExtraLight.ttf</file>
+        <file>resources/fonts/Blinker/Blinker-Thin.ttf</file>
+        <file>resources/QML/DapFont.qml</file>
     </qresource>
 </RCC>
