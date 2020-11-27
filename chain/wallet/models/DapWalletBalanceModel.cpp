@@ -12,6 +12,7 @@ void DapWalletBalanceModel::setBalance(WalletBallanceInfo_t a_balanceMap)
     QMutableMapIterator<const DapNetwork*, DapBalanceModel*> it(m_networkBalances);
     while (it.hasNext())
     {
+        it.next();
         if (!a_balanceMap.contains(it.key()))
             it.remove();
     }

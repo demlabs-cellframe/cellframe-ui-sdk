@@ -15,6 +15,7 @@ class DapWallet : public QObject
 
 public:
     Q_INVOKABLE explicit DapWallet(QObject * parent = nullptr);
+    Q_INVOKABLE explicit DapWallet(const QString& a_name, QObject * parent = nullptr);
     Q_INVOKABLE DapWallet(const DapWallet& aWallet);
     Q_INVOKABLE DapWallet& operator=(const DapWallet& aToken);
 

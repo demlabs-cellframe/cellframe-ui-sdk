@@ -4,21 +4,25 @@ DapWallet::DapWallet(QObject * parent)
     : QObject(parent)
     , m_balanceModel(new DapWalletBalanceModel(this))
 {
+}
 
+DapWallet::DapWallet(const QString &a_name, QObject *parent)
+    : QObject(parent)
+    , m_balanceModel(new DapWalletBalanceModel(this))
+    , m_sName(a_name)
+{
 }
 
 DapWallet::DapWallet(const DapWallet &aWallet)
-    : m_sName(aWallet.m_sName)
+    : m_balanceModel(new DapWalletBalanceModel(this))
+    , m_sName(aWallet.m_sName)
     , m_dBalance(aWallet.m_dBalance)
     , m_sIcon(aWallet.m_sIcon)
     , m_sAddress(aWallet.m_sAddress)
     , m_aNetworks(aWallet.m_aNetworks)
     , m_aAddresses(aWallet.m_aAddresses)
     , m_aTokens(aWallet.m_aTokens)
-    , m_balanceModel(new DapWalletBalanceModel(this))
-
 {
-
 }
 
 DapWallet &DapWallet::operator=(const DapWallet &aWallet)

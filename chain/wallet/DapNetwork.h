@@ -15,6 +15,7 @@ public:
         INKS_PREPARE,
         LINKS_CONNECTING,
         SYNC_CHAINS,
+        SYNC_GDB,
         UNDEFINED
         //...
     };

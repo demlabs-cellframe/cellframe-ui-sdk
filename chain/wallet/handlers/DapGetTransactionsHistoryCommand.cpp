@@ -27,6 +27,7 @@ QVariant DapGetTransactionsHistoryCommand::respondToClient(const QVariant &arg1,
                                                           const QVariant &arg7, const QVariant &arg8, const QVariant &arg9,
                                                           const QVariant &arg10)
 {
+    Q_UNUSED(arg3)
     Q_UNUSED(arg4)
     Q_UNUSED(arg5)
     Q_UNUSED(arg6)
@@ -36,11 +37,15 @@ QVariant DapGetTransactionsHistoryCommand::respondToClient(const QVariant &arg1,
     Q_UNUSED(arg10)
 
     QProcess processCreate;
+
+    QString networkName = arg2.canConvert<QStringList>() ? arg2.toStringList()[0] : arg2.toString();
+
     processCreate.start(QString("%1 tx_history -w %2 -net %3 -chain %4")
                         .arg(m_sCliPath)
                         .arg(arg1.toString())
-                        .arg(arg2.toString())
-                        .arg(arg3.toString()));
+                        .arg(networkName)
+                        .arg("bronze"));
+
 
     processCreate.waitForFinished(-1);
     QJsonArray resultArray;
