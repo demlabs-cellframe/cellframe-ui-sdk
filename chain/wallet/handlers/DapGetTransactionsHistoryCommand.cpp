@@ -38,25 +38,21 @@ QVariant DapGetTransactionsHistoryCommand::respondToClient(const QVariant &arg1,
     Q_UNUSED(arg9)
     Q_UNUSED(arg10)
 
-    QProcess processCreate, processCreate2;
-    processCreate.start(QString("%1 tx_history -w %2 -net %3 -chain zerochain")
-                        .arg(m_sCliPath)
-                        .arg(arg1.toString())
-                        .arg(arg2.toString()));
-
-    processCreate.waitForFinished(-1);
     QJsonArray resultArray;
 
-    processCreate2.start(QString("%1 tx_history -w %2 -net %3 -chain bronze")
-                        .arg(m_sCliPath)
-                        .arg(arg1.toString())
-                        .arg(arg2.toString()));
+    QProcess processCreate;
+    for (QString chain: {"zerochain", "bronze"})
+    {
+        processCreate;
+        processCreate.start(QString("%1 tx_history -w %2 -net %3 -chain %4")
+                            .arg(m_sCliPath)
+                            .arg(arg1.toString())
+                            .arg(arg2.toString())
+                            .arg(chain));
 
-    processCreate2.waitForFinished(-1);
-
-    addToTransactionArray(resultArray, QString::fromLatin1(processCreate.readAll()));
-
-    addToTransactionArray(resultArray, QString::fromLatin1(processCreate2.readAll()));
+        processCreate.waitForFinished(-1);
+        addToTransactionArray(resultArray, QString::fromLatin1(processCreate.readAll()));
+    }
 
     processCreate.start(QString("%1 mempool_list -net %2")
                         .arg(m_sCliPath)
