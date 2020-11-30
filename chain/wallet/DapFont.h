@@ -8,7 +8,7 @@
 class DapFont : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QFont regular11 READ regular10 CONSTANT)
+    Q_PROPERTY(QFont regular10 READ regular10 CONSTANT)
     Q_PROPERTY(QFont regular11 READ regular11 CONSTANT)
     Q_PROPERTY(QFont regular12 READ regular12 CONSTANT)
     Q_PROPERTY(QFont regular14 READ regular14 CONSTANT)
