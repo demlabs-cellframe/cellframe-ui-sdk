@@ -8,6 +8,7 @@
 class DapFont : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QFont regular11 READ regular10 CONSTANT)
     Q_PROPERTY(QFont regular11 READ regular11 CONSTANT)
     Q_PROPERTY(QFont regular12 READ regular12 CONSTANT)
     Q_PROPERTY(QFont regular14 READ regular14 CONSTANT)
@@ -25,6 +26,7 @@ class DapFont : public QObject
 public:
     explicit DapFont(QObject *parent = nullptr);
 
+    QFont regular10() { m_fonts["regular"].font.setPixelSize(10*pt); return m_fonts["regular"].font; }
     QFont regular11() { m_fonts["regular"].font.setPixelSize(11*pt); return m_fonts["regular"].font; }
     QFont regular12() { m_fonts["regular"].font.setPixelSize(12*pt); return m_fonts["regular"].font; }
     QFont regular14() { m_fonts["regular"].font.setPixelSize(14*pt); return m_fonts["regular"].font; }
