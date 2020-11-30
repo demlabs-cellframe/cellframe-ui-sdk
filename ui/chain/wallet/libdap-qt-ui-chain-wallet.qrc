@@ -30,6 +30,5 @@
         <file>resources/fonts/Blinker/Blinker-Light.ttf</file>
         <file>resources/fonts/Blinker/Blinker-ExtraLight.ttf</file>
         <file>resources/fonts/Blinker/Blinker-Thin.ttf</file>
-        <file>resources/QML/DapFont.qml</file>
     </qresource>
 </RCC>
