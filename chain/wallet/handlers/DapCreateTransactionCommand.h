@@ -4,6 +4,8 @@
 #include <QProcess>
 #include "DapErrors.h"
 #include "DapAbstractCommand.h"
+#include <QDateTime>
+#include "DapSaveTransaction.h"
 
 class DapCreateTransactionCommand : public DapAbstractCommand
 {

@@ -63,6 +63,10 @@ QVariant DapCreateTransactionCommand::respondToClient(const QVariant &arg1, cons
 
     if(rx.cap(1) == "Ok")
     {
+        QRegExp rxHash("tx_hash=(\\w+)");
+        rxHash.indexIn(result, 0);
+
+        DapSaveTransaction::saveTransactionBySpecifyingTime(rxHash.cap(1),"","-" + dataMap.value(AMOUNT).toString(),dataMap.value(TOKEN).toString(),dataMap.value(RECIEVER_ADDRESS).toString());
         resultObj.insert(SUCCESS,true);
     }
     else
