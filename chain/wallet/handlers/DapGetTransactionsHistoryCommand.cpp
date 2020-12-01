@@ -37,14 +37,7 @@ QVariant DapGetTransactionsHistoryCommand::respondToClient(const QVariant &arg1,
     Q_UNUSED(arg8)
     Q_UNUSED(arg9)
     Q_UNUSED(arg10)
-    QStringList dataMap = arg2.toStringList();
-    QProcess processCreate, processCreate2;
-    processCreate.start(QString("%1 tx_history -w %2 -net %3 -chain zerochain")
-                        .arg(m_sCliPath)
-                        .arg(arg1.toString())
-                        .arg(dataMap.at(0)));
 
-    processCreate.waitForFinished(-1);
     QJsonArray resultArray;
 
     QString networkName = arg2.canConvert<QStringList>() ? arg2.toStringList()[0] : arg2.toString();
