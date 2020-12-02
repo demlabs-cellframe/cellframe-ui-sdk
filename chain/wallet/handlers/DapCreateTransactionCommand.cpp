@@ -66,7 +66,16 @@ QVariant DapCreateTransactionCommand::respondToClient(const QVariant &arg1, cons
         QRegExp rxHash("tx_hash=(\\w+)");
         rxHash.indexIn(result, 0);
 
-        DapSaveTransaction::saveTransactionBySpecifyingTime(rxHash.cap(1),"","-" + dataMap.value(AMOUNT).toString(),dataMap.value(TOKEN).toString(),dataMap.value(RECIEVER_ADDRESS).toString());
+        QSettings settings(DAP_BRAND + QString(".ini"), QSettings::IniFormat);
+        settings.beginGroup(dataMap.value(WALLET_NAME).toString());
+            settings.beginGroup(rxHash.cap(1));
+                settings.setValue(DapGetTransactionsHistoryCommand::TIME,       "");
+                settings.setValue(DapGetTransactionsHistoryCommand::AMOUNT,     "-" + dataMap.value(AMOUNT).toString());
+                settings.setValue(DapGetTransactionsHistoryCommand::TOKEN,      dataMap.value(TOKEN).toString());
+                settings.setValue(DapGetTransactionsHistoryCommand::ADDRESS,    dataMap.value(RECIEVER_ADDRESS).toString());
+            settings.endGroup();
+        settings.endGroup();
+
         resultObj.insert(SUCCESS,true);
     }
     else

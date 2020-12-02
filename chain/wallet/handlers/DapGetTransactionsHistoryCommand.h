@@ -4,8 +4,9 @@
 #include <QString>
 #include "DapErrors.h"
 #include <QDateTime>
-#include "DapSaveTransaction.h"
+#include <QSettings>
 #include "DapAbstractCommand.h"
+#include <QRegularExpression>
 
 class DapGetTransactionsHistoryCommand : public DapAbstractCommand
 {
