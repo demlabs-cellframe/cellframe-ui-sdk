@@ -18,7 +18,7 @@ QVariant DapTransactionsModel::data(const QModelIndex &index, int role) const
     switch (role)
     {
     case Qt::DisplayRole:
-        return QVariant::fromValue<QObject*>(transaction);
+        return QVariant::fromValue(transaction);
     case DateDisplayRole:
         if (transaction->date().date() == QDate::currentDate())
             return tr("Today");
