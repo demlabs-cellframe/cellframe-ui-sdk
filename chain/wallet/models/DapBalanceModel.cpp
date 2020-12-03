@@ -2,7 +2,8 @@
 
 
 
-DapBalanceModel::DapBalanceModel(QObject *parent)
+DapBalanceModel::DapBalanceModel(QObject *a_parent)
+    : QAbstractListModel(a_parent)
 {
 }
 
@@ -15,14 +16,14 @@ DapBalanceModel::DapBalanceModel(const BalanceInfo_t &a_balanceMap, QObject *a_p
 void DapBalanceModel::setBalance(const BalanceInfo_t &a_balanceMap)
 {
     //remove not existing in a_balanceMap
-    QMutableMapIterator<BalanceInfo_t::key_type,  BalanceInfo_t::mapped_type> it(m_tokensAmount);
+    QMutableListIterator<DapTokenValue*> it(m_tokensAmount);
     while (it.hasNext())
     {
         it.next();
 
-        if (!a_balanceMap.contains(it.key()))
+        if (!a_balanceMap.contains(it.value()->token()))
         {
-            int row = this->rowOf(it.key());
+            int row = m_tokensAmount.indexOf(it.value());
             this->QAbstractListModel::beginRemoveRows({}, row, row);
             it.remove();
             this->endRemoveRows();
@@ -37,35 +38,44 @@ void DapBalanceModel::setBalance(const BalanceInfo_t &a_balanceMap)
 
 void DapBalanceModel::setBalance(const DapToken *a_token, balance_t a_amount)
 {
-    auto tokenIt = m_tokensAmount.find(a_token);
-
     //if already exist:
-    if (tokenIt == m_tokensAmount.end())
-    {
-        this->insertTokenAmount(a_token, a_amount);
+    if (this->appendTokenAmount(a_token, a_amount))
         return;
-    }
 
-    int row = this->rowOf(tokenIt);
-    QModelIndex index = this->index(row, 0);
+    auto tokenVal = this->tokenValue(a_token);
 
     //remove token if balance is empty:
     if (a_amount == 0)
     {
+        int row = m_tokensAmount.indexOf(tokenVal);
         beginRemoveRows(QModelIndex(), row, row);
-        m_tokensAmount.erase(tokenIt);
+        m_tokensAmount.removeAt(row);
         endRemoveRows();
     }
     else
-    {
-        tokenIt.value() = a_amount;
-        emit this->QAbstractListModel::dataChanged(index, index);
-    }
+        tokenVal->setAmount(a_amount);
 }
 
-int DapBalanceModel::balance(const QString& a_tokenName) const
+bool DapBalanceModel::hasBalance(const QString &a_tokenName, const QString &a_tokenAmountString) const
 {
-    return m_tokensAmount.value(DapToken::token(a_tokenName));
+    auto token = DapToken::token(a_tokenName);
+    if (!token)
+        return 0;
+    auto tokenBalance = this->balance(token);
+
+    auto requestedAmount = DapTokenValue::tokensAmountStringtoTokensAmount(a_tokenAmountString);
+
+    return  (requestedAmount <= tokenBalance);
+}
+
+balance_t DapBalanceModel::balance(const DapToken* a_token) const
+{
+    auto tokenVal = this->tokenValue(a_token);
+
+    if (!tokenVal)
+        return 0;
+
+    return tokenVal->amount();
 }
 
 int DapBalanceModel::rowCount(const QModelIndex &a_parent) const
@@ -80,12 +90,8 @@ QVariant DapBalanceModel::data(const QModelIndex &a_index, int a_role) const
     if (row < 0 || row > m_tokensAmount.count())
         return {};
 
-    auto it = m_tokensAmount.begin();
-    it += row;
-
     switch (a_role) {
-        case Roles::Token: return QVariant(it.key()->name());
-        case Roles::Amount: return QVariant::fromValue<balance_t>(it.value());
+        case Roles::TOKEN_VALUE: return QVariant::fromValue(const_cast<DapTokenValue*>(m_tokensAmount.at(a_index.row())));
         default: return {};
     }
 }
@@ -93,24 +99,34 @@ QVariant DapBalanceModel::data(const QModelIndex &a_index, int a_role) const
 QVariantList DapBalanceModel::tokens() const
 {
     QVariantList tokens;
-    for (auto curToken: m_tokensAmount.keys())
+    for (auto curTokenValue: m_tokensAmount)
     {
-        tokens.append(QVariant::fromValue(const_cast<DapToken*>(curToken)));
+        tokens.append(QVariant::fromValue(curTokenValue->token()));
     }
     return tokens;
 }
 
-bool DapBalanceModel::insertTokenAmount(const DapToken *a_token, balance_t a_amount)
+DapTokenValue *DapBalanceModel::tokenValue(const DapToken* a_token) const
 {
-    auto lowerBoundIt = m_tokensAmount.lowerBound(a_token);
-    if (lowerBoundIt.key() == a_token)
+    for (auto& curTokenValue: m_tokensAmount)
+    {
+        if (curTokenValue->token() == a_token)
+            return curTokenValue;
+    }
+    return nullptr;
+}
+
+
+bool DapBalanceModel::appendTokenAmount(const DapToken *a_token, balance_t a_amount)
+{
+    if (this->tokenValue(a_token))
         return false;
 
-    int index = this->rowOf(lowerBoundIt);
+    int index = m_tokensAmount.count();
 
     QAbstractListModel::beginInsertRows(QModelIndex(), index, index);
 
-    m_tokensAmount[a_token] = a_amount;
+    m_tokensAmount.append(new DapTokenValue(a_token, a_amount));
 
     emit this->tokensChanged(this->tokens());
 
@@ -119,28 +135,10 @@ bool DapBalanceModel::insertTokenAmount(const DapToken *a_token, balance_t a_amo
     return true;
 }
 
-int DapBalanceModel::rowOf(const DapToken *a_token)
-{
-    auto it = m_tokensAmount.find(a_token);
-    if (it == m_tokensAmount.end())
-        return -1;
-
-    return this->rowOf(it);
-}
-
-int DapBalanceModel::rowOf(BalanceInfo_t::iterator a_iterator)
-{
-    if (m_tokensAmount.isEmpty())
-        return 0;
-
-    return std::distance(m_tokensAmount.begin(), a_iterator);
-}
-
 
 QHash<int, QByteArray> DapBalanceModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    roles[Token] = "token";
-    roles[Amount] = "amount";
+    roles[TOKEN_VALUE] = "tokenValue";
     return roles;
 }

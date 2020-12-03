@@ -11,11 +11,18 @@ class DapTransaction : public QObject
     Q_OBJECT
     Q_PROPERTY(DapNetwork*          network             READ network            WRITE setNetwork            NOTIFY networkChanged)
     Q_PROPERTY(Status               status              READ status             WRITE setStatus             NOTIFY statusChanged)
-    Q_PROPERTY(unsigned long        confirmationsCount  READ confirmationsCount WRITE setConfirmationsCount NOTIFY confirmationsCountChanged)
+    Q_PROPERTY(size_t               confirmationsCount  READ confirmationsCount WRITE setConfirmationsCount NOTIFY confirmationsCountChanged)
     Q_PROPERTY(DapTokenValue*       tokenValue          READ tokenValue         CONSTANT)
     Q_PROPERTY(QDateTime            date                READ date               WRITE setDate               NOTIFY dateChanged)
+    Q_PROPERTY(QString              sumRepresentation   READ sumRepresentation                              NOTIFY sumRepresentationChanged)
 
 public:
+
+    enum Type
+    {
+        EXPENSE,
+        INCOME
+    };
 
     enum Status
     {
@@ -26,13 +33,6 @@ public:
     }; Q_ENUM(Status)
 
     explicit DapTransaction(QObject* a_parent = nullptr);
-    explicit DapTransaction(DapNetwork *a_network,
-                            Status a_status,
-                            size_t a_confirmationsCount,
-                            const DapTokenValue& a_tokenValue,
-                            QDateTime a_date,
-                            const QString& a_hash,
-                            QObject* a_parent = nullptr);
 
     DapTransaction(const DapTransaction& a_transaction);
     DapTransaction &operator=(const DapTransaction& a_transaction);
@@ -40,9 +40,11 @@ public:
     DapNetwork* network()         const { return m_network;            }
     Status status()               const { return m_status;             }
     size_t confirmationsCount()   const { return m_confirmationsCount; }
+    const DapTokenValue* tokenValue()   const { return &m_tokenValue;        }
     DapTokenValue* tokenValue()         { return &m_tokenValue;        }
     QDateTime date()              const { return m_date;               }
     QString  hash()               const { return m_hash;               }
+    QString sumRepresentation() const;
 
     void setNetwork(DapNetwork* a_network);
     void setStatus (Status a_status);
@@ -58,6 +60,7 @@ signals:
     void statusChanged(Status);
     void confirmationsCountChanged(size_t);
     void dateChanged(QDateTime);
+    void sumRepresentationChanged(QString);
 
 private:
     DapNetwork*          m_network = nullptr;
@@ -66,5 +69,7 @@ private:
     DapTokenValue        m_tokenValue;
     QDateTime            m_date{};
     QString              m_hash;
+
+    Type m_type;
 };
 #endif // DAPTRANSACTION_H

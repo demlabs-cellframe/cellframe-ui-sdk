@@ -3,23 +3,9 @@
 DapTransaction::DapTransaction(QObject *a_parent)
     : QObject(a_parent)
 {
-}
-
-DapTransaction::DapTransaction(DapNetwork* a_network,
-                               Status a_status,
-                               size_t a_confirmationsCount,
-                               const DapTokenValue &a_tokenValue,
-                               QDateTime a_date,
-                               const QString& a_hash,
-                               QObject* a_parent)
-    : QObject               (a_parent)
-    , m_network             (a_network)
-    , m_status              (a_status)
-    , m_confirmationsCount  (a_confirmationsCount)
-    , m_tokenValue          (a_tokenValue)
-    , m_date                (a_date)
-    , m_hash                (a_hash)
-{
+    connect(&m_tokenValue, &DapTokenValue::representationChanged, [this]{
+        emit this->sumRepresentationChanged(this->sumRepresentation());
+    });
 }
 
 DapTransaction::DapTransaction(const DapTransaction &a_transaction)
@@ -28,7 +14,7 @@ DapTransaction::DapTransaction(const DapTransaction &a_transaction)
     , m_confirmationsCount  (a_transaction.m_confirmationsCount)
     , m_tokenValue          (a_transaction.m_tokenValue)
     , m_date                (a_transaction.m_date)
-    ,m_hash                 (a_transaction.m_hash)
+    , m_hash                (a_transaction.m_hash)
 {
 }
 
@@ -43,6 +29,11 @@ DapTransaction &DapTransaction::operator=(const DapTransaction &a_transaction)
         this->setDate(a_transaction.m_date);
     }
     return *this;
+}
+
+QString DapTransaction::sumRepresentation() const
+{
+    return m_type == Type::EXPENSE ? "-" : "" + this->tokenValue()->representation();
 }
 
 void DapTransaction::setNetwork(DapNetwork *a_network)
