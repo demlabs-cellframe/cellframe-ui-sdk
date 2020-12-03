@@ -40,15 +40,17 @@ QVariant DapGetTransactionsHistoryCommand::respondToClient(const QVariant &arg1,
 
     QJsonArray resultArray;
 
+    QString networkName = arg2.canConvert<QStringList>() ? arg2.toStringList()[0] : arg2.toString();
+
+    QString command("%1 tx_history -w %2 -net %3 -chain %4");
+    command = command.arg(m_sCliPath);
+    command = command.arg(arg1.toString());
+    command = command.arg(networkName);
+
     QProcess processCreate;
     for (QString chain: {"zerochain", "bronze"})
     {
-        processCreate;
-        processCreate.start(QString("%1 tx_history -w %2 -net %3 -chain %4")
-                            .arg(m_sCliPath)
-                            .arg(arg1.toString())
-                            .arg(arg2.toString())
-                            .arg(chain));
+        processCreate.start(command.arg(chain));
 
         processCreate.waitForFinished(-1);
         addToTransactionArray(resultArray, QString::fromLatin1(processCreate.readAll()));
@@ -56,31 +58,77 @@ QVariant DapGetTransactionsHistoryCommand::respondToClient(const QVariant &arg1,
 
     processCreate.start(QString("%1 mempool_list -net %2")
                         .arg(m_sCliPath)
-                        .arg(arg2.toString()));
+                        .arg(networkName));
+
+
 
     processCreate.waitForFinished(-1);
-    //resultList.clear();
+
+    QSettings settings(DAP_BRAND + QString(".ini"), QSettings::IniFormat);
+    settings.beginGroup(arg1.toString());
+    QStringList hashList = settings.childGroups();
+    settings.endGroup();
+
+
     QStringList resultMempoolList = QString(processCreate.readAll()).split("\n");
 
-    QJsonArray mempoolArray;
-    for(auto line:resultMempoolList)
+    for(auto &line:resultMempoolList)
     {
         if(!line.isEmpty() && line != "\r")
         {
-            QRegExp rxMempool("data_hash=(\\w+) ts_create=([A-Za-z]{3} [A-Za-z]{3} [0-9]{2} [0-9\\:]{8} [0-9]{4})");
+            QRegExp rxMempool("data_hash=(\\w+) ts_create=([A-Za-z]{3} [A-Za-z]{3} [0-9\\s]{0,2} [0-9\\:]{8} [0-9]{4})");
             rxMempool.indexIn(line);
             if(!rxMempool.cap(0).isEmpty())
             {
+                for(auto &hash: hashList)
+                {
+                    if(hash == rxMempool.cap(1))
+                    {
+                        QString stringValue = QString("%1/%2/%3").arg(arg1.toString()).arg(hash);
+                        if(settings.value(stringValue.arg(TIME)).toString().isEmpty())
+                            settings.setValue(stringValue.arg(TIME),convertTimeFromHistory(rxMempool.cap(2)));
 
-                QJsonObject tmpResult;
-                tmpResult.insert(HASH, rxMempool.cap(1));
-                tmpResult.insert(TIME, convertTimeFromHistory(rxMempool.cap(2)));
-                mempoolArray.append(tmpResult);
+                        QJsonObject tmpJsonObj;
+                        tmpJsonObj.insert(HASH,                 hash);
+                        tmpJsonObj.insert(TIME,                 settings.value(stringValue.arg(TIME)).toString());
+                        tmpJsonObj.insert(AMOUNT,               settings.value(stringValue.arg(AMOUNT)).toString());
+                        tmpJsonObj.insert(TOKEN,                settings.value(stringValue.arg(TOKEN)).toString());
+                        tmpJsonObj.insert(ADDRESS,              settings.value(stringValue.arg(ADDRESS)).toString());
+                        tmpJsonObj.insert(STATE_TRANSACTION,    StateTrasaction::MEMPOOL);
+
+                        resultArray.append(tmpJsonObj);
+                    }
+                }
             }
         }
     }
-    if(!mempoolArray.isEmpty())
-        DapSaveTransaction::creatLocalHistory(resultArray,mempoolArray);
+
+    ///Additional check for the absence in history
+    ///
+    for(auto &hash: hashList)
+    {
+        bool isHash = false;
+        for(auto object: resultArray)
+            if(hash == object.toVariant().toMap().take(HASH))
+            {
+                isHash = true;
+            }
+        if(!isHash)
+        {
+            QString stringValue = QString("%1/%2/%3").arg(arg1.toString()).arg(hash);
+
+            QJsonObject tmpJsonObj;
+            tmpJsonObj.insert(HASH,                 hash);
+            tmpJsonObj.insert(TIME,                 settings.value(stringValue.arg(TIME)).toString());
+            tmpJsonObj.insert(AMOUNT,               settings.value(stringValue.arg(AMOUNT)).toString());
+            tmpJsonObj.insert(TOKEN,                settings.value(stringValue.arg(TOKEN)).toString());
+            tmpJsonObj.insert(ADDRESS,              settings.value(stringValue.arg(ADDRESS)).toString());
+            tmpJsonObj.insert(STATE_TRANSACTION,    StateTrasaction::CENCELED);
+
+            resultArray.append(tmpJsonObj);
+        }
+    }
+
 
     return resultArray;
 }
@@ -105,7 +153,7 @@ void DapGetTransactionsHistoryCommand::addToTransactionArray(QJsonArray &a_array
         resultObj.insert(TIME, convertTimeFromHistory(curTx));
 
 
-        if(!curTx.contains("in recv") && !curTx.contains("in send"))
+        if(!curTx.contains("in send"))
         {
             if(curTx.contains("recv") || curTx.contains("send") )
             {
@@ -127,18 +175,6 @@ void DapGetTransactionsHistoryCommand::addToTransactionArray(QJsonArray &a_array
             }
         }
 
-
-        //  Requires clarification
-        //        if(iter.contains("in send"))
-        //        {
-        //            QRegExp rxSend("(in send) ([0-9]{0,}) ([A-Z]{0,}) (from) ([A-Za-z0-9]{0,})\\n to ([A-Za-z0-9]{0,})");
-        //            rxSend.indexIn(iter);
-        //            resultObj.insert(TransactionAction,rxSend.cap(1));
-        //            resultObj.insert(TransactionPrice,rxSend.cap(2));
-        //            resultObj.insert(TransactionTokenName,rxSend.cap(3));
-        //            resultObj.insert(TransactionSenderAddress,rxSend.cap(5));
-        //            resultObj.insert(TransactionRecipientAddress,rxSend.cap(6));
-        //        }
         resultObj.insert(STATE_TRANSACTION, StateTrasaction::SUCCESSFUL);
         a_array.append(resultObj);
     }
@@ -146,7 +182,7 @@ void DapGetTransactionsHistoryCommand::addToTransactionArray(QJsonArray &a_array
 
 QString DapGetTransactionsHistoryCommand::convertTimeFromHistory(const QString& a_string)
 {
-    QRegExp rxTime("([A-Za-z]{3}) ([A-Za-z]{3}) ([0-9]{2}) ([0-9\\:]{8}) ([0-9]{4})");
+    QRegExp rxTime("([A-Za-z]{3}) ([A-Za-z]{3}) ([0-9\\s]{1,}) ([0-9\\:]{8}) ([0-9]{4})");
     rxTime.indexIn(a_string);
 
     if(!rxTime.cap(0).isEmpty())
@@ -163,13 +199,10 @@ QString DapGetTransactionsHistoryCommand::convertTimeFromHistory(const QString& 
         QTime time = QTime::fromString(QString("%1").arg(rxTime.cap(4)),"hh:mm:ss");
 
         return QDateTime(date,time).toString();
-        //resultObj.insert(TIME, QDateTime(date,time).toString());
     }
     else
     {
         return "";
-       // resultObj.insert(TIME, "");
     }
 
-    return QString();
 }
