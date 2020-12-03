@@ -33,7 +33,7 @@ DapTransaction &DapTransaction::operator=(const DapTransaction &a_transaction)
 
 QString DapTransaction::sumRepresentation() const
 {
-    return m_type == Type::EXPENSE ? "-" : "" + this->tokenValue()->representation();
+    return (m_type == Type::EXPENSE ? "- " : "+ ") + this->tokenValue()->representation();
 }
 
 void DapTransaction::setNetwork(DapNetwork *a_network)
@@ -80,15 +80,24 @@ void DapTransaction::setHash(QString a_hash)
     m_hash = a_hash;
 }
 
+void DapTransaction::setType(DapTransaction::Type a_type)
+{
+    if (m_type == a_type)
+        return;
+
+    m_type = a_type;
+    emit this->sumRepresentationChanged(this->sumRepresentation());
+}
+
 QString DapTransaction::statusRepresentation() const
 {
     QString returnStr{};
     switch (this->status())
     {
-    case Local:      returnStr = tr("Local");      break;
-    case Mempool:    returnStr = tr("Mempool");    break;
-    case Successful: returnStr = tr("Successful"); break;
-    case Canceled:   returnStr = tr("Canceled");   break;
+    case LOCAL:      returnStr = tr("Local");      break;
+    case MEMPOOL:    returnStr = tr("Mempool");    break;
+    case SUCCESSFUL: returnStr = tr("Successful"); break;
+    case CANCELED:   returnStr = tr("Canceled");   break;
     }
     if(this->confirmationsCount() > 0)
         returnStr += " (" + QString::number(this->confirmationsCount()) + tr(" Confirms)");

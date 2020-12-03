@@ -26,7 +26,7 @@ DapTokenValue &DapTokenValue::operator=(const DapTokenValue &a_token)
 
 QString DapTokenValue::amountString() const
 {
-    return DapTokenValue::datoshiAmountToString(m_amount);
+    return DapTokenValue::datoshiAmountToTokensString(m_amount);
 }
 
 void DapTokenValue::setToken(DapToken *a_token)
@@ -50,11 +50,16 @@ void DapTokenValue::setAmount(balance_t a_amount)
     emit this->representationChanged(this->representation());
 }
 
-QString DapTokenValue::datoshiAmountToString(balance_t a_amount)
+QString DapTokenValue::tokensAmountStringToDatoshiString(const QString &a_tokensString)
 {
-    unsigned int datoshiKoef = DATOSHI_KOEF;
-    unsigned int tokenPart = a_amount / datoshiKoef;
-    unsigned int datoshiPart = a_amount % datoshiKoef;
+    return DapTokenValue::datoshiAmountToDatoshiString(DapTokenValue::tokensAmountStringToDatoshiAmount(a_tokensString));
+}
+
+QString DapTokenValue::datoshiAmountToTokensString(balance_t a_amount)
+{
+    unsigned long datoshiKoef = DATOSHI_KOEF;
+    unsigned long tokenPart = a_amount / datoshiKoef;
+    unsigned long datoshiPart = a_amount % datoshiKoef;
 
     auto resultString = QString("%1,%2").arg(tokenPart).arg(datoshiPart, DATOSHI_EXP, 10, QChar('0'));
 
@@ -63,10 +68,27 @@ QString DapTokenValue::datoshiAmountToString(balance_t a_amount)
         resultString.chop(1);
     }
 
+    if (resultString.endsWith(','))
+        resultString.chop(1);
+
     return resultString;
 }
 
-balance_t DapTokenValue::datoshiStringtoTokensAmount(QString a_datoshiAmount)
+QString DapTokenValue::datoshiAmountToDatoshiString(balance_t a_amount)
+{
+    unsigned long datoshiKoef = DATOSHI_KOEF;
+    unsigned long tokenPart = a_amount / datoshiKoef;
+    unsigned long datoshiPart = a_amount % datoshiKoef;
+
+    QString string = QString::number(datoshiPart);
+
+    if (tokenPart > 0)
+        string = QString::number(tokenPart) + string;
+
+    return string;
+}
+
+balance_t DapTokenValue::datoshiStringToTokensAmount(QString a_datoshiAmount)
 {
     balance_t result = 0;
 
@@ -82,7 +104,7 @@ balance_t DapTokenValue::datoshiStringtoTokensAmount(QString a_datoshiAmount)
     return result;
 }
 
-balance_t DapTokenValue::tokensAmountStringtoTokensAmount(const QString& a_tokensAmount)
+balance_t DapTokenValue::tokensAmountStringToDatoshiAmount(const QString& a_tokensAmount)
 {
     auto strings = a_tokensAmount.split(QRegExp("[\\.,]"));
 
@@ -90,7 +112,7 @@ balance_t DapTokenValue::tokensAmountStringtoTokensAmount(const QString& a_token
 
     fractPartStr.append(QString(DATOSHI_EXP - fractPartStr.count(), '0'));
 
-    return datoshiStringtoTokensAmount(strings.first() + fractPartStr);
+    return datoshiStringToTokensAmount(strings.first() + fractPartStr);
 }
 
 QString DapTokenValue::representation() const

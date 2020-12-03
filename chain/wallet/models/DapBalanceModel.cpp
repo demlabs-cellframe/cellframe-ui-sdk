@@ -63,7 +63,7 @@ bool DapBalanceModel::hasBalance(const QString &a_tokenName, const QString &a_to
         return 0;
     auto tokenBalance = this->balance(token);
 
-    auto requestedAmount = DapTokenValue::tokensAmountStringtoTokensAmount(a_tokenAmountString);
+    auto requestedAmount = DapTokenValue::tokensAmountStringToDatoshiAmount(a_tokenAmountString);
 
     return  (requestedAmount <= tokenBalance);
 }

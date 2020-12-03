@@ -26,10 +26,10 @@ public:
 
     enum Status
     {
-        Local,
-        Mempool,
-        Successful,
-        Canceled
+        LOCAL,
+        MEMPOOL,
+        SUCCESSFUL,
+        CANCELED
     }; Q_ENUM(Status)
 
     explicit DapTransaction(QObject* a_parent = nullptr);
@@ -52,6 +52,7 @@ public:
     void setTokenValue (const DapTokenValue &a_tokenValue);
     void setDate(QDateTime a_date);
     void setHash(QString a_hash);
+    void setType(Type a_type);
 
     Q_INVOKABLE QString statusRepresentation() const;
 

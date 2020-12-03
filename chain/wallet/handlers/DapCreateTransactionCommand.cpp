@@ -63,7 +63,7 @@ QVariant DapCreateTransactionCommand::respondToClient(const QVariant &arg1, cons
 
     if(rx.cap(1) == "Ok")
     {
-        QRegExp rxHash("tx_hash=(\\w+)");
+        QRegExp rxHash("tx_hash=0x(\\w+)");
         rxHash.indexIn(result, 0);
 
         QSettings settings(DAP_BRAND + QString(".ini"), QSettings::IniFormat);

@@ -33,9 +33,11 @@ public:
     void setToken(DapToken *a_token);
     void setAmount(balance_t a_amount);
 
-    static QString datoshiAmountToString(balance_t a_amount);
-    static balance_t datoshiStringtoTokensAmount(QString a_datoshiAmount);
-    static balance_t tokensAmountStringtoTokensAmount(const QString &a_tokensAmount);
+    static QString tokensAmountStringToDatoshiString(const QString &a_tokensString);
+    static QString datoshiAmountToTokensString(balance_t a_amount);
+    static QString datoshiAmountToDatoshiString(balance_t a_amount);
+    static balance_t datoshiStringToTokensAmount(QString a_datoshiAmount);
+    static balance_t tokensAmountStringToDatoshiAmount(const QString &a_tokensAmount);
 
 signals:
     void tokenChanged(DapToken*);

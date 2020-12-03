@@ -1,13 +1,15 @@
 #include "DapGetTransactionsHistoryCommand.h"
 
 const QString DapGetTransactionsHistoryCommand::TIME = "time";
-const QString DapGetTransactionsHistoryCommand::ACTION = "action";
 const QString DapGetTransactionsHistoryCommand::AMOUNT = "amount";
 const QString DapGetTransactionsHistoryCommand::TOKEN = "tokenName";
 const QString DapGetTransactionsHistoryCommand::ADDRESS = "address";
 const QString DapGetTransactionsHistoryCommand::HASH = "hash";
-const QString DapGetTransactionsHistoryCommand::STATE_TRANSACTION = "stateTransaction";
+const QString DapGetTransactionsHistoryCommand::STATE = "state";
+const QString DapGetTransactionsHistoryCommand::INCOME_TYPE = "income";
 
+
+const QStringList DapGetTransactionsHistoryCommand::month {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
 /// Overloaded constructor.
 /// @param asServiceName Service name.
@@ -38,13 +40,16 @@ QVariant DapGetTransactionsHistoryCommand::respondToClient(const QVariant &arg1,
     Q_UNUSED(arg9)
     Q_UNUSED(arg10)
 
-    QJsonArray resultArray;
+    QVariantMap resultMap;
 
     QString networkName = arg2.canConvert<QStringList>() ? arg2.toStringList()[0] : arg2.toString();
+    QString walletName = arg1.toString();
+
+    //------------------- Successful: -------------------
 
     QString command("%1 tx_history -w %2 -net %3 -chain %4");
     command = command.arg(m_sCliPath);
-    command = command.arg(arg1.toString());
+    command = command.arg(walletName);
     command = command.arg(networkName);
 
     QProcess processCreate;
@@ -53,144 +58,134 @@ QVariant DapGetTransactionsHistoryCommand::respondToClient(const QVariant &arg1,
         processCreate.start(command.arg(chain));
 
         processCreate.waitForFinished(-1);
-        addToTransactionArray(resultArray, QString::fromLatin1(processCreate.readAll()));
+        DapGetTransactionsHistoryCommand::parseTxHistoryResultAndAdd(QString::fromLatin1(processCreate.readAll()), resultMap);
     }
+
+    //------------------- Nempool: -------------------
 
     processCreate.start(QString("%1 mempool_list -net %2")
                         .arg(m_sCliPath)
                         .arg(networkName));
 
-
-
     processCreate.waitForFinished(-1);
 
     QSettings settings(DAP_BRAND + QString(".ini"), QSettings::IniFormat);
-    settings.beginGroup(arg1.toString());
+    settings.beginGroup(walletName);
     QStringList hashList = settings.childGroups();
     settings.endGroup();
 
+    if (hashList.isEmpty())
+        return QJsonObject::fromVariantMap(resultMap); // No sense for continue
 
     QStringList resultMempoolList = QString(processCreate.readAll()).split("\n");
 
-    for(auto &line:resultMempoolList)
+    auto settingsKey = QString("%1/%2/%3").arg(walletName);
+    QString hashSettingsKey;
+    for(auto &line: resultMempoolList)
     {
-        if(!line.isEmpty() && line != "\r")
-        {
-            QRegExp rxMempool("data_hash=(\\w+) ts_create=([A-Za-z]{3} [A-Za-z]{3} [0-9\\s]{0,2} [0-9\\:]{8} [0-9]{4})");
-            rxMempool.indexIn(line);
-            if(!rxMempool.cap(0).isEmpty())
-            {
-                for(auto &hash: hashList)
-                {
-                    if(hash == rxMempool.cap(1))
-                    {
-                        QString stringValue = QString("%1/%2/%3").arg(arg1.toString()).arg(hash);
-                        if(settings.value(stringValue.arg(TIME)).toString().isEmpty())
-                            settings.setValue(stringValue.arg(TIME),convertTimeFromHistory(rxMempool.cap(2)));
+        if(line.isEmpty() || line == "\r")
+            continue;
 
-                        QJsonObject tmpJsonObj;
-                        tmpJsonObj.insert(HASH,                 hash);
-                        tmpJsonObj.insert(TIME,                 settings.value(stringValue.arg(TIME)).toString());
-                        tmpJsonObj.insert(AMOUNT,               settings.value(stringValue.arg(AMOUNT)).toString());
-                        tmpJsonObj.insert(TOKEN,                settings.value(stringValue.arg(TOKEN)).toString());
-                        tmpJsonObj.insert(ADDRESS,              settings.value(stringValue.arg(ADDRESS)).toString());
-                        tmpJsonObj.insert(STATE_TRANSACTION,    StateTrasaction::MEMPOOL);
+        QRegExp rxMempool("data_hash=0x(\\w+) ts_create=([A-Za-z]{3} [A-Za-z]{3} [0-9\\s]{0,2} [0-9\\:]{8} [0-9]{4})");
+        rxMempool.indexIn(line);
+        if (rxMempool.cap(0).isEmpty())
+            continue;
 
-                        resultArray.append(tmpJsonObj);
-                    }
-                }
-            }
-        }
+        auto hash = rxMempool.cap(1);
+
+        hashSettingsKey = settingsKey.arg(hash);
+
+        if (!settings.contains(hashSettingsKey.arg(AMOUNT)))
+            continue; //tx isn't our's
+
+        QString txTime = convertTimeFromHistory(rxMempool.cap(2));
+        if (!settings.contains(hashSettingsKey.arg(TIME)))
+            settings.setValue(hashSettingsKey.arg(TIME), txTime);
+
+        resultMap.insert(hash, QJsonObject {
+            {TIME       , txTime},
+            {AMOUNT     , settings.value(hashSettingsKey.arg(AMOUNT)).toString()},
+            {TOKEN      , settings.value(hashSettingsKey.arg(TOKEN)).toString()},
+            {ADDRESS    , settings.value(hashSettingsKey.arg(ADDRESS)).toString()},
+            {INCOME_TYPE, false},
+            {STATE      , State::MEMPOOL}
+        });
     }
 
-    ///Additional check for the absence in history
-    ///
+    //------------------- Canceled: -------------------
     for(auto &hash: hashList)
     {
-        bool isHash = false;
-        for(auto object: resultArray)
-            if(hash == object.toVariant().toMap().take(HASH))
-            {
-                isHash = true;
-            }
-        if(!isHash)
+        if(!resultMap.contains(hash))
         {
-            QString stringValue = QString("%1/%2/%3").arg(arg1.toString()).arg(hash);
+            hashSettingsKey = settingsKey.arg(hash);
 
-            QJsonObject tmpJsonObj;
-            tmpJsonObj.insert(HASH,                 hash);
-            tmpJsonObj.insert(TIME,                 settings.value(stringValue.arg(TIME)).toString());
-            tmpJsonObj.insert(AMOUNT,               settings.value(stringValue.arg(AMOUNT)).toString());
-            tmpJsonObj.insert(TOKEN,                settings.value(stringValue.arg(TOKEN)).toString());
-            tmpJsonObj.insert(ADDRESS,              settings.value(stringValue.arg(ADDRESS)).toString());
-            tmpJsonObj.insert(STATE_TRANSACTION,    StateTrasaction::CENCELED);
-
-            resultArray.append(tmpJsonObj);
+            resultMap.insert(hash, QJsonObject{
+                {TIME   , settings.value(hashSettingsKey.arg(TIME)).toString()},
+                {AMOUNT , settings.value(hashSettingsKey.arg(AMOUNT)).toString()},
+                {TOKEN  , settings.value(hashSettingsKey.arg(TOKEN)).toString()},
+                {ADDRESS, settings.value(hashSettingsKey.arg(ADDRESS)).toString()},
+                {STATE  , State::CENCELED}
+            });
         }
     }
 
-
-    return resultArray;
+    return QJsonObject::fromVariantMap(resultMap);
 }
 
-void DapGetTransactionsHistoryCommand::addToTransactionArray(QJsonArray &a_array, const QString &a_string)
+void DapGetTransactionsHistoryCommand::parseTxHistoryResultAndAdd(const QString &a_result, QVariantMap &a_allTransactions)
 {
-    QStringList resultList = a_string.split("tx hash ");
+    QStringList resultList = a_result.split("tx hash ");
     for(auto curTx:resultList)
     {
         if(curTx.contains("history") || curTx.isEmpty())
             continue;
 
-        QJsonObject resultObj;
-
-        QRegExp rxHash("^(\\w+)");
+        QRegExp rxHash("^0x(\\w+)");
         rxHash.indexIn(curTx);
-        if(!rxHash.cap(1).isEmpty())
-            resultObj.insert(HASH,rxHash.cap(1));
-        else
-            resultObj.insert(HASH,"");
+        auto hash = rxHash.cap(1);
+        if(hash.isEmpty())
+            continue; //can't be empty hash
 
-        resultObj.insert(TIME, convertTimeFromHistory(curTx));
-
+        QJsonObject resultObj{{TIME, convertTimeFromHistory(curTx)}};
 
         if(!curTx.contains("in send"))
         {
-            if(curTx.contains("recv") || curTx.contains("send") )
-            {
-                QRegExp rxSendRecv("(recv|send) ([0-9]{0,}) ([A-Z]{0,}) (from|to) ([A-Za-z0-9]{0,})");
-                rxSendRecv.indexIn(curTx);
-                if(rxSendRecv.cap(2) == "send")
-                    resultObj.insert(AMOUNT,"-"+rxSendRecv.cap(2));
+            QRegExp rxSendRecv("(recv|send) ([0-9]*) ([A-Z]*) (from|to) ([A-Za-z0-9]*)");
+            if (rxSendRecv.indexIn(curTx) != -1)
+            {                   
+                auto type = rxSendRecv.cap(1);
+
+                resultObj.insert(INCOME_TYPE, type == "recv");
                 resultObj.insert(AMOUNT,rxSendRecv.cap(2));
                 resultObj.insert(TOKEN,rxSendRecv.cap(3));
                 resultObj.insert(ADDRESS,rxSendRecv.cap(5));
-
             }
             else if(curTx.contains("emit"))
             {
-                QRegExp rxEmit("(emit) ([0-9]{0,}) ([A-Z]{0,})");
+                QRegExp rxEmit("(emit) ([0-9]*) ([A-Z]*)");
                 rxEmit.indexIn(curTx);
+                resultObj.insert(INCOME_TYPE, true);
                 resultObj.insert(AMOUNT, rxEmit.cap(2));
                 resultObj.insert(TOKEN, rxEmit.cap(3));
             }
         }
 
-        resultObj.insert(STATE_TRANSACTION, StateTrasaction::SUCCESSFUL);
-        a_array.append(resultObj);
+        resultObj.insert(STATE, State::SUCCESSFUL);
+        a_allTransactions.insert(hash, resultObj);
     }
 }
 
 QString DapGetTransactionsHistoryCommand::convertTimeFromHistory(const QString& a_string)
 {
-    QRegExp rxTime("([A-Za-z]{3}) ([A-Za-z]{3}) ([0-9\\s]{1,}) ([0-9\\:]{8}) ([0-9]{4})");
+    QRegExp rxTime("([A-Za-z]{3}) ([A-Za-z]{3}) ([0-9\\s]+) ([0-9\\:]{8}) ([0-9]{4})");
     rxTime.indexIn(a_string);
 
     if(!rxTime.cap(0).isEmpty())
     {
         int month = 0;
-        for(int index = 0; index < m_month.count();index++)
+        for(int index = 0; index < DapGetTransactionsHistoryCommand::month.count();index++)
         {
-            if(rxTime.cap(2) == m_month.at(index))
+            if(rxTime.cap(2) == DapGetTransactionsHistoryCommand::month.at(index))
             {
                 month = index+1;
             }

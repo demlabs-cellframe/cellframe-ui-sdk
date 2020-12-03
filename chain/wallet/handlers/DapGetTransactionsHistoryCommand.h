@@ -12,14 +12,14 @@ class DapGetTransactionsHistoryCommand : public DapAbstractCommand
 {
 public:
     static const QString TIME;
-    static const QString ACTION;
     static const QString AMOUNT;
     static const QString TOKEN;
     static const QString ADDRESS;
     static const QString HASH;
-    static const QString STATE_TRANSACTION;
+    static const QString STATE;
+    static const QString INCOME_TYPE;
 
-    enum StateTrasaction{MEMPOOL,SUCCESSFUL,CENCELED};
+    enum State {MEMPOOL,SUCCESSFUL,CENCELED};
 
     /// Overloaded constructor.
     /// @param asServiceName Service name.
@@ -44,8 +44,8 @@ public slots:
                              const QVariant &arg7 = QVariant(), const QVariant &arg8 = QVariant(),
                              const QVariant &arg9 = QVariant(), const QVariant &arg10 = QVariant()) override;
 private:
-    void addToTransactionArray(QJsonArray &a_array,const QString &a_string);
+    static void parseTxHistoryResultAndAdd(const QString &a_result, QVariantMap &a_allTransactions);
 
-    const QStringList m_month{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-    QString convertTimeFromHistory(const QString& a_string);
+    static const QStringList month;
+    static QString convertTimeFromHistory(const QString& a_string);
 };
