@@ -61,7 +61,7 @@ QString DapTokenValue::datoshiAmountToTokensString(balance_t a_amount)
     unsigned long tokenPart = a_amount / datoshiKoef;
     unsigned long datoshiPart = a_amount % datoshiKoef;
 
-    auto resultString = QString("%1,%2").arg(tokenPart).arg(datoshiPart, DATOSHI_EXP, 10, QChar('0'));
+    auto resultString = QString("%1.%2").arg(tokenPart).arg(datoshiPart, DATOSHI_EXP, 10, QChar('0'));
 
     while (resultString.endsWith('0'))
     {
@@ -119,3 +119,4 @@ QString DapTokenValue::representation() const
 {
     return this->amountString() + " " + m_token->name();
 }
+
