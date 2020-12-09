@@ -50,7 +50,7 @@ namespace Dap {
             NetId( const QString& a_str){
                 m_value.uint64 = a_str.isNull() ? 0 : dap_chain_net_id_from_str(a_str.toLatin1().constData()).uint64;
             }
-            QString toString(){ return QString().sprintf("0x%016lX",m_value.uint64); }
+            QString toString(){ return QString().sprintf("0x%016llx",m_value.uint64); }
             operator dap_chain_net_id_t& (){ return  m_value; }
             dap_chain_net_id_t& operator=(const NetId& a_netId) {  m_value.uint64 = a_netId.m_value.uint64; return m_value; }
             dap_chain_net_id_t& operator=(QString& a_netId_str) {
@@ -76,7 +76,7 @@ namespace Dap {
                 }
                 operator dap_chain_net_srv_uid_t& (){ return  m_value; }
 
-                QString toString(){ return QString().sprintf("0x%016lX",m_value.uint64); }
+                QString toString(){ return QString().sprintf("0x%016llx",m_value.uint64); }
 
                 dap_chain_net_srv_uid_t& operator=(const Uid& a_netSrvUid) {
                     m_value.uint64 = a_netSrvUid.m_value.uint64;
