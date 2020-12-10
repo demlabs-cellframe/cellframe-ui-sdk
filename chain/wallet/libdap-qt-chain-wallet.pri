@@ -15,6 +15,7 @@ DISTFILES +=
 HEADERS += \
     $$PWD/CellframeNodeConfig.h \
     $$PWD/DapChainConvertor.h \
+    $$PWD/DapFont.h \
     $$PWD/DapHistoryType.h \
     $$PWD/DapLogMessage.h \
     $$PWD/DapNetwork.h \
@@ -69,6 +70,7 @@ HEADERS += \
 SOURCES += \
     $$PWD/CellframeNodeConfig.cpp \
     $$PWD/DapChainConvertor.cpp \
+    $$PWD/DapFont.cpp \
     $$PWD/DapHistoryType.cpp \
     $$PWD/DapLogMessage.cpp \
     $$PWD/DapNetwork.cpp \
