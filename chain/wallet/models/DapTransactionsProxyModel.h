@@ -24,8 +24,6 @@ public:
     }; Q_ENUM(Date)
 
     explicit DapTransactionsProxyModel(QObject *a_parent = nullptr);
-    explicit DapTransactionsProxyModel(QAbstractListModel* a_model,
-                                       QObject *a_parent = nullptr);
 
     int dateFilter()   const { return m_date; }
     QVariantList statusFilter() const;
@@ -33,6 +31,8 @@ public:
     void setDateFilter(int a_date = DapTransactionsProxyModel::Date::AllTime);
     Q_INVOKABLE void addStatusFilter(int a_status);
     Q_INVOKABLE void removeStatusFilter(int a_status);
+
+    DapTransactionsModel* transactionsModel();
 
     void setSourceModel(QAbstractItemModel *sourceModel) override;
     void setDefaultFilters();
@@ -43,16 +43,15 @@ signals:
 
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const  override;
-    bool lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const override;
 
 private:
     int m_date = Date::AllTime;
     QSet<DapTransaction::Status> m_statuses
     {
-        DapTransaction::Status::Local,
-        DapTransaction::Status::Mempool,
-        DapTransaction::Status::Successful,
-        DapTransaction::Status::Canceled
+        DapTransaction::Status::LOCAL,
+        DapTransaction::Status::MEMPOOL,
+        DapTransaction::Status::SUCCESSFUL,
+        DapTransaction::Status::CANCELED
     };
 };
 

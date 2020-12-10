@@ -3,34 +3,50 @@
 
 #include <QObject>
 #include <DapToken.h>
-#include <DapBalanceModel.h>
+
+typedef unsigned __int128 balance_t;
+
+#define DATOSHI_EXP 9
+#define DATOSHI_KOEF  pow(10, DATOSHI_EXP)
+
 
 class DapTokenValue : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(DapToken* token READ token WRITE setToken NOTIFY tokenChanged)
-    Q_PROPERTY(balance_t amount READ amount WRITE setAmount NOTIFY amountChanged)
+    Q_PROPERTY(QString amountString READ amountString NOTIFY amountStringChanged)
+    Q_PROPERTY(QString representation READ representation NOTIFY representationChanged)
 
 public:
 
     explicit DapTokenValue (QObject* a_parent = nullptr) : QObject(a_parent){}
-    explicit DapTokenValue(DapToken* a_token, balance_t a_amount, QObject *a_parent = nullptr);
+    explicit DapTokenValue(const DapToken* a_token, balance_t a_amount, QObject *a_parent = nullptr);
     DapTokenValue(const DapTokenValue& a_token);
     DapTokenValue& operator=(const DapTokenValue& a_token);
 
-    DapToken* token()  const { return m_token;  }
+    DapToken* token()  const { return const_cast<DapToken*>(m_token); }
     balance_t amount() const { return m_amount; }
-    Q_INVOKABLE QString representation(bool a_signed = false) const;
+    QString amountString() const;
+
+    Q_INVOKABLE QString representation() const;
 
     void setToken(DapToken *a_token);
     void setAmount(balance_t a_amount);
 
+    static QString tokensAmountStringToDatoshiString(const QString &a_tokensString);
+    static QString datoshiAmountToTokensString(balance_t a_amount);
+    static QString datoshiAmountToDatoshiString(balance_t a_amount);
+    static balance_t datoshiStringToTokensAmount(QString a_datoshiAmount);
+    static balance_t tokensAmountStringToDatoshiAmount(const QString &a_tokensAmount);
+
 signals:
     void tokenChanged(DapToken*);
     void amountChanged(balance_t);
+    void amountStringChanged(const QString& a_amountString);
+    void representationChanged(const QString& a_representation);
 
 private:
-    DapToken* m_token = nullptr;
+    const DapToken* m_token = nullptr;
     balance_t m_amount{};
 };
 

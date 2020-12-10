@@ -1,23 +1,25 @@
-#ifndef DapGetTransactionHistoryCommand_H
-#define DapGetTransactionHistoryCommand_H
+#pragma once
 
 #include <QProcess>
 #include <QString>
 #include "DapErrors.h"
 #include <QDateTime>
-
+#include <QSettings>
 #include "DapAbstractCommand.h"
+#include <QRegularExpression>
 
 class DapGetTransactionsHistoryCommand : public DapAbstractCommand
 {
 public:
     static const QString TIME;
-    static const QString ACTION;
     static const QString AMOUNT;
     static const QString TOKEN;
     static const QString ADDRESS;
     static const QString HASH;
+    static const QString STATE;
+    static const QString INCOME_TYPE;
 
+    enum State {MEMPOOL,SUCCESSFUL,CENCELED};
 
     /// Overloaded constructor.
     /// @param asServiceName Service name.
@@ -41,9 +43,9 @@ public slots:
                              const QVariant &arg5 = QVariant(), const QVariant &arg6 = QVariant(),
                              const QVariant &arg7 = QVariant(), const QVariant &arg8 = QVariant(),
                              const QVariant &arg9 = QVariant(), const QVariant &arg10 = QVariant()) override;
+private:
+    static void parseTxHistoryResultAndAdd(const QString &a_result, QVariantMap &a_allTransactions);
 
-    const QStringList m_month{"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    static const QStringList month;
+    static QString convertTimeFromHistory(const QString& a_string);
 };
-
-#endif // DapGetTransactionHistoryCommand_H

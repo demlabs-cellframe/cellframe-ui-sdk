@@ -1,16 +1,13 @@
 #include "DapTransactionsProxyModel.h"
 #include <QLocale>
+#include <QDebug>
 
 DapTransactionsProxyModel::DapTransactionsProxyModel(QObject *a_parent)
     : QSortFilterProxyModel(a_parent)
 {
-}
-
-DapTransactionsProxyModel::DapTransactionsProxyModel(QAbstractListModel *a_model,
-                                                     QObject *a_parent)
-    : QSortFilterProxyModel(a_parent)
-{
-    setSourceModel(a_model);
+    this->setSortRole(DapTransactionsModel::TIME);
+    this->setDynamicSortFilter(true);
+    this->setSourceModel(new DapTransactionsModel(this));
 }
 
 QVariantList DapTransactionsProxyModel::statusFilter() const
@@ -48,6 +45,11 @@ void DapTransactionsProxyModel::removeStatusFilter(int a_status)
     }
 }
 
+DapTransactionsModel *DapTransactionsProxyModel::transactionsModel()
+{
+    return dynamic_cast<DapTransactionsModel*>(this->sourceModel());
+}
+
 void DapTransactionsProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
 {
     QSortFilterProxyModel::setSourceModel(sourceModel);
@@ -56,10 +58,10 @@ void DapTransactionsProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
 
 void DapTransactionsProxyModel::setDefaultFilters()
 {
-    m_statuses << DapTransaction::Status::Local
-               << DapTransaction::Status::Mempool
-               << DapTransaction::Status::Canceled
-               << DapTransaction::Status::Successful;
+    m_statuses << DapTransaction::Status::LOCAL
+               << DapTransaction::Status::MEMPOOL
+               << DapTransaction::Status::CANCELED
+               << DapTransaction::Status::SUCCESSFUL;
     m_date = Date::AllTime;
     invalidateFilter();
 }
@@ -92,13 +94,4 @@ bool DapTransactionsProxyModel::filterAcceptsRow(int sourceRow, const QModelInde
         }
     }
     return false;
-}
-
-bool DapTransactionsProxyModel::lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const
-{
-    QObject* obj = qvariant_cast<QObject*>(sourceModel()->data(source_left));
-    DapTransaction* left_transaction = qobject_cast<DapTransaction*>(obj);
-    obj = qvariant_cast<QObject*>(sourceModel()->data(source_right));
-    DapTransaction* right_transaction = qobject_cast<DapTransaction*>(obj);
-    return left_transaction->date() < right_transaction->date();
 }
