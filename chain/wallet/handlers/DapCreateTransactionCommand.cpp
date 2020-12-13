@@ -46,11 +46,17 @@ QVariant DapCreateTransactionCommand::respondToClient(const QVariant &arg1, cons
     QVariantMap dataMap = arg1.toMap();
 
     QString command = QString("%1 tx_create -net %2 -chain bronze -from_wallet %3 -to_addr %4 -token %5 -value %6").arg(m_sCliPath);
-    command = command.arg(dataMap.value(NETWORK).toString());
-    command = command.arg(dataMap.value(WALLET_NAME).toString());
-    command = command.arg(dataMap.value(RECIEVER_ADDRESS).toString());
-    command = command.arg(dataMap.value(TOKEN).toString());
-    command = command.arg(dataMap.value(AMOUNT).toLongLong());
+    command = command.arg(arg2.toString());
+    command = command.arg(arg1.toString());
+    command = command.arg(arg3.toString());
+    command = command.arg(arg5.toString());
+    command = command.arg(arg4.toString());
+    // TODO We need to find out why it works on Linux and doesn't work on Windows
+//    command = command.arg(dataMap.value(NETWORK).toString());
+//    command = command.arg(dataMap.value(WALLET_NAME).toString());
+//    command = command.arg(dataMap.value(RECIEVER_ADDRESS).toString());
+//    command = command.arg(dataMap.value(TOKEN).toString());
+//    command = command.arg(dataMap.value(AMOUNT).toLongLong());
 
     QProcess processCreate;
     processCreate.start(command);
@@ -67,12 +73,21 @@ QVariant DapCreateTransactionCommand::respondToClient(const QVariant &arg1, cons
         rxHash.indexIn(result, 0);
 
         QSettings settings(DAP_BRAND + QString(".ini"), QSettings::IniFormat);
-        settings.beginGroup(dataMap.value(WALLET_NAME).toString());
+
+        settings.beginGroup(arg1.toString());
             settings.beginGroup(rxHash.cap(1));
                 settings.setValue(DapGetTransactionsHistoryCommand::TIME,       "");
-                settings.setValue(DapGetTransactionsHistoryCommand::AMOUNT,     "-" + dataMap.value(AMOUNT).toString());
-                settings.setValue(DapGetTransactionsHistoryCommand::TOKEN,      dataMap.value(TOKEN).toString());
-                settings.setValue(DapGetTransactionsHistoryCommand::ADDRESS,    dataMap.value(RECIEVER_ADDRESS).toString());
+                settings.setValue(DapGetTransactionsHistoryCommand::AMOUNT,     "-" + arg4.toString());
+                settings.setValue(DapGetTransactionsHistoryCommand::TOKEN,      arg5.toString());
+                settings.setValue(DapGetTransactionsHistoryCommand::ADDRESS,    arg3.toString());
+    // TODO We need to find out why it works on Linux and doesn't work on Windows
+//        settings.beginGroup(dataMap.value(WALLET_NAME).toString());
+//            settings.beginGroup(rxHash.cap(1));
+//                settings.setValue(DapGetTransactionsHistoryCommand::TIME,       "");
+//                settings.setValue(DapGetTransactionsHistoryCommand::AMOUNT,     "-" + dataMap.value(AMOUNT).toString());
+//                settings.setValue(DapGetTransactionsHistoryCommand::TOKEN,      dataMap.value(TOKEN).toString());
+//                settings.setValue(DapGetTransactionsHistoryCommand::ADDRESS,    dataMap.value(RECIEVER_ADDRESS).toString());
+
             settings.endGroup();
         settings.endGroup();
 
