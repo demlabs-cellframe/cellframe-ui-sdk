@@ -45,13 +45,9 @@ QVariant DapAddWalletCommand::respondToClient(const QVariant &arg1, const QVaria
 
     auto command = QString("%1 wallet new -w %2 -sign %3").arg(CLI_PATH);
 
-//  TODO We need to find out why it works on Linux and doesn't work on Windows
-//    command = command.arg(requestData.value(WALLET_NAME).toString());
-//    command = command.arg(requestData.value(SIGNATURE_TYPE).toString());
-//    if (requestData.value(USE_EXISTING).toBool())
-    command = command.arg(arg1.toString());
-    command = command.arg(arg3.toString());
-    if(arg2.toBool())
+    command = command.arg(requestData.value(WALLET_NAME).toString());
+    command = command.arg(requestData.value(SIGNATURE_TYPE).toString());
+    if (requestData.value(USE_EXISTING).toBool())
         command += " -force";
 
     process.start(command);
